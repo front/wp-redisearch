@@ -60,4 +60,19 @@ class Settings {
     return isset( $redis_port ) ? $redis_port : '6379';
   }
 
+  /**
+  * Is auto suggestion enabled?
+  * @since    0.1.0
+  * @param
+  * @return string    $suggestion
+  */
+  public static function suggestionEnabled() {
+    if ( did_action('carbon_fields_register_fields') && did_action('carbon_fields_fields_registered') ) {
+      $suggestion = carbon_get_theme_option( 'wp_redisearch_redis_suggestion' );
+    } else {
+      $suggestion = get_option( '_wp_redisearch_redis_suggestion' );
+    }
+    return $suggestion;
+  }
+
 }

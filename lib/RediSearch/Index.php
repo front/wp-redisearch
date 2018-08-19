@@ -35,7 +35,6 @@ class Index {
     return $this;
   }
 
-
   /**
   * Create connection to redis server.
   * @since    0.1.0
@@ -52,6 +51,12 @@ class Index {
     return $this;
   }
 
+  /**
+  * Prepare items (posts) to be indexed.
+  * @since    0.1.0
+  * @param
+  * @return object $this
+  */
   public function add() {
     $args = array(
       'posts_per_page'     => 10,
@@ -60,13 +65,42 @@ class Index {
     $posts = get_posts( $args );
 
     $index_name = Settings::indexName();
+    $suggestion = Settings::suggestionEnabled();
+
     foreach ($posts as $post) {
       $title = $post->post_title;
       $content = $post->post_content;
       $id = $post->ID;
       $fields = array('postTitle', $title, 'postContent', $content, 'postId', $id);
-      $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', 'norwegian', 'FIELDS'], $fields );
-      $index = $this->client->rawCommand('FT.ADD', $command);
+      $this->addPosts($index_name, $id, $fields);
+      if ( isset( $suggestion ) ) {
+        $this->addSuggestion($index_name, $id, $title, 1);
+      }
     }
   }
+
+  /**
+  * Add to index or in other term, index items.
+  * @since    0.1.0
+  * @param
+  * @return object $this
+  */
+  public function addPosts($index_name, $id, $fields) {
+    $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', 'norwegian', 'FIELDS'], $fields );
+    $index = $this->client->rawCommand('FT.ADD', $command);
+    return $index;
+  }
+
+  /**
+  * Add to suggestion list.
+  * @since    0.1.0
+  * @param
+  * @return object $this
+  */
+  public function addSuggestion($index_name, $id, $title, $score) {
+    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $id, 123] );
+    $this->client->rawCommand('FT.SUGADD', $command);
+  }
+
+
 }
