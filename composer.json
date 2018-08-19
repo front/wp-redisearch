@@ -1,0 +1,26 @@
+{
+    "name": "WPRedisearch/WPRedisearch",
+    "description": "RediSearch plugin for Wordpress",
+    "keywords": ["wordpress", "redis", "redisearch"],
+    "homepage": "http://github.com/7kmco/wp-redisearch",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/7kmco/wp-redisearch/issues"
+    },
+    "authors": [
+        {
+            "name": "Foad Yousefi",
+            "email": "foadyousefi@gmail.com",
+            "homepage": "https://7km.co"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "WPRedisearch\\": "lib/"
+        }
+    },
+    "require": {
+        "htmlburger/carbon-fields": "^2.2",
+        "predis/predis": "^1.1"
+    }
+}
