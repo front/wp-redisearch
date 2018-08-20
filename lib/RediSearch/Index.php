@@ -3,36 +3,23 @@
 namespace WPRedisearch\RediSearch;
 
 use WPRedisearch\Settings;
-use WPRedisearch\RedisRaw\PredisAdapter;
 use WPRedisearch\RediSearch\Setup;
+use WPRedisearch\RedisRaw\PredisAdapter;
 
 class Index {
 
 	/**
 	 * @param object $client
 	 */
-  private $client;
+  public $client;
 
 	/**
 	 * @param object $index
 	 */
   private $index;
 
-  public function __construct() {
-  }
-
-  /**
-  * Create connection to redis server.
-  * @since    0.1.0
-  * @param
-  * @return
-  */
-  public function connect() {
-    $redis_server = Settings::RedisServer();
-    $redis_port = Settings::RedisPort();
-    // Connect to server
-    $this->client = ( new PredisAdapter() )->connect( $redis_server, $redis_port );
-    return $this;
+  public function __construct( $client ) {
+    $this->client = $client;
   }
 
   /**
