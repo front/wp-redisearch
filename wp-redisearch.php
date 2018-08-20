@@ -7,6 +7,29 @@ Author: Foad Yousefi
 Author URI: https://www.wp-redisearch.com
 */
 
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+// Plugin path.
+if ( ! defined( 'WPRS_PATH' ) ) {
+	define( 'WPRS_PATH', plugin_dir_path( __FILE__ ) );
+}
+// Plugin URL.
+if ( ! defined( 'WPRS_URL' ) ) {
+	define( 'WPRS_URL', plugin_dir_url( __FILE__ ) );
+}
+// Plugin base.
+if ( ! defined( 'WPRS_BASE' ) ) {
+	define( 'WPRS_BASE', plugin_basename( __FILE__ ) );
+}
+// Plugin name.
+if ( ! defined( 'WPRS_NAME' ) ) {
+	define( 'WPRS_NAME', 'wp-redisearch' );
+}
+// Plugin version .
+if ( ! defined( 'WPRS_VERSION' ) ) {
+	define( 'WPRS_VERSION', '0.1.0' );
+}
 
 require_once  __DIR__ . '/vendor/autoload.php';
 
