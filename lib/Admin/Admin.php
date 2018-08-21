@@ -4,6 +4,7 @@ namespace WPRedisearch;
 
 use Carbon_Fields\Container;
 use Carbon_Fields\Field;
+use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Setup;
 
@@ -123,8 +124,7 @@ class Admin {
   * @return
   */
   public static function wp_redisearch_add_to_index() {
-    $client = Setup::connect();
-    $index = new Index( $client );
+    $index = new Index( WPRedisearch::$client );
     $index->create()->add();
     print_r($index);
     wp_die();
