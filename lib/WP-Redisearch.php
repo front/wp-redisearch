@@ -15,12 +15,22 @@ use WPRedisearch\RediSearch\Index;
 
 class WPRedisearch {
 
+	/**
+   * Redis client to be used through entire website.
+	 * @param object $client
+	 */
+  public static $client;
+
+	/**
+	 * @param object $admin
+	 */
   private $admin;
+
   public function __construct() {
     $this->admin = new Admin;
     // Check if Redis server is on and we can connect to it.
     try {
-      $client = Setup::connect();
+      self::$client = Setup::connect();
     } catch (\Exception $e) {
       if ( isset( $e ) )  {
         $connection_exception = true;
@@ -31,8 +41,8 @@ class WPRedisearch {
     } else {
       // Check if RediSearch module is loaded.
       try {
-        $module_loaded = $client->rawCommand('MODULE', ['LIST']);
-        foreach ($module_loaded as $module) {
+        $loaded_modules = self::$client->rawCommand('MODULE', ['LIST']);
+        foreach ($loaded_modules as $module) {
           if ( in_array( 'ft', $module ) ) {
             $ft_module = true;
           }
@@ -57,9 +67,10 @@ class WPRedisearch {
   * @return
   */
   public static function redis_server_connection_notice() {
+    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_redis_server.php');
     ?>
     <div class="notice notice-error is-dismissible">
-      <p><?php _e( 'Something went wrong while conencting to Redis Server!', 'wp-redisearch' ); ?></p>
+      <p><?php printf( __( 'Something went wrong while conencting to Redis Server! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
     </div>
     <?php
   }
@@ -71,9 +82,10 @@ class WPRedisearch {
   * @return
   */
   public static function redisearch_not_loaded_notice() {
+    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_redis_server.php');
     ?>
     <div class="notice notice-error is-dismissible">
-      <p><?php _e( 'RediSearch module not loaded!', 'wp-redisearch' ); ?></p>
+      <p><?php printf( __( 'RediSearch module not loaded! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
     </div>
     <?php
   }
