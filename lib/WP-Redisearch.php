@@ -129,11 +129,14 @@ class WPRedisearch {
   
 
   public function wp_redisearch_pre_get_posts( $query ) {
-    if ( $query->is_home() && $query->is_search() && $query->is_main_query() ) {
+    if ( !is_admin() && $query->is_search() && $query->is_main_query() ) {
       $search = new Search( self::$client );
       $search_results = $search->search();
       unset( $search_results[0] );
       unset( $query->query_vars['s'] );
+      add_filter( 'get_search_query', function() {
+        return $_GET['s'];
+      });
 		  $query->set('post__in', $search_results );
     }
   }
