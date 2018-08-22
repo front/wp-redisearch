@@ -61,18 +61,18 @@ class Settings {
   }
 
   /**
-  * Is auto suggestion enabled?
+  * Get options
   * @since    0.1.0
   * @param
-  * @return string    $suggestion
+  * @return string    $option_value
   */
-  public static function suggestionEnabled() {
+  public static function get( $option ) {
     if ( did_action('carbon_fields_register_fields') && did_action('carbon_fields_fields_registered') ) {
-      $suggestion = carbon_get_theme_option( 'wp_redisearch_suggestion' );
+      $option_value = carbon_get_theme_option( $option );
     } else {
-      $suggestion = get_option( '_wp_redisearch_suggestion' );
+      $option_value = get_option( '_' . $option );
     }
-    return $suggestion;
+    return $option_value;
   }
 
 }
