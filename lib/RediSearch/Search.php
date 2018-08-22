@@ -38,7 +38,8 @@ class Search {
   */
   public function suggest( $term ) {
     $index_name = Settings::indexName();
-    $suggestion = $this->client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', $term, 'FUZZY', 'WITHPAYLOADS', 'MAX', '10']);
+    $results_no = Settings::get( 'wp_redisearch_suggested_results' );
+    $suggestion = $this->client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', $term, 'FUZZY', 'WITHPAYLOADS', 'MAX', $results_no]);
     return $suggestion;
   }
 }

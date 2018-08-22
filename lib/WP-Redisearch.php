@@ -118,7 +118,7 @@ class WPRedisearch {
   */
   public function wp_redisearch_public_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
-    $suggestion = Settings::suggestionEnabled();
+    $suggestion = Settings::get( 'wp_redisearch_suggestion' );
     $localized_data = array(
 			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' ),
 			'suggestionEnabled' 	=> $suggestion

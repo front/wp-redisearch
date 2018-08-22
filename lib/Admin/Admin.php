@@ -91,7 +91,8 @@ EOT;
       Field::make( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ) ),
       Field::make( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) ),
       Field::make( 'separator', 'wp_redisearch_suggestion_separator', __( 'Auto suggestion | Live search', 'wp-redisearch' ) ),
-      Field::make( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) )
+      Field::make( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) ),
+      Field::make( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion. (something around 5 to 10 is optimal)', 'wp-redisearch' ) )
     );
     return $fields;
   }

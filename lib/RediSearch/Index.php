@@ -52,7 +52,7 @@ class Index {
     $posts = get_posts( $args );
 
     $index_name = Settings::indexName();
-    $suggestion = Settings::suggestionEnabled();
+    $suggestion = Settings::get( 'wp_redisearch_suggestion' );
 
     foreach ($posts as $post) {
       $title = $post->post_title;
@@ -86,7 +86,7 @@ class Index {
   * @return object $this
   */
   public function addSuggestion($index_name, $permalink, $title, $score) {
-    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $permalink, 123] );
+    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $permalink] );
     $this->client->rawCommand('FT.SUGADD', $command);
   }
 
