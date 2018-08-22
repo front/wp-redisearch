@@ -56,12 +56,13 @@ class Index {
 
     foreach ($posts as $post) {
       $title = $post->post_title;
+      $permalink = $post->guid;
       $content = $post->post_content;
       $id = $post->ID;
       $fields = array('postTitle', $title, 'postContent', $content, 'postId', $id);
       $this->addPosts($index_name, $id, $fields);
       if ( isset( $suggestion ) ) {
-        $this->addSuggestion($index_name, $id, $title, 1);
+        $this->addSuggestion($index_name, $permalink, $title, 1);
       }
     }
   }
@@ -84,8 +85,8 @@ class Index {
   * @param
   * @return object $this
   */
-  public function addSuggestion($index_name, $id, $title, $score) {
-    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $id, 123] );
+  public function addSuggestion($index_name, $permalink, $title, $score) {
+    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $permalink, 123] );
     $this->client->rawCommand('FT.SUGADD', $command);
   }
 
