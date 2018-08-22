@@ -68,9 +68,9 @@ class Settings {
   */
   public static function suggestionEnabled() {
     if ( did_action('carbon_fields_register_fields') && did_action('carbon_fields_fields_registered') ) {
-      $suggestion = carbon_get_theme_option( 'wp_redisearch_redis_suggestion' );
+      $suggestion = carbon_get_theme_option( 'wp_redisearch_suggestion' );
     } else {
-      $suggestion = get_option( '_wp_redisearch_redis_suggestion' );
+      $suggestion = get_option( '_wp_redisearch_suggestion' );
     }
     return $suggestion;
   }

@@ -55,9 +55,25 @@ class Admin {
   * @return object $fields
   */
   public static function wp_redisearch_status_page() {
+    $posts_count = wp_count_posts( 'post' );
+    $posts_num = $posts_count->publish;
+    $index_btn = __( 'Index posts', 'wp-redisearch' );
+    $status_html = <<<"EOT"
+      <p>This is RediSearch status page.</p>
+      <p>Whith the current settings, there is <strong>${posts_num}</strong> to be indexed.</p>
+      <button id="wpRediSearchIndexBtn" class="button button-primary button-large">${index_btn}</button>
+      <div id="progress" data-indexable="32">
+        <span class="progress-txt">23/42</span>
+      </div>
+      <style>
+        #progress {position: relative;background: #FFF;margin-top:30px;height:20px;width: 100%;padding: 2px;border: 1px solid #ab211e;}
+        #progress:after {content: '';display: block;background: #D62E29;width: 34%;height: 100%;transition: all linear 0.7s;}
+        span.progress-txt {position: absolute;bottom: 25px;transform: translateX(-100%);color: #000000;}
+      </style>
+EOT;
     $fields = array(
       Field::make( 'separator', 'wp_redisearch_redis_status_separator', __( 'Redisearch Status', 'wp-redisearch' ) ),
-        Field::make( 'html', 'wp_redisearch_index_posts' )->set_html( __( '<button id="wpRediSearchIndexBtn" class="button button-primary button-large">Index posts</button>', 'wp-redisearch' ) )
+        Field::make( 'html', 'wp_redisearch_index_posts' )->set_html( $status_html )
     );
     return $fields;
   }
@@ -74,8 +90,8 @@ class Admin {
       Field::make( 'text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ) ),
       Field::make( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ) ),
       Field::make( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) ),
-      Field::make( 'separator', 'wp_redisearch_redis_suggestion_separator', __( 'Auto suggestion | Live search', 'wp-redisearch' ) ),
-      Field::make( 'checkbox', 'wp_redisearch_redis_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) )
+      Field::make( 'separator', 'wp_redisearch_suggestion_separator', __( 'Auto suggestion | Live search', 'wp-redisearch' ) ),
+      Field::make( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) )
     );
     return $fields;
   }
@@ -93,11 +109,13 @@ class Admin {
       'public' => true,
       'exclude_from_search' => false,
       'show_ui' => true,
-      ]);
+    ]);
     $fields = array(
-        Field::make( 'separator', 'wp_redisearch_redis_post_types_separator', 'Post types to index' ),
-        Field::make( 'set', 'wp_redisearch_redis_post_types',  __( 'Post types', 'wp-redisearch' ) )->add_options( $post_types ),
-        Field::make( 'separator', 'wp_redisearch_redis_fields', __( 'Custom fields', 'wp-redisearch' ) )
+        Field::make( 'separator', 'wp_redisearch_redis_general_separator', 'General indexing settings' ),
+        Field::make( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) ),
+        Field::make( 'separator', 'wp_redisearch_post_types_separator', 'Post types to index' ),
+        Field::make( 'set', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ) )->add_options( $post_types ),
+        Field::make( 'separator', 'wp_redisearch_fields', __( 'Custom fields', 'wp-redisearch' ) )
     );
 
     return $fields;
