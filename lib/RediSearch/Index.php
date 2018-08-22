@@ -61,7 +61,7 @@ class Index {
       $id = $post->ID;
       $fields = array('postTitle', $title, 'postContent', $content, 'postId', $id);
       $this->addPosts($index_name, $id, $fields);
-      if ( isset( $suggestion ) ) {
+      if ( $suggestion ) {
         $this->addSuggestion($index_name, $permalink, $title, 1);
       }
     }

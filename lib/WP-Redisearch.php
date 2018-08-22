@@ -6,6 +6,7 @@ use WPRedisearch\Admin;
 use WPRedisearch\RediSearch\Setup;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Search;
+use WPRedisearch\Settings;
 
 /**
  * WPRedisearch Class.
@@ -60,7 +61,7 @@ class WPRedisearch {
     }
     
     $this->wp_redisearch_handle_ajax_requests();
-
+   
     // Do the search
     add_action( 'pre_get_posts', array( $this, 'wp_redisearch_pre_get_posts' ) );
   }
@@ -117,8 +118,10 @@ class WPRedisearch {
   */
   public function wp_redisearch_public_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
+    $suggestion = Settings::suggestionEnabled();
     $localized_data = array(
-			'ajaxUrl' 				=> admin_url( 'admin-ajax.php' )
+			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' ),
+			'suggestionEnabled' 	=> $suggestion
 		);
 		wp_localize_script( 'wp_redisearch_public_js', 'wpRds', $localized_data );
     wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Public/css/wp-redisearch.css', array(), WPRS_VERSION );
