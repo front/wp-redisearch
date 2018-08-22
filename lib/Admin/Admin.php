@@ -39,7 +39,7 @@ class Admin {
     ->add_fields( self::wp_redisearch_redis_server_conf() );
 
     // Indexable post types and fields
-    Container::make( 'theme_options', __( 'Indexables', 'wp-redisearch' ) )
+    Container::make( 'theme_options', __( 'Indexing', 'wp-redisearch' ) )
     ->set_page_parent( $wp_redisearch_options )
     ->add_fields( self::wp_redisearch_custom_fields() );
   }
@@ -116,7 +116,10 @@ EOT;
         Field::make( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) ),
         Field::make( 'separator', 'wp_redisearch_post_types_separator', 'Post types to index' ),
         Field::make( 'set', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ) )->add_options( $post_types ),
-        Field::make( 'separator', 'wp_redisearch_fields', __( 'Custom fields', 'wp-redisearch' ) )
+        Field::make( 'separator', 'wp_redisearch_fields', __( 'Custom fields', 'wp-redisearch' ) ),
+        Field::make( 'separator', 'wp_redisearch_synonym', __( 'Synonyms support', 'wp-redisearch' ) ),
+        Field::make( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) ),
+        Field::make( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list. Add each group on a line and separate terms by comma. Just keep in mined only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) ),
     );
 
     return $fields;
