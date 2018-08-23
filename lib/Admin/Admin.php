@@ -58,9 +58,15 @@ class Admin {
     $posts_count = wp_count_posts( 'post' );
     $posts_num = $posts_count->publish;
     $index_btn = __( 'Index posts', 'wp-redisearch' );
+    $num_docs = 0;
+    if ( isset( WPRedisearch::$indexInfo ) && gettype( WPRedisearch::$indexInfo ) == 'array' ) {
+      $num_docs_offset = array_search( 'num_docs', WPRedisearch::$indexInfo ) + 1;
+      $num_docs = WPRedisearch::$indexInfo[$num_docs_offset];
+    }
     $status_html = <<<"EOT"
       <p>This is RediSearch status page.</p>
       <p>Whith the current settings, there is <strong>${posts_num}</strong> to be indexed.</p>
+      <p>Right now, ${num_docs} have been indexed.</p>
       <button id="wpRediSearchIndexBtn" class="button button-primary button-large">${index_btn}</button>
       <div id="progress" data-indexable="32">
         <span class="progress-txt">23/42</span>
