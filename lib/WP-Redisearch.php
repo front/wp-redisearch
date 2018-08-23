@@ -24,6 +24,24 @@ class WPRedisearch {
   public static $client;
 
 	/**
+   * Set this if there is any kind of errors.
+	 * @param object $redisearchException
+	 */
+  public static $redisearchException = false;
+
+	/**
+   * Set this if suggestion is not added.
+	 * @param object $suggestionException
+	 */
+  public static $suggestionException = false;
+
+	/**
+   * Redisearch index info.
+	 * @param object $indexInfo
+	 */
+  public static $indexInfo = null;
+
+	/**
 	 * @param object $admin
 	 */
   private $admin;
@@ -31,12 +49,30 @@ class WPRedisearch {
   public function __construct() {
     add_action( 'wp_enqueue_scripts', array( $this, 'wp_redisearch_public_enqueue_scripts' ) );
     $this->admin = new Admin;
-    // Check if Redis server is on and we can connect to it.
+    $this->wp_redisearch_handle_ajax_requests();
+    $this->wp_redisearch_admin_notice();
+    // Do the search
+    if ( !self::$redisearchException ) {
+      add_action( 'pre_get_posts', array( $this, 'wp_redisearch_pre_get_posts' ) );
+    }
+  }
+  
+  /**
+  * Check for errors like:
+  * - Redis server
+  * - Redisearch module
+  * - If index exists
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public function wp_redisearch_admin_notice() {
     try {
       self::$client = Setup::connect();
     } catch (\Exception $e) {
       if ( isset( $e ) )  {
         $connection_exception = true;
+        self::$redisearchException = true;
       }
     }
     if ( isset( $connection_exception ) ) {
@@ -56,29 +92,39 @@ class WPRedisearch {
         }
       }
       if ( isset( $module_exception ) || !isset( $ft_module )  ) {
+        self::$redisearchException = true;
         add_action( 'admin_notices', array(__CLASS__, 'redisearch_not_loaded_notice' ) );
       } else {
         $index_name = Settings::indexName();
         // Check if index exists.
         try {
-          $index_info = self::$client->rawCommand('FT.INFO', [$index_name]);
+          self::$indexInfo = self::$client->rawCommand('FT.INFO', [$index_name]);
         } catch (\Exception $e) {
           if ( isset( $e ) )  {
             $index_not_exist = true;
           }
         }
-        if ( $index_info == 'Unknown Index name' || isset( $index_not_exist ) ) {
+        if ( self::$indexInfo == 'Unknown Index name' || isset( $index_not_exist ) ) {
+          self::$redisearchException = true;
           add_action( 'admin_notices', array(__CLASS__, 'redisearch_index_not_exist_notice' ) );
+        }
+        // Check if suggestion exists.
+        if ( Settings::get( 'wp_redisearch_suggestion' )) {
+          try {
+            $suggestion = self::$client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', 'a', 'FUZZY', 'MAX', '2']);
+          } catch (\Exception $e) {
+            if ( isset( $e ) )  {
+              self::$suggestionException = true;
+            }
+          }
+          if ( is_null($suggestion) ) {
+            self::$suggestionException = true;
+          }
         }
       }
     }
-    
-    $this->wp_redisearch_handle_ajax_requests();
-   
-    // Do the search
-    add_action( 'pre_get_posts', array( $this, 'wp_redisearch_pre_get_posts' ) );
   }
-
+  
   /**
   * Show admin notice if error in redis server connection.
   * @since    0.1.0
@@ -146,7 +192,7 @@ class WPRedisearch {
   */
   public function wp_redisearch_public_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
-    $suggestion = Settings::get( 'wp_redisearch_suggestion' );
+    $suggestion = Settings::get( 'wp_redisearch_suggestion' ) && !self::$suggestionException;
     $localized_data = array(
 			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' ),
 			'suggestionEnabled' 	=> $suggestion
