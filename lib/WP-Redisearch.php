@@ -57,6 +57,19 @@ class WPRedisearch {
       }
       if ( isset( $module_exception ) || !isset( $ft_module )  ) {
         add_action( 'admin_notices', array(__CLASS__, 'redisearch_not_loaded_notice' ) );
+      } else {
+        $index_name = Settings::indexName();
+        // Check if index exists.
+        try {
+          $index_info = self::$client->rawCommand('FT.INFO', [$index_name]);
+        } catch (\Exception $e) {
+          if ( isset( $e ) )  {
+            $index_not_exist = true;
+          }
+        }
+        if ( $index_info == 'Unknown Index name' || isset( $index_not_exist ) ) {
+          add_action( 'admin_notices', array(__CLASS__, 'redisearch_index_not_exist_notice' ) );
+        }
       }
     }
     
@@ -92,6 +105,21 @@ class WPRedisearch {
     ?>
     <div class="notice notice-error is-dismissible">
       <p><?php printf( __( 'RediSearch module not loaded! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
+    </div>
+    <?php
+  }
+
+  /**
+  * Show admin notice RediSearch module not loaded.
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public static function redisearch_index_not_exist_notice() {
+    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_wp_redisearch.php');
+    ?>
+    <div class="notice notice-error is-dismissible">
+      <p><?php printf( __( 'Redis server is running and RediSearch module is loaded! But your index not exist. This mean your site never been indexed or for some reasons, it have been deleted. Please go to <a href="%s">settings page</a> and re-index your website.', 'wp-redisearch' ), $redis_settings_page); ?></p>
     </div>
     <?php
   }
