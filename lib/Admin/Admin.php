@@ -68,13 +68,14 @@ class Admin {
       <p>Whith the current settings, there is <strong>${posts_num}</strong> to be indexed.</p>
       <p>Right now, ${num_docs} have been indexed.</p>
       <button id="wpRediSearchIndexBtn" class="button button-primary button-large">${index_btn}</button>
-      <div id="progress" data-indexable="32">
-        <span class="progress-txt">23/42</span>
+      <div id="indexingProgress">
+        <div id="indexBar" data-posts-num="${posts_num}" data-num-docs="${num_docs}"></div>
+        <span id="indexedStat">${num_docs}/${posts_num}</span>
       </div>
       <style>
-        #progress {position: relative;background: #FFF;margin-top:30px;height:20px;width: 100%;padding: 2px;border: 1px solid #ab211e;}
-        #progress:after {content: '';display: block;background: #D62E29;width: 34%;height: 100%;transition: all linear 0.7s;}
-        span.progress-txt {position: absolute;bottom: 25px;transform: translateX(-100%);color: #000000;}
+        #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
+        #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.5s;}
+        span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
       </style>
 EOT;
     $fields = array(
