@@ -165,7 +165,7 @@ class WPRedisearch {
     $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_wp_redisearch.php');
     ?>
     <div class="notice notice-error is-dismissible">
-      <p><?php printf( __( 'Redis server is running and RediSearch module is loaded! But your index not exist. This mean your site never been indexed or for some reasons, it have been deleted. Please go to <a href="%s">settings page</a> and re-index your website.', 'wp-redisearch' ), $redis_settings_page); ?></p>
+      <p><?php printf( __( 'Redis server is running and RediSearch module is loaded! But your index not exist. This mean your site never been indexed or for some reasons, the index have been deleted. Please go to <a href="%s">settings page</a> and re-index your website.', 'wp-redisearch' ), $redis_settings_page); ?></p>
     </div>
     <?php
   }
