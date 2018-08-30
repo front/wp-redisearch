@@ -4,6 +4,7 @@ namespace WPRedisearch;
 
 use Carbon_Fields\Container;
 use Carbon_Fields\Field;
+use WPRedisearch\Settings;
 use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Setup;
@@ -55,8 +56,14 @@ class Admin {
   * @return object $fields
   */
   public static function wp_redisearch_status_page() {
-    $posts_count = wp_count_posts( 'post' );
-    $posts_num = $posts_count->publish;
+    $default_args = Settings::query_args();
+    $default_args['posts_per_page'] = -1;
+    $args = apply_filters( 'wp_redisearch_posts_args', $default_args);
+
+    $query = new \WP_Query( $args );
+    $num_posts = $query->found_posts;
+
+    $index_options = __( 'Indexing options:', 'wp-redisearch' );
     $index_btn = __( 'Index posts', 'wp-redisearch' );
     $num_docs = 0;
     if ( isset( WPRedisearch::$indexInfo ) && gettype( WPRedisearch::$indexInfo ) == 'array' ) {
@@ -65,16 +72,25 @@ class Admin {
     }
     $status_html = <<<"EOT"
       <p>This is RediSearch status page.</p>
-      <p>Whith the current settings, there is <strong>${posts_num}</strong> to be indexed.</p>
+      <p>Whith the current settings, there is <strong>${num_posts}</strong> to be indexed.</p>
       <p>Right now, ${num_docs} have been indexed.</p>
-      <button id="wpRediSearchIndexBtn" class="button button-primary button-large">${index_btn}</button>
+      <div class="indexing-options">
+        <span>${index_options}</spam>
+        <a class="dashicons indexing-btn start-indexing dashicons-update"></a>
+        <a class="dashicons indexing-btn pause-indexing dashicons-controls-pause"></a>
+        <a class="dashicons indexing-btn resume-indexing dashicons-controls-play"></a>
+        <a class="dashicons indexing-btn cancel-indexing dashicons-no"></a>
+      </div>
       <div id="indexingProgress">
-        <div id="indexBar" data-posts-num="${posts_num}" data-num-docs="${num_docs}"></div>
-        <span id="indexedStat">${num_docs}/${posts_num}</span>
+        <div id="indexBar" data-num-posts="${num_posts}" data-num-docs="${num_docs}"></div>
+        <span id="indexedStat">
+        <span id="statNumDoc">${num_docs}</span>/<span id="statNumPosts">${num_posts}</span></span>
       </div>
       <style>
+        .indexing-options{margin-top:20px;}
+        .indexing-btn{cursor: pointer}
         #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
-        #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.5s;}
+        #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
         span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
       </style>
 EOT;
@@ -154,9 +170,20 @@ EOT;
   */
   public static function wp_redisearch_add_to_index() {
     $index = new Index( WPRedisearch::$client );
-    $index->create()->add();
-    print_r($index);
-    wp_die();
+    $results = $index->create()->add();
+    wp_send_json_success( $results );
+  }
+
+  /**
+  * Drop existing index.
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public static function wp_redisearch_drop_index() {
+    $index = new Index( WPRedisearch::$client );
+    $results = $index->drop();
+    wp_send_json_success( $results );
   }
 
 }

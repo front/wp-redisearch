@@ -75,4 +75,21 @@ class Settings {
     return $option_value;
   }
 
+  /**
+  * args for WP_Query for indexing
+  * @since    0.1.0
+  * @param
+  * @return string    $args
+  */
+  public static function query_args() {
+    return array(
+			'post_type'              => array('post', 'page'),
+			'post_status'            => array('publish'),
+			'ignore_sticky_posts'    => true,
+			'orderby'                => 'ID',
+			'order'                  => 'DESC',
+			'fields'                 => 'all',
+    );
+  }
+
 }

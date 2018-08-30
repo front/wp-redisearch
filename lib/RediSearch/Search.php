@@ -25,7 +25,15 @@ class Search {
   */
   public function search() {
     $index_name = Settings::indexName();
-    $query = '%' . $_GET['s'] . '%';
+    $query = $_GET['s'];
+    // $query = explode( ' ', $query );
+    // $search_term = '';
+    // $stop_words = [ 'a', 'is', 'the', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'it', 'no', 'not', 'of', 'on', 'or', 'such', 'that',  'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was', 'will',  'with'];
+    // foreach ($query as $q) {
+    //   if ( !in_array( $q, $stop_words ) ) {
+    //     $search_term .= '%' . $q . '% ';
+    //   }
+    // }
     $search_results = $this->client->rawCommand('FT.SEARCH', [$index_name, $query, 'NOCONTENT']);
     return $search_results;
   }
