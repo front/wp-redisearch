@@ -55,12 +55,25 @@ class Index {
     }
 
     $index_name = Settings::indexName();
+    $synonym_enabled = Settings::get( 'wp_redisearch_synonym_enable' );
+    $synonym_terms = Settings::get( 'wp_redisearch_synonyms_list' );
+
     $title_schema = ['postTitle', 'TEXT', 'WEIGHT', 5.0, 'SORTABLE'];
     $body_schema = ['postContent', 'TEXT'];
     $post_id_schema = ['postID', 'NUMERIC'];
     $post_link_schema = ['postLink', 'TEXT'];
     $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema , $body_schema, $post_id_schema, $post_link_schema );
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
+
+    if ( $synonym_enabled && isset($synonym_terms) && !empty($synonym_terms) ) {
+      $synonym_terms = preg_split("/\\r\\n|\\r|\\n/", $synonym_terms );
+      $synonym_terms = array_map( 'trim', $synonym_terms );
+      foreach ($synonym_terms as $synonym) {
+        $synonym_group = array_map( 'trim', explode( ',', $synonym) );
+        $synonym_command = array_merge( [$index_name], $synonym_group );
+        $this->client->rawCommand('FT.SYNADD', $synonym_command);
+      }
+    }
     return $this;
   }
 
