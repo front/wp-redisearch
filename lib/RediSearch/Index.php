@@ -99,7 +99,7 @@ class Index {
 
         $title = get_the_title();
         $permalink = get_permalink();
-        $content = rtrim( implode( "\n", get_the_content() ) ) . "\n";
+        $content = wp_strip_all_tags( get_the_content(), true );
         $id = get_the_id();
         $fields = array('postTitle', $title, 'postContent', $content, 'postId', $id, 'postLink', $permalink);
         $this->addPosts($index_name, $id, $fields);
