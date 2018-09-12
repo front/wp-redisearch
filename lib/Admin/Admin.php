@@ -72,14 +72,12 @@ class Admin {
     }
     $status_html = <<<"EOT"
       <p>This is RediSearch status page.</p>
-      <p>Whith the current settings, there is <strong>${num_posts}</strong> to be indexed.</p>
-      <p>Right now, ${num_docs} have been indexed.</p>
-      <div class="indexing-options">
+      <p>Whith the current settings, there is <strong>${num_posts}</strong> posts to be indexed.</p>
+      <p>Right now, <strong>${num_docs}</strong> posts have been indexed.</p>
+      <div class="indexing-options" data-num-posts="${num_posts}" data-num-docs="${num_docs}">
         <span>${index_options}</spam>
-        <a class="dashicons indexing-btn start-indexing dashicons-update"></a>
-        <a class="dashicons indexing-btn pause-indexing dashicons-controls-pause"></a>
-        <a class="dashicons indexing-btn resume-indexing dashicons-controls-play"></a>
-        <a class="dashicons indexing-btn cancel-indexing dashicons-no"></a>
+        <a class="dashicons indexing-btn start-indexing dashicons-update" title="Dump existing index and re-index."></a>
+        <a class="dashicons indexing-btn resume-indexing dashicons-controls-play" title="Resume indexing from where it stoped."></a>
       </div>
       <div id="indexingProgress">
         <div id="indexBar" data-num-posts="${num_posts}" data-num-docs="${num_docs}"></div>
@@ -88,7 +86,7 @@ class Admin {
       </div>
       <style>
         .indexing-options{margin-top:20px;}
-        .indexing-btn{cursor: pointer}
+        .indexing-btn{position:relative;cursor: pointer}
         #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
         #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
         span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
