@@ -140,7 +140,8 @@ class Index {
   public function addPosts($index_name, $id, $indexing_options) {
     $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', $indexing_options['language']] );
 
-    $extra_params = apply_filters( 'wp_redisearch_index_extra_params', $indexing_options['extra_params'] );
+    $extra_params = isset( $indexing_options['extra_params'] ) ? $indexing_options['extra_params'] : array();
+    $extra_params = apply_filters( 'wp_redisearch_index_extra_params', $extra_params );
     // If any extra options passed, merge it to $command
     if ( isset( $extra_params ) ) {
       $command = array_merge( $command, $extra_params );
