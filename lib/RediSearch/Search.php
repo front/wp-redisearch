@@ -20,21 +20,19 @@ class Search {
   /**
   * Search in the index.
   * @since    0.1.0
-  * @param
+  * @param object $query
   * @return
   */
-  public function search() {
+  public function search( $wp_query ) {
     $index_name = Settings::indexName();
-    $query = $_GET['s'];
-    // $query = explode( ' ', $query );
-    // $search_term = '';
-    // $stop_words = [ 'a', 'is', 'the', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'it', 'no', 'not', 'of', 'on', 'or', 'such', 'that',  'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was', 'will',  'with'];
-    // foreach ($query as $q) {
-    //   if ( !in_array( $q, $stop_words ) ) {
-    //     $search_term .= '%' . $q . '% ';
-    //   }
-    // }
-    $search_results = $this->client->rawCommand('FT.SEARCH', [$index_name, $query, 'NOCONTENT']);
+    $wprds_query = $wp_query->query_vars['s'];
+    // Offset search results based on pagination
+    $from = 0;
+    $offset = $wp_query->query_vars['posts_per_page'];
+    if ( isset( $wp_query->query_vars['paged'] ) && $wp_query->query_vars['paged'] > 1 ) {
+      $from = $wp_query->query_vars['posts_per_page'] * ( $wp_query->query_vars['paged'] - 1 );
+    }
+    $search_results = $this->client->rawCommand('FT.SEARCH', [$index_name, $wprds_query, 'NOCONTENT', 'LIMIT', $from, $offset]);
     return $search_results;
   }
 
