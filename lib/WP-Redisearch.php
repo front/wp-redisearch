@@ -46,6 +46,11 @@ class WPRedisearch {
 	 */
   private $admin;
 
+	/**
+	 * @param object $admin
+	 */
+  private $search_query_posts = array();
+
   public function __construct() {
     add_action( 'wp_enqueue_scripts', array( $this, 'wp_redisearch_public_enqueue_scripts' ) );
     $this->admin = new Admin;
@@ -53,7 +58,8 @@ class WPRedisearch {
     $this->wp_redisearch_admin_notice();
     // Do the search
     if ( !self::$redisearchException ) {
-      add_action( 'pre_get_posts', array( $this, 'wp_redisearch_pre_get_posts' ) );
+      add_filter( 'posts_request', array( $this, 'wp_redisearch_posts_request' ), 10, 2 );
+      add_filter( 'the_posts', array( $this, 'filter_the_posts' ), 10, 2 );
     }
   }
   
@@ -204,18 +210,67 @@ class WPRedisearch {
     wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Public/css/wp-redisearch.css', array(), WPRS_VERSION );
   }
   
-
-  public function wp_redisearch_pre_get_posts( $query ) {
-    if ( !is_admin() && $query->is_search() && $query->is_main_query() ) {
-      $search = new Search( self::$client );
-      $search_results = $search->search();
-      unset( $search_results[0] );
-      unset( $query->query_vars['s'] );
-      add_filter( 'get_search_query', function() {
-        return $_GET['s'];
-      });
-		  $query->set('post__in', $search_results );
+  /**
+   * Filter the posts to return redisearch posts.
+   * @since    0.1.0
+   * @param array $posts
+	 * @param object $query
+	 * @return array $new_posts
+   */
+	public function filter_the_posts( $posts, $query ) {
+    if ( is_admin() ||
+        !$query->is_main_query() ||
+        ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
+        empty( $query->query_vars['s'] )
+      ) {
+      return $posts;
     }
+		$new_posts = $this->search_query_posts;
+    return $new_posts;
+	}
+
+  /**
+   * Filter search query and return posts found in redisearch.
+   * Reset query to return nothing.
+   * @since    0.1.0
+   * @param string $request
+	 * @param object $query
+	 * @return string
+   */
+  public function wp_redisearch_posts_request( $request, $query ) {
+    global $wpdb;
+    if ( self::$redisearchException ) {
+      $query->redisearch_success = false;
+      return $request;
+    }
+    
+    if ( is_admin() ||
+        !$query->is_main_query() ||
+        ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
+        empty( $query->query_vars['s'] )
+      ) {
+      return $request;
+    }
+    
+    $search = new Search( self::$client );
+    $search_results = $search->search( $query );
+    $search_count = $search_results[0];
+
+    unset( $search_results[0] );
+
+    $args = array(
+      'post_type'     => 'any',
+      'post_status'   => 'any',
+      'orderby'       => 'post__in',
+      'post__in'      => $search_results
+    );
+    $searched_posts = new \WP_Query( $args );
+    $this->search_query_posts = $searched_posts->posts;
+    $query->found_posts = $search_count;
+    $query->redisearch_success = true;
+    $query->max_num_pages = ceil( $search_count / $query->get( 'posts_per_page' ) );
+    
+    return "SELECT * FROM $wpdb->posts WHERE 1=0";
   }
 
   public function wp_redisearch_get_suggestion() {
