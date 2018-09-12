@@ -256,6 +256,10 @@ class WPRedisearch {
     $search_results = $search->search( $query );
     $search_count = $search_results[0];
 
+    if ( $search_results[0] == 0 ) {
+      $query->redisearch_success = true;
+      return $request;
+    }
     unset( $search_results[0] );
 
     $args = array(
