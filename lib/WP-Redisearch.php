@@ -60,6 +60,7 @@ class WPRedisearch {
     if ( !self::$redisearchException ) {
       add_filter( 'posts_request', array( $this, 'wp_redisearch_posts_request' ), 10, 2 );
       add_filter( 'the_posts', array( $this, 'filter_the_posts' ), 10, 2 );
+      add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
     }
   }
   
@@ -282,6 +283,6 @@ class WPRedisearch {
     $search_results = $search->suggest( $_POST['term'] );
     echo json_encode( $search_results );
     wp_die();
-  }
+  } 
 
 }

@@ -109,13 +109,16 @@ class Index {
       
       while ( $query->have_posts() ) {
         $query->the_post();
+        $indexing_options = array();
 
         $title = get_the_title();
         $permalink = get_permalink();
         $content = wp_strip_all_tags( get_the_content(), true );
         $id = get_the_id();
-        $fields = array('postTitle', $title, 'postContent', $content, 'postId', $id, 'postLink', $permalink);
-        $this->addPosts($index_name, $id, $fields);
+        // Post language. This could be useful to do some stop word, stemming and etc.
+        $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
+        $indexing_options['fields'] = array( 'postTitle', $title, 'postContent', $content, 'postId', $id, 'postLink', $permalink );
+        $this->addPosts($index_name, $id, $indexing_options);
         if ( $suggestion ) {
           $this->addSuggestion($index_name, $permalink, $title, 1);
         }
@@ -129,13 +132,36 @@ class Index {
   /**
   * Add to index or in other term, index items.
   * @since    0.1.0
+  * @param integer $post_id
+  * @param array $post
+  * @param array $indexing_options
+  * @return object $index
+  */
+  public function addPosts($index_name, $id, $indexing_options) {
+    $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', $indexing_options['language']] );
+
+    $extra_params = apply_filters( 'wp_redisearch_index_extra_params', $indexing_options['extra_params'] );
+    // If any extra options passed, merge it to $command
+    if ( isset( $extra_params ) ) {
+      $command = array_merge( $command, $extra_params );
+    }
+
+    $command = array_merge( $command, array( 'FIELDS' ), $indexing_options['fields'] );
+
+    $index = $this->client->rawCommand('FT.ADD', $command);
+    return $index;
+  }
+
+  /**
+  * Delete post from index.
+  * @since    0.1.0
   * @param
   * @return object $this
   */
-  public function addPosts($index_name, $id, $fields) {
-    $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', 'norwegian', 'FIELDS'], $fields );
-    $index = $this->client->rawCommand('FT.ADD', $command);
-    return $index;
+  public function deletePosts($index_name, $id) {
+    $command = array( $index_name, $id , 'DD' );
+    $this->client->rawCommand('FT.DEL', $command);
+    return $this;
   }
 
   /**

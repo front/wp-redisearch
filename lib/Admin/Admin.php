@@ -175,6 +175,39 @@ EOT;
   }
 
   /**
+  * action for "index it" ajax call to start indexing selected posts.
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public function wp_redisearch_index_post_on_publish( $post_id, $post, $update ) {
+    // If this is a revision, of it is auto save, don't do anything.
+    if ( wp_is_post_revision( $post_id ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) )
+      return;
+
+    $index = new Index( WPRedisearch::$client );
+    $index_name = Settings::indexName();
+
+    // If post is not published or un-published, delete from index then, return.
+    if ( $post->post_status != 'publish' ) {
+      $index->deletePosts( $index_name, $post_id );
+      return;
+    }
+    
+    $title = $post->post_title;
+    $content = wp_strip_all_tags( $post->post_content, true );
+    $permalink = get_permalink( $post_id );
+    $fields = array( 'postTitle', $title, 'postContent', $content, 'postId', $post_id, 'postLink', $permalink );
+    
+    $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $post_id );
+    $indexing_options['fields'] = array( 'postTitle', $title, 'postContent', $content, 'postId', $post_id, 'postLink', $permalink );
+    $indexing_options['extra_params'] = array( 'REPLACE' );
+
+    // Finally, add post to index
+    $index->addPosts( $index_name, $post_id, $indexing_options );
+  }
+
+  /**
   * Drop existing index.
   * @since    0.1.0
   * @param
