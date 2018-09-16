@@ -125,31 +125,46 @@ class Options {
    */
   public static function create_admin_page() {
     ?>
-
     <div class="wrap">
       <h1><?php esc_html_e( $this->page_title, 'wp-redisearch' ); ?></h1>
       <form method="post" action="options.php">
-        <div class="wprds-form-wraper">
-          <div class="fields">
-          <?php
-            $post_types = get_post_types([
-              'public'              => true,
-              'exclude_from_search' => false,
-              'show_ui'             => true,
-            ]);
-            $post_types = array_values( $post_types );
-            
-            settings_fields( self::$options_group );
-            Fields::make( self::$options_group, self::$options_name );
-            Fields::add('header', null, 'Redis server configurations');
-            Fields::add('text', 'example_text_field', 'Redis server', 'And this is field description.');
-            Fields::add('textarea', 'example_textarea_field', 'Redis port', 'And this is field description.');
-            Fields::add('checkbox', 'example_checkbox', 'This is checkbox', 'Checkbox desc.');
-            Fields::add('multiselect', 'example_multiselect', 'Indexable post types', 'Post types to be indexed and also searched through.', $post_types);
-            ?>
-          </div>
-          <div class="form-actions">
-            <?php submit_button(); ?>
+        <div id="poststuff">
+			    <div id="post-body" class="metabox-holder columns-2 wprds-form-wraper">
+				    <div id="post-body-content">
+					    <div class="postbox " style="display: block;">
+                <?php
+                $post_types = get_post_types([
+                  'public'              => true,
+                  'exclude_from_search' => false,
+                  'show_ui'             => true,
+                ]);
+                $post_types = array_values( $post_types );
+                
+                settings_fields( self::$options_group );
+                Fields::make( self::$options_group, self::$options_name );
+                Fields::add('header', null, 'Redis server configurations');
+                Fields::add('text', 'example_text_field', 'Redis server', 'And this is field description.');
+                Fields::add('textarea', 'example_textarea_field', 'Redis port', 'And this is field description.');
+                Fields::add('checkbox', 'example_checkbox', 'This is checkbox', 'Checkbox desc.');
+                Fields::add('multiselect', 'example_multiselect', 'Indexable post types', 'Post types to be indexed and also searched through.', $post_types);
+                ?>
+					    </div>
+            </div>
+        
+            <div id="postbox-container-1" class="postbox-container">
+                <div id="submitdiv" class="postbox">
+                  <h3>Actions</h3>
+
+                  <div id="major-publishing-actions">
+
+                    <div id="publishing-action">
+                      <span class="spinner"></span>								
+                      <?php submit_button(null, 'primary', null, false); ?>
+                    </div>
+                    <div class="clear"></div>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </form>

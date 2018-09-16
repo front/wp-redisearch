@@ -1,34 +1,27 @@
-.wprds-form-wraper {
-  display: flex; }
-  .wprds-form-wraper .fields {
-    flex: 2; }
-  .wprds-form-wraper .wprds-field {
-    position: relative;
-    padding: 14px 12px 15px;
-    background: #fff;
-    border-width: 1px 1px 0 0;
-    border-style: solid;
-    border-color: #e5e5e5; }
-    .wprds-form-wraper .wprds-field h3 {
-      padding: 0;
-      font-size: 28px;
-      margin: 0;
-      line-height: 1;
-      font-weight: 200; }
-    .wprds-form-wraper .wprds-field .label {
-      font-weight: 600;
-      margin-bottom: 10px; }
-    .wprds-form-wraper .wprds-field.text-field input,
-    .wprds-form-wraper .wprds-field.textarea textarea {
-      display: block;
-      width: 100%;
-      margin-bottom: 10px; }
-    .wprds-form-wraper .wprds-field.multiselect .options {
-      margin-bottom: 10px; }
-      .wprds-form-wraper .wprds-field.multiselect .options .option {
-        display: block; }
-    .wprds-form-wraper .wprds-field .desc {
-      color: #888; }
-  .wprds-form-wraper .form-actions {
-    flex: 1;
-    margin-left: 10px; }
+.wprds-form-wraper .wprds-field {
+  position: relative;
+  padding: 14px 12px 15px;
+  background: #fff;
+  border-width: 1px 1px 0 0;
+  border-style: solid;
+  border-color: #e5e5e5; }
+  .wprds-form-wraper .wprds-field h3 {
+    padding: 0;
+    font-size: 28px;
+    margin: 0;
+    line-height: 1;
+    font-weight: 200; }
+  .wprds-form-wraper .wprds-field .label {
+    font-weight: 600;
+    margin-bottom: 10px; }
+  .wprds-form-wraper .wprds-field.text-field input,
+  .wprds-form-wraper .wprds-field.textarea textarea {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px; }
+  .wprds-form-wraper .wprds-field .desc {
+    color: #888; }
+
+.wprds-form-wraper .form-actions {
+  flex: 1;
+  margin-left: 10px; }

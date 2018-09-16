@@ -1,10 +1,4 @@
 .wprds-form-wraper {
-  display: flex;
-  
-  .fields {
-    flex: 2;
-  }
-
   .wprds-field {
     position: relative;
     padding: 14px 12px 15px;
@@ -31,16 +25,6 @@
       display: block;
       width: 100%;
       margin-bottom: 10px;
-    }
-
-    &.multiselect {
-      .options {
-        margin-bottom: 10px;
-
-        .option {
-          display: block;
-        }
-      }
     }
 
     .desc {
