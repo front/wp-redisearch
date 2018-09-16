@@ -1,0 +1,55 @@
+.wprds-form-wraper {
+  display: flex;
+  
+  .fields {
+    flex: 2;
+  }
+
+  .wprds-field {
+    position: relative;
+    padding: 14px 12px 15px;
+    background: #fff;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #e5e5e5;
+
+    h3 {
+      padding: 0;
+      font-size: 28px;
+      margin: 0;
+      line-height: 1;
+      font-weight: 200;
+    }
+
+    .label {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    &.text-field input,
+    &.textarea textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    &.multiselect {
+      .options {
+        margin-bottom: 10px;
+
+        .option {
+          display: block;
+        }
+      }
+    }
+
+    .desc {
+      color: #888;
+    }
+  }
+  
+  .form-actions {
+    flex: 1;
+    margin-left: 10px;
+  }
+}
