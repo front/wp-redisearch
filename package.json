@@ -8,14 +8,22 @@
     "styles:admin": "concurrently \"npm run styles:compile-admin\" \"npm run styles:prefix-admin\"",
     "styles:compile-public": "node-sass -w assets/scss/public.scss -o assets/scss/",
     "styles:prefix-public": "postcss assets/scss/public.scss --use autoprefixer -b \"last 2 versions\" --no-map -o lib/public/css/wp-redisearch.css -w",
-    "styles:public": "concurrently \"npm run styles:compile-public\" \"npm run styles:prefix-public\""
+    "styles:public": "concurrently \"npm run styles:compile-public\" \"npm run styles:prefix-public\"",
+    "babel:admin": "babel --presets es2015 --presets minify assets/scripts/admin.js -o lib/admin/js/admin.js",
+    "babel:public": "babel --presets es2015 --presets minify assets/scripts/public.js -o lib/public/js/wp-redisearch.js"
   },
   "author": "Foad Yousefi",
   "license": "GPL",
   "devDependencies": {
     "autoprefixer": "^8.4.1",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-minify": "^0.4.3",
+    "babel-watch": "^2.0.7",
     "concurrently": "^3.5.1",
     "node-sass": "^4.9.0",
     "postcss-cli": "^5.0.0"
-  }
+  },
+  "dependencies": {}
 }
