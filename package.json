@@ -1,0 +1,21 @@
+{
+  "name": "wp-redisearch",
+  "version": "0.1.0",
+  "description": "Replace Wordpress search with Redisearch",
+  "scripts": {
+    "styles:compile-admin": "node-sass -w assets/scss/admin.scss -o assets/scss/",
+    "styles:prefix-admin": "postcss assets/scss/admin.scss --use autoprefixer -b \"last 2 versions\" --no-map -o lib/admin/css/admin.css -w",
+    "styles:admin": "concurrently \"npm run styles:compile-admin\" \"npm run styles:prefix-admin\"",
+    "styles:compile-public": "node-sass -w assets/scss/public.scss -o assets/scss/",
+    "styles:prefix-public": "postcss assets/scss/public.scss --use autoprefixer -b \"last 2 versions\" --no-map -o lib/public/css/wp-redisearch.css -w",
+    "styles:public": "concurrently \"npm run styles:compile-public\" \"npm run styles:prefix-public\""
+  },
+  "author": "Foad Yousefi",
+  "license": "GPL",
+  "devDependencies": {
+    "autoprefixer": "^8.4.1",
+    "concurrently": "^3.5.1",
+    "node-sass": "^4.9.0",
+    "postcss-cli": "^5.0.0"
+  }
+}
