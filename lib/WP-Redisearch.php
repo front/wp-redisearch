@@ -7,6 +7,7 @@ use WPRedisearch\RediSearch\Setup;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Search;
 use WPRedisearch\Settings;
+use WPRedisearch\ThemeOptions;
 
 /**
  * WPRedisearch Class.
@@ -52,6 +53,7 @@ class WPRedisearch {
   private $search_query_posts = array();
 
   public function __construct() {
+    new Options();
     add_action( 'wp_enqueue_scripts', array( $this, 'wp_redisearch_public_enqueue_scripts' ) );
     $this->admin = new Admin;
     $this->wp_redisearch_handle_ajax_requests();
