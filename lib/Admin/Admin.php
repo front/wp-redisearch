@@ -157,7 +157,8 @@ EOT;
     $localized_data = array(
 			'ajaxUrl' 				=> admin_url( 'admin-ajax.php' )
 		);
-		wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
+    wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
+    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/admin/css/admin.css', false, 20180914 );
   }
 
   /**
