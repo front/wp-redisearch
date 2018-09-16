@@ -23,6 +23,10 @@ class Text extends Fields {
    * Initiate field.
    *
    * @since 0.1.0
+   * @param string $name
+   * @param string $label
+   * @param string $description
+   * @return function field_html()
    */
   public function __construct($name, $label, $description) {
     self::$name = $name;
@@ -35,6 +39,8 @@ class Text extends Fields {
    * Get field value, so we can use it to show current value.
    *
    * @since 0.1.0
+   * @param
+   * @return string $field_value
    */
   public static function get_value() {
     $field_value = parent::get_field_value( self::$name );
@@ -45,6 +51,8 @@ class Text extends Fields {
    * Set field name attr.
    *
    * @since 0.1.0
+   * @param
+   * @return string $field_name
    */
   public static function input_name() {
     $options_name = parent::$options_name;
@@ -55,6 +63,8 @@ class Text extends Fields {
    * And the actual output markup of the field.
    *
    * @since 0.1.0
+   * @param
+   * @return
    */
   public function field_html() {
     ?>
