@@ -81,12 +81,14 @@ class Multiselect extends Fields {
         <?php
           foreach ( self::$options as $key => $value) {
             ?>
-              <label class="option">
-                <input type="checkbox"
-                      name="<?php echo self::input_name() ?>[<?php echo $value ?>]"
-                      <?php echo (isset(self::get_value()[ $value]) && self::get_value()[ $value] == 'on') ? 'checked="checked"' : '' ?> />
-                <?php echo $value ?>
-              </label>
+              <p>
+                <label>
+                  <input type="checkbox"
+                        name="<?php echo self::input_name() ?>[<?php echo $value ?>]"
+                        <?php echo (isset(self::get_value()[ $value]) && self::get_value()[ $value] == 'on') ? 'checked="checked"' : '' ?> />
+                  <?php echo $value ?>
+                </label>
+              </p>
             <?php
           }
         ?>
