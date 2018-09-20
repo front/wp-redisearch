@@ -2,8 +2,11 @@
 
 namespace WPRedisearch;
 
-use Carbon_Fields\Container;
-use Carbon_Fields\Field;
+use SevenFields\Fields\Fields;
+use SevenFields\Container\Container;
+
+// use Carbon_Fields\Container;
+// use Carbon_Fields\Field;
 use WPRedisearch\Settings;
 use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
@@ -24,30 +27,25 @@ class Admin {
   * @return 
   */
   public static function init() {
-    add_action( 'carbon_fields_register_fields', array(__CLASS__, 'wp_redisearch_options' ) );
-    add_action( 'after_setup_theme', array(__CLASS__, 'wp_redisearch_load' ) );
+    add_action( 'admin_menu', array( __CLASS__, 'setting_pages_init' ) );
   }
 
-  public static function wp_redisearch_options() {
-    $wp_redisearch_options = Container::make( 'theme_options', __( 'WP redisearch', 'wp-redisearch' ) )
-      ->set_page_menu_position( 20 )
-      ->set_icon( 'dashicons-search' )
-      ->add_fields( self::wp_redisearch_status_page() );
-
+  public static function setting_pages_init() {
+    // Redisearch Dashboard
+    Container::make( __( 'WP redisearch', 'wp-redisearch' ), 'wp-redisearch' )
+    ->set_menu_position( 20 )
+    ->set_icon( 'dashicons-search' )
+    ->add_fields(array( __CLASS__, 'wp_redisearch_status_page'));
     // Redis server configurations.
-    Container::make( 'theme_options', __( 'Redis Server', 'wp-redisearch' ) )
-    ->set_page_parent( $wp_redisearch_options )
-    ->add_fields( self::wp_redisearch_redis_server_conf() );
-
-    // Indexable post types and fields
-    Container::make( 'theme_options', __( 'Indexing', 'wp-redisearch' ) )
-    ->set_page_parent( $wp_redisearch_options )
-    ->add_fields( self::wp_redisearch_custom_fields() );
+    Container::make( __( 'Redis server', 'wp-redisearch' ), 'redis-server')
+    ->set_parent('wp-redisearch')
+    ->add_fields(array( __CLASS__, 'wp_redisearch_redis_server_conf') );
+    // Indexing options and configurations.
+    Container::make( __( 'Indexing options', 'wp-redisearch' ), 'indexing-options')
+    ->set_parent('wp-redisearch')
+    ->add_fields(array( __CLASS__, 'wp_redisearch_custom_fields') );
   }
 
-  public static function wp_redisearch_load() {
-    \Carbon_Fields\Carbon_Fields::boot();
-  }
 
   /**
   * Fields for Redis Status option page.
@@ -92,11 +90,8 @@ class Admin {
         span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
       </style>
 EOT;
-    $fields = array(
-      Field::make( 'separator', 'wp_redisearch_redis_status_separator', __( 'Redisearch Status', 'wp-redisearch' ) ),
-        Field::make( 'html', 'wp_redisearch_index_posts' )->set_html( $status_html )
-    );
-    return $fields;
+    
+    Fields::add('header', null, 'Redis dashboard');
   }
 
   /**
@@ -106,16 +101,13 @@ EOT;
   * @return object $fields
   */
   public static function wp_redisearch_redis_server_conf() {
-    $fields = array(
-      Field::make( 'separator', 'wp_redisearch_redis_server', __( 'Redis server configurations', 'wp-redisearch' ) ),
-      Field::make( 'text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ) ),
-      Field::make( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ) ),
-      Field::make( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) ),
-      Field::make( 'separator', 'wp_redisearch_suggestion_separator', __( 'Auto suggestion | Live search', 'wp-redisearch' ) ),
-      Field::make( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) ),
-      Field::make( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion. (something around 5 to 10 is optimal)', 'wp-redisearch' ) )
-    );
-    return $fields;
+    Fields::add('header', null, __( 'Redis server configurations', 'wp-redisearch' ));
+    Fields::add('text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ), __( 'Redis server url, usually it is 127.0.0.1', 'wp-redisearch' ) );
+    Fields::add( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ), __( 'Redis port number, by default it is 6379', 'wp-redisearch' ) );
+    Fields::add( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) );
+    Fields::add( 'header', null, __( 'Auto suggestion | Live search', 'wp-redisearch' ) );
+    Fields::add( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) );
+    Fields::add( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion. (something around 5 to 10 is optimal)', 'wp-redisearch' ) );
   }
 
   
@@ -132,18 +124,14 @@ EOT;
       'exclude_from_search' => false,
       'show_ui' => true,
     ]);
-    $fields = array(
-        Field::make( 'separator', 'wp_redisearch_redis_general_separator', 'General indexing settings' ),
-        Field::make( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) ),
-        Field::make( 'separator', 'wp_redisearch_post_types_separator', 'Post types to index' ),
-        Field::make( 'set', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ) )->add_options( $post_types ),
-        Field::make( 'separator', 'wp_redisearch_fields', __( 'Custom fields', 'wp-redisearch' ) ),
-        Field::make( 'separator', 'wp_redisearch_synonym', __( 'Synonyms support', 'wp-redisearch' ) ),
-        Field::make( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) ),
-        Field::make( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list. Add each group on a line and separate terms by comma. Just keep in mined only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) ),
-    );
-
-    return $fields;
+    Fields::add( 'header', null, 'General indexing settings' );
+    Fields::add( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) );
+    Fields::add( 'header', null, 'Post types to index' );
+    Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), $post_types );
+    Fields::add( 'header', null, __( 'Custom fields', 'wp-redisearch' ) );
+    Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
+    Fields::add( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) );
+    Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. Just keep in mined only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
   }
 
   /**

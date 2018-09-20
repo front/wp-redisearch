@@ -19,8 +19,10 @@
             "WPRedisearch\\": "lib/"
         }
     },
+    "minimum-stability": "dev",
     "require": {
         "htmlburger/carbon-fields": "^2.2",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "foadyousefi/seven-fields": "dev-master"
     }
 }

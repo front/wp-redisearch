@@ -4,8 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebabe39fb8ecd4b2d04a80ead1d5a35a",
+    "content-hash": "2ec76376aae1b8505b70dbc33f1e60a1",
     "packages": [
+        {
+            "name": "foadyousefi/seven-fields",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/foadyousefi/seven-fields.git",
+                "reference": "e236ad27c8ee9e41f51b11df6228974b2c916fb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/foadyousefi/seven-fields/zipball/e236ad27c8ee9e41f51b11df6228974b2c916fb7",
+                "reference": "e236ad27c8ee9e41f51b11df6228974b2c916fb7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SevenFields\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Foad Yousefi",
+                    "email": "foadyousefi@gmail.com",
+                    "homepage": "https://7km.co/"
+                }
+            ],
+            "description": "WordPress developer-friendly option pages with custom fields.",
+            "homepage": "https://7km.co/",
+            "time": "2018-09-20T23:17:45+00:00"
+        },
         {
             "name": "htmlburger/carbon-fields",
             "version": "2.2.0",
@@ -131,16 +169,16 @@
         },
         {
             "name": "predis/predis",
-            "version": "v1.1.1",
+            "version": "v1.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nrk/predis.git",
-                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1"
+                "reference": "111d100ee389d624036b46b35ed0c9ac59c71313"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nrk/predis/zipball/f0210e38881631afeafb56ab43405a92cafd9fd1",
-                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/111d100ee389d624036b46b35ed0c9ac59c71313",
+                "reference": "111d100ee389d624036b46b35ed0c9ac59c71313",
                 "shasum": ""
             },
             "require": {
@@ -177,13 +215,15 @@
                 "predis",
                 "redis"
             ],
-            "time": "2016-06-16T16:22:20+00:00"
+            "time": "2017-07-12T14:39:17+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "foadyousefi/seven-fields": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
