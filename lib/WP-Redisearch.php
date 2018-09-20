@@ -138,7 +138,7 @@ class WPRedisearch {
   * @return
   */
   public static function redis_server_connection_notice() {
-    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_redis_server.php');
+    $redis_settings_page = admin_url('admin.php?page=wp-redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
       <p><?php printf( __( 'Something went wrong while conencting to Redis Server! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
@@ -153,7 +153,7 @@ class WPRedisearch {
   * @return
   */
   public static function redisearch_not_loaded_notice() {
-    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_redis_server.php');
+    $redis_settings_page = admin_url('admin.php?page=wp-redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
       <p><?php printf( __( 'RediSearch module not loaded! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
@@ -168,7 +168,7 @@ class WPRedisearch {
   * @return
   */
   public static function redisearch_index_not_exist_notice() {
-    $redis_settings_page = admin_url('admin.php?page=crb_carbon_fields_container_wp_redisearch.php');
+    $redis_settings_page = admin_url('admin.php?page=wp-redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
       <p><?php printf( __( 'Redis server is running and RediSearch module is loaded! But your index not exist. This mean your site never been indexed or for some reasons, the index have been deleted. Please go to <a href="%s">settings page</a> and re-index your website.', 'wp-redisearch' ), $redis_settings_page); ?></p>
