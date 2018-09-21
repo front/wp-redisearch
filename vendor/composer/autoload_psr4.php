@@ -9,5 +9,4 @@ return array(
     'WPRedisearch\\' => array($baseDir . '/lib'),
     'SevenFields\\' => array($vendorDir . '/foadyousefi/seven-fields/src'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
-    'Carbon_Fields\\' => array($vendorDir . '/htmlburger/carbon-fields/core'),
 );

@@ -5,8 +5,6 @@ namespace WPRedisearch;
 use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
 
-// use Carbon_Fields\Container;
-// use Carbon_Fields\Field;
 use WPRedisearch\Settings;
 use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
@@ -43,7 +41,7 @@ class Admin {
     // Indexing options and configurations.
     Container::make( __( 'Indexing options', 'wp-redisearch' ), 'indexing-options')
     ->set_parent('wp-redisearch')
-    ->add_fields(array( __CLASS__, 'wp_redisearch_custom_fields') );
+    ->add_fields(array( __CLASS__, 'wp_redisearch_indexing_fields') );
   }
 
 
@@ -118,7 +116,7 @@ EOT;
   * @param
   * @return object $fields
   */
-  public static function wp_redisearch_custom_fields() {
+  public static function wp_redisearch_indexing_fields() {
 
     $post_types = get_post_types([
       'public' => true,
