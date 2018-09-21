@@ -66,8 +66,8 @@ class Settings {
   * @param
   * @return string    $option_value
   */
-  public static function get( $option ) {
-    $option_value = get_option( $option, null );
+  public static function get( $option, $default = null ) {
+    $option_value = get_option( $option, $default );
     return $option_value;
   }
 
