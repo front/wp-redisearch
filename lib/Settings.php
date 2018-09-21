@@ -70,7 +70,7 @@ class Settings {
     if ( did_action('carbon_fields_register_fields') && did_action('carbon_fields_fields_registered') ) {
       $option_value = carbon_get_theme_option( $option );
     } else {
-      $option_value = get_option( '_' . $option );
+      $option_value = get_option( $option );
     }
     return $option_value;
   }
