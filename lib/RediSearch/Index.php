@@ -88,7 +88,7 @@ class Index {
     if ( empty( $index_meta ) ) {
       $index_meta['offset'] = 0;
     }
-    $posts_per_page = apply_filters( 'wp_redisearch_posts_per_page', Settings::get( 'wp_redisearch_indexing_batches' ) );
+    $posts_per_page = apply_filters( 'wp_redisearch_posts_per_page', Settings::get( 'wp_redisearch_indexing_batches', 20 ) );
 
     $default_args = Settings::query_args();
     $default_args['posts_per_page'] = $posts_per_page;
