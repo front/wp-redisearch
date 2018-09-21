@@ -67,11 +67,7 @@ class Settings {
   * @return string    $option_value
   */
   public static function get( $option ) {
-    if ( did_action('carbon_fields_register_fields') && did_action('carbon_fields_fields_registered') ) {
-      $option_value = carbon_get_theme_option( $option );
-    } else {
-      $option_value = get_option( $option );
-    }
+    $option_value = get_option( $option, null );
     return $option_value;
   }
 
