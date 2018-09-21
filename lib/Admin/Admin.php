@@ -90,8 +90,9 @@ class Admin {
         span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
       </style>
 EOT;
-    
+
     Fields::add('header', null, 'Redis dashboard');
+    Fields::add('html', 'stats', 'Status', $status_html );
   }
 
   /**

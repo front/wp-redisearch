@@ -440,6 +440,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'SevenFields\\Fields\\Checkbox' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Checkbox.php',
         'SevenFields\\Fields\\Fields' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Fields.php',
         'SevenFields\\Fields\\Header' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Header.php',
+        'SevenFields\\Fields\\Html' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Html.php',
         'SevenFields\\Fields\\Multiselect' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Multiselect.php',
         'SevenFields\\Fields\\Select' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Select.php',
         'SevenFields\\Fields\\Text' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Text.php',

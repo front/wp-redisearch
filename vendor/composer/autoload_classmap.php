@@ -401,6 +401,7 @@ return array(
     'SevenFields\\Fields\\Checkbox' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Checkbox.php',
     'SevenFields\\Fields\\Fields' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Fields.php',
     'SevenFields\\Fields\\Header' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Header.php',
+    'SevenFields\\Fields\\Html' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Html.php',
     'SevenFields\\Fields\\Multiselect' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Multiselect.php',
     'SevenFields\\Fields\\Select' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Select.php',
     'SevenFields\\Fields\\Text' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Text.php',
