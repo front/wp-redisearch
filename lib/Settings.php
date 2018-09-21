@@ -83,7 +83,7 @@ class Settings {
   */
   public static function query_args() {
     return array(
-			'post_type'              => array('post', 'page'),
+			'post_type'              => array_keys( self::get( 'wp_redisearch_post_types' ) ),
 			'post_status'            => array('publish'),
 			'ignore_sticky_posts'    => true,
 			'orderby'                => 'ID',
