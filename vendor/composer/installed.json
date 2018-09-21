@@ -183,18 +183,18 @@
         "source": {
             "type": "git",
             "url": "https://github.com/foadyousefi/seven-fields.git",
-            "reference": "30047d3face111f0e2b041882200883e43ecd523"
+            "reference": "e456f51eea07cd7153a92be31468c77051f36623"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/foadyousefi/seven-fields/zipball/30047d3face111f0e2b041882200883e43ecd523",
-            "reference": "30047d3face111f0e2b041882200883e43ecd523",
+            "url": "https://api.github.com/repos/foadyousefi/seven-fields/zipball/e456f51eea07cd7153a92be31468c77051f36623",
+            "reference": "e456f51eea07cd7153a92be31468c77051f36623",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3"
         },
-        "time": "2018-09-21T21:47:16+00:00",
+        "time": "2018-09-21T22:08:14+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {

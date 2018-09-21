@@ -107,8 +107,8 @@ EOT;
     Fields::add( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ), __( 'Redis port number, by default it is 6379', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) );
     Fields::add( 'header', null, __( 'Auto suggestion | Live search', 'wp-redisearch' ) );
-    Fields::add( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ) );
-    Fields::add( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion. (something around 5 to 10 is optimal)', 'wp-redisearch' ) );
+    Fields::add( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ), __( 'Auto suggestion is a redisearch built-in feature. It only adds the post title to suggestion group.', 'wp-redisearch' ) );
+    Fields::add( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion.', 'wp-redisearch' ), __( '(something around 5 to 10 is optimal and 10 is maximum allowed number by redisearch.)', 'wp-redisearch' ) );
   }
 
   
@@ -132,7 +132,7 @@ EOT;
     Fields::add( 'header', null, __( 'Custom fields', 'wp-redisearch' ) );
     Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
     Fields::add( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) );
-    Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. Just keep in mined only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
+    Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
   }
 
   /**
