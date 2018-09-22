@@ -177,6 +177,17 @@ class Index {
   }
 
   /**
+  * Delete from suggestion list.
+  * @since    0.1.0
+  * @param
+  * @return object $this
+  */
+  public function deleteSuggestion($index_name, $title) {
+    $command = array_merge( [$index_name . 'Sugg', $title] );
+    $this->client->rawCommand('FT.SUGDEL', $command);
+  }
+
+  /**
   * Write entire redisearch index to the disk to persist it.
   * @since    0.1.0
   * @param

@@ -198,6 +198,10 @@ EOT;
         $index = new Index( WPRedisearch::$client );
         $index->writeToDisk();
       }
+      // If suggest enabled, remove post from suggest
+      if ( Settings::get( 'wp_redisearch_suggestion' ) ) {
+        $index->deleteSuggestion($index_name, $post->post_title);
+      }
       return;
     }
     
