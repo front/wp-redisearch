@@ -117,24 +117,57 @@ EOT;
   * @return object $fields
   */
   public static function wp_redisearch_indexing_fields() {
-
-    $post_types = get_post_types([
-      'public' => true,
-      'exclude_from_search' => false,
-      'show_ui' => true,
-    ]);
     Fields::add( 'header', null, __( 'General indexing settings', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) );
     Fields::add( 'header', null, __( 'Persist index after server restart.', 'wp-redisearch' ), __( 'Redisearch is in-memory database, which means after server restart (for any reason), all data in the redis database will be lost. But redis also can write to the disk.', 'wp-redisearch' ) );
     Fields::add( 'checkbox', 'wp_redisearch_write_to_disk', __( 'Write redis data to the disk', 'wp-redisearch' ), __( 'If enabled, after indexing manualy in redisearch dashboard or adding new post to the site, entire redisearch index will be written to the disk and after server restart, you won\'t loos any data', 'wp-redisearch') );
-    Fields::add( 'header', null, 'Post types to index' );
-    Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), $post_types );
-    Fields::add( 'header', null, __( 'Custom fields', 'wp-redisearch' ) );
+    Fields::add( 'header', null, 'What to be indexed' );
+    Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::post_types() );
+    Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::get_terms() );
     Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
     Fields::add( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) );
     Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
   }
 
+  /**
+  * List of all post types.
+  * @since    0.1.0
+  * @param integer $post
+  * @return string
+  */
+  private static function post_types() {
+    $post_types = get_post_types(
+      array(
+        'public' => true,
+        'exclude_from_search' => false,
+        'show_ui' => true,
+      )
+    );
+    return $post_types;
+  }
+
+  /**
+  * Get all terms.
+  * @since    0.1.0
+  * @param integer $post
+  * @return array $terms
+  */
+  private static function get_terms() {
+    $post_types = self::post_types();
+    $indexable_taxonomies = array();
+
+    foreach ( $post_types as $post_type ) {
+      $taxonomies = get_object_taxonomies( $post_type, 'objects' );
+      foreach ( $taxonomies as $taxonomy ) {
+        if ( $taxonomy->public || $taxonomy->publicly_queryable ) {
+          $indexable_taxonomies[] = $taxonomy->name;
+        }
+      }
+    }
+
+		return $indexable_taxonomies;
+  }
+  
   /**
   * Enqueue admin scripts.
   * @since    0.1.0
