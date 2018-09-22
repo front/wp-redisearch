@@ -123,8 +123,10 @@ EOT;
       'exclude_from_search' => false,
       'show_ui' => true,
     ]);
-    Fields::add( 'header', null, 'General indexing settings' );
+    Fields::add( 'header', null, __( 'General indexing settings', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) );
+    Fields::add( 'header', null, __( 'Persist index after server restart.', 'wp-redisearch' ), __( 'Redisearch is in-memory database, which means after server restart (for any reason), all data in the redis database will be lost. But redis also can write to the disk.', 'wp-redisearch' ) );
+    Fields::add( 'checkbox', 'wp_redisearch_write_to_disk', __( 'Write redis data to the disk', 'wp-redisearch' ), __( 'If enabled, after indexing manualy in redisearch dashboard or adding new post to the site, entire redisearch index will be written to the disk and after server restart, you won\'t loos any data', 'wp-redisearch') );
     Fields::add( 'header', null, 'Post types to index' );
     Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), $post_types );
     Fields::add( 'header', null, __( 'Custom fields', 'wp-redisearch' ) );
@@ -161,6 +163,20 @@ EOT;
   }
 
   /**
+  * Write to disk to persist data.
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public static function wp_redisearch_write_to_disk() {
+    if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
+      $index = new Index( WPRedisearch::$client );
+      $result = $index->writeToDisk();
+      wp_send_json_success( $result );
+    }
+  }
+
+  /**
   * action for "index it" ajax call to start indexing selected posts.
   * @since    0.1.0
   * @param
@@ -177,6 +193,11 @@ EOT;
     // If post is not published or un-published, delete from index then, return.
     if ( $post->post_status != 'publish' ) {
       $index->deletePosts( $index_name, $post_id );
+      // If enabled, write to disk
+      if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
+        $index = new Index( WPRedisearch::$client );
+        $index->writeToDisk();
+      }
       return;
     }
     
@@ -191,6 +212,11 @@ EOT;
 
     // Finally, add post to index
     $index->addPosts( $index_name, $post_id, $indexing_options );
+    // If enabled, write to disk
+    if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
+      $index = new Index( WPRedisearch::$client );
+      $index->writeToDisk();
+    }
   }
 
   /**

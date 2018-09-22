@@ -176,5 +176,14 @@ class Index {
     $this->client->rawCommand('FT.SUGADD', $command);
   }
 
+  /**
+  * Write entire redisearch index to the disk to persist it.
+  * @since    0.1.0
+  * @param
+  * @return
+  */
+  public function writeToDisk() {
+    return $this->client->rawCommand('SAVE', []);
+  }
 
 }

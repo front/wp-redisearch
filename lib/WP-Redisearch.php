@@ -186,6 +186,9 @@ class WPRedisearch {
     add_action('wp_ajax_wp_redisearch_add_to_index', array( $this->admin, 'wp_redisearch_add_to_index' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_add_to_index', array( $this->admin, 'wp_redisearch_add_to_index' ) );
     
+    add_action('wp_ajax_wp_redisearch_write_to_disk', array( $this->admin, 'wp_redisearch_write_to_disk' ) );
+    add_action('wp_ajax_nopriv_wp_redisearch_write_to_disk', array( $this->admin, 'wp_redisearch_write_to_disk' ) );
+    
     add_action('wp_ajax_wp_redisearch_drop_index', array( $this->admin, 'wp_redisearch_drop_index' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_drop_index', array( $this->admin, 'wp_redisearch_drop_index' ) );
 

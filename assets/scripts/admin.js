@@ -56,10 +56,29 @@
             addToIndex()
           } else {
             updateProgressBar(res.data.found_posts, res.data.found_posts)
+            startIndexing.css('display', 'inline-block')
+            writeToDisk()
           }
         })
         .error(function (err) {
           console.log(err)
+        })
+    }
+
+    function writeToDisk() {
+      let postData = {
+        action: 'wp_redisearch_write_to_disk'
+      }
+      jQuery.ajax({
+        data: postData,
+        type: "post",
+        url: wpRds.ajaxUrl
+      })
+        .done(function (res) {
+          console.log('Data successfully written to the disk ', res.data)
+        })
+        .error(function (err) {
+          console.log('Error writing to the disk ', err)
         })
     }
 
