@@ -69,7 +69,16 @@ class Index {
     $permalink_schema = ['permalink', 'TEXT'];
     $date_schema = ['post_date', 'NUMERIC'];
 
-    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema );
+    $indexable_terms = array_keys( Settings::get( 'wp_redisearch_indexable_terms', array() ) );
+    $terms_schema = array();
+    if ( isset( $indexable_terms ) && !empty( $indexable_terms ) ) {
+      foreach ($indexable_terms as $term) {
+        $terms_schema[] = [$term, 'TEXT'];
+      }
+    }
+
+    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema );
+
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
     if ( $synonym_enabled && isset($synonym_terms) && !empty($synonym_terms) ) {
@@ -178,7 +187,7 @@ class Index {
     );
     
     $post_terms = apply_filters( 'wp_redisearch_prepared_terms', $this->prepare_terms( $post ), $post );
-
+    
     $post_args = array_merge( $post_args, $post_terms );
 
 		$post_args = apply_filters( 'wp_redisearch_prepared_post_args', $post_args, $post );
@@ -214,7 +223,8 @@ class Index {
 			foreach ( $post_terms as $term ) {
         $terms_dic .= ' ' . $term->name;
 			}
-			$terms[ $taxonomy ] = $terms_dic;
+			$terms[] = $taxonomy;
+			$terms[] = ltrim( $terms_dic );
 		}
 
 		return $terms;
