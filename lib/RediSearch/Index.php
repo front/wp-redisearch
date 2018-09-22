@@ -125,7 +125,7 @@ class Index {
         // Post language. This could be useful to do some stop word, stemming and etc.
         $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
         $indexing_options['fields'] = $this->prepare_post( get_the_id() );
-        
+
         $this->addPosts($index_name, $id, $indexing_options);
         if ( $suggestion ) {
           $this->addSuggestion($index_name, $permalink, $title, 1);
@@ -239,7 +239,7 @@ class Index {
     }
 
     $command = array_merge( $command, array( 'FIELDS' ), $indexing_options['fields'] );
-    update_option('wp_redisearch_index_test', $command);
+
     $index = $this->client->rawCommand('FT.ADD', $command);
     return $index;
   }
