@@ -217,6 +217,10 @@ EOT;
       $index = new Index( WPRedisearch::$client );
       $index->writeToDisk();
     }
+    // If suggestion enabled, add to suggest
+    if ( Settings::get( 'wp_redisearch_suggestion' ) ) {
+      $index->addSuggestion($index_name, $permalink, $title, 1);
+    }
   }
 
   /**
