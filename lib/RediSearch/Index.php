@@ -58,11 +58,18 @@ class Index {
     $synonym_enabled = Settings::get( 'wp_redisearch_synonym_enable' );
     $synonym_terms = Settings::get( 'wp_redisearch_synonyms_list' );
 
-    $title_schema = ['postTitle', 'TEXT', 'WEIGHT', 5.0, 'SORTABLE'];
-    $body_schema = ['postContent', 'TEXT'];
-    $post_id_schema = ['postID', 'NUMERIC'];
-    $post_link_schema = ['postLink', 'TEXT'];
-    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema , $body_schema, $post_id_schema, $post_link_schema );
+    $title_schema = ['post_title', 'TEXT', 'WEIGHT', 5.0, 'SORTABLE'];
+    $content_schema = ['post_content', 'TEXT'];
+    $content_filtered_schema = ['post_content_filtered', 'TEXT'];
+    $excerpt_schema = ['post_excerpt', 'TEXT'];
+    $post_type_schema = ['post_type', 'TEXT'];
+    $author_schema = ['post_author', 'TEXT'];
+    $id_schema = ['post_id', 'NUMERIC'];
+    $menu_order_schema = ['menu_order', 'NUMERIC'];
+    $permalink_schema = ['permalink', 'TEXT'];
+    $date_schema = ['post_date', 'NUMERIC'];
+
+    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema );
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
     if ( $synonym_enabled && isset($synonym_terms) && !empty($synonym_terms) ) {
@@ -117,7 +124,8 @@ class Index {
         $id = get_the_id();
         // Post language. This could be useful to do some stop word, stemming and etc.
         $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
-        $indexing_options['fields'] = array( 'postTitle', $title, 'postContent', $content, 'postId', $id, 'postLink', $permalink );
+        $indexing_options['fields'] = $this->prepare_post( get_the_id() );
+        
         $this->addPosts($index_name, $id, $indexing_options);
         if ( $suggestion ) {
           $this->addSuggestion($index_name, $permalink, $title, 1);
@@ -128,6 +136,89 @@ class Index {
     }
     return $index_meta;
   }
+
+  /**
+	 * Prepare a post for indexing.
+	 *
+	 * @param object $post_id
+	 * @since 0.1.0
+	 * @return bool|array
+	 */
+	public function prepare_post( $post_id ) {
+    $post = get_post( $post_id );
+		$user = get_userdata( $post->post_author );
+
+		if ( $user instanceof WP_User ) {
+			$user_data = $user->display_name;
+		} else {
+			$user_data = '';
+		}
+
+		$post_date = $post->post_date;
+    $post_modified = $post->post_modified;
+       // If date is invalid, set it to null
+		if ( ! strtotime( $post_date ) || $post_date === "0000-00-00 00:00:00" ) {
+			$post_date = null;
+		}
+    
+    
+    $post_categories = get_the_category( $post->ID );
+
+		$post_args = array(
+			'post_id', $post->ID,
+			'post_author', $user_data,
+			'post_date', strtotime( $post_date ),
+			'post_title', $post->post_title,
+			'post_excerpt', $post->post_excerpt,
+			'post_content_filtered', wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ), true ),
+			'post_content', wp_strip_all_tags( $post->post_content, true ),
+			'post_type', $post->post_type,
+			'permalink', get_permalink( $post->ID ),
+			'menu_order', absint( $post->menu_order )
+    );
+    
+    $post_terms = apply_filters( 'wp_redisearch_prepared_terms', $this->prepare_terms( $post ), $post );
+
+    $post_args = array_merge( $post_args, $post_terms );
+
+		$post_args = apply_filters( 'wp_redisearch_prepared_post_args', $post_args, $post );
+
+		return $post_args;
+	}
+
+  /**
+  * Prepare post terms.
+  * @since    0.1.0
+  * @param integer $post
+  * @return string
+  */
+  private function prepare_terms( $post ) {
+    $indexable_terms = Settings::get( 'wp_redisearch_indexable_terms' );
+    $indexable_terms = isset( $indexable_terms ) ? array_keys( $indexable_terms ) : array();
+    
+		if ( empty( $indexable_terms ) ) {
+			return array();
+		}
+
+		$terms = array();
+		foreach ( $indexable_terms as $taxonomy ) {
+
+			$post_terms = get_the_terms( $post->ID, $taxonomy );
+
+			if ( ! $post_terms || is_wp_error( $post_terms ) ) {
+				continue;
+			}
+
+			$terms_dic = '';
+
+			foreach ( $post_terms as $term ) {
+        $terms_dic .= ' ' . $term->name;
+			}
+			$terms[ $taxonomy ] = $terms_dic;
+		}
+
+		return $terms;
+	}
 
   /**
   * Add to index or in other term, index items.
@@ -148,7 +239,7 @@ class Index {
     }
 
     $command = array_merge( $command, array( 'FIELDS' ), $indexing_options['fields'] );
-
+    update_option('wp_redisearch_index_test', $command);
     $index = $this->client->rawCommand('FT.ADD', $command);
     return $index;
   }
