@@ -29,6 +29,12 @@ class WPRedisearch {
   public static $redisearchException = false;
 
 	/**
+   * Set this if redisearch module not loaded.
+	 * @param object $module_exception
+	 */
+  public static $module_exception = false;
+
+	/**
    * Set this if suggestion is not added.
 	 * @param object $suggestionException
 	 */
@@ -204,7 +210,7 @@ class WPRedisearch {
   */
   public function wp_redisearch_public_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
-    $suggestion = Settings::get( 'wp_redisearch_suggestion' ) && !self::$suggestionException;
+    $suggestion = Settings::get( 'wp_redisearch_suggestion' ) && !self::$suggestionException && !self::$redisearchException && !self::$module_exception;
     $localized_data = array(
 			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' ),
 			'suggestionEnabled' 	=> $suggestion
