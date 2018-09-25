@@ -30,17 +30,17 @@ class Admin {
 
   public static function setting_pages_init() {
     // Redisearch Dashboard
-    Container::make( __( 'WP redisearch', 'wp-redisearch' ), 'wp-redisearch' )
+    Container::make( __( 'Redisearch', 'wp-redisearch' ), 'redisearch' )
     ->set_menu_position( 20 )
     ->set_icon( 'dashicons-search' )
     ->add_fields(array( __CLASS__, 'wp_redisearch_status_page'));
     // Redis server configurations.
     Container::make( __( 'Redis server', 'wp-redisearch' ), 'redis-server')
-    ->set_parent('wp-redisearch')
+    ->set_parent('redisearch')
     ->add_fields(array( __CLASS__, 'wp_redisearch_redis_server_conf') );
     // Indexing options and configurations.
     Container::make( __( 'Indexing options', 'wp-redisearch' ), 'indexing-options')
-    ->set_parent('wp-redisearch')
+    ->set_parent('redisearch')
     ->add_fields(array( __CLASS__, 'wp_redisearch_indexing_fields') );
   }
 
