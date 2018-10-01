@@ -73,7 +73,7 @@ class Index {
     $terms_schema = array();
     if ( isset( $indexable_terms ) && !empty( $indexable_terms ) ) {
       foreach ($indexable_terms as $term) {
-        $terms_schema[] = [$term, 'TEXT'];
+        $terms_schema[] = [$term, 'TAG'];
       }
     }
 
@@ -218,11 +218,12 @@ class Index {
 				continue;
 			}
 
-			$terms_dic = '';
+			$terms_dic = [];
 
 			foreach ( $post_terms as $term ) {
-        $terms_dic .= ' ' . $term->name;
-			}
+        $terms_dic[] = $term->name;
+      }
+      $terms_dic = implode( ',', $terms_dic );
 			$terms[] = $taxonomy;
 			$terms[] = ltrim( $terms_dic );
 		}
