@@ -1,18 +1,4 @@
 # RediSearch
-Contributors: foadyousefi
-Author URI: https://frontkom.no
-Plugin URI: https://github.com/7kmCo/wp-redisearch
-Tags: search, redisearch, redis, fuzzy, aggregation, searching, autosuggest, suggest, advanced search, woocommerce
-Requires at least: 4.6
-Tested up to: 4.9.8
-Stable tag: trunk
-Requires PHP: 5.2.4
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-
-Flexible search engine for WordPress with very high performance.
-
-### Description
 
 Redisearch implements a search engine on top of Redis. It has lots of advanced features, like exact phrase matching and numeric filtering for text queries, that are nearly not possible or inefficient with mysql search queries.
 
