@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/foadyousefi/seven-fields.git",
-                "reference": "e456f51eea07cd7153a92be31468c77051f36623"
+                "reference": "08dd99a6c69e292939605ce750e09347742021d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/foadyousefi/seven-fields/zipball/e456f51eea07cd7153a92be31468c77051f36623",
-                "reference": "e456f51eea07cd7153a92be31468c77051f36623",
+                "url": "https://api.github.com/repos/foadyousefi/seven-fields/zipball/08dd99a6c69e292939605ce750e09347742021d9",
+                "reference": "08dd99a6c69e292939605ce750e09347742021d9",
                 "shasum": ""
             },
             "require": {
@@ -42,7 +42,7 @@
             ],
             "description": "WordPress developer-friendly option pages with custom fields.",
             "homepage": "https://7km.co/",
-            "time": "2018-09-21T22:08:14+00:00"
+            "time": "2018-10-01T13:33:38+00:00"
         },
         {
             "name": "predis/predis",
