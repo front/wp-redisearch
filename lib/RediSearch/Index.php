@@ -64,10 +64,10 @@ class Index {
     $excerpt_schema = ['post_excerpt', 'TEXT'];
     $post_type_schema = ['post_type', 'TEXT'];
     $author_schema = ['post_author', 'TEXT'];
-    $id_schema = ['post_id', 'NUMERIC'];
+    $id_schema = ['post_id', 'NUMERIC', 'SORTABLE'];
     $menu_order_schema = ['menu_order', 'NUMERIC'];
     $permalink_schema = ['permalink', 'TEXT'];
-    $date_schema = ['post_date', 'NUMERIC'];
+    $date_schema = ['post_date', 'NUMERIC', 'SORTABLE'];
 
     $indexable_terms = array_keys( Settings::get( 'wp_redisearch_indexable_terms', array() ) );
     $terms_schema = array();
