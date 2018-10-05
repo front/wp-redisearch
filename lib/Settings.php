@@ -15,9 +15,9 @@ class Settings {
   public static function indexName() {
     $index_name = get_option( 'wp_redisearch_index_name' );
 
-    if ( !isset( $index_name) ) {
+    if ( !isset( $index_name) || empty( $index_name ) ) {
       $site_url = get_bloginfo('wpurl');
-      $site_url = preg_replace('#^https?://#', '', $site_url);
+      $site_url = preg_replace('/^https?:\/\//m', '', $site_url);
       $site_url = str_replace('-', '_', $site_url);
       $site_url = str_replace('.', '_', $site_url);
       $site_url = str_replace('/', '_', $site_url);
@@ -34,7 +34,7 @@ class Settings {
   */
   public static function RedisServer() {
     $redis_server = get_option( 'wp_redisearch_server' );
-    return isset( $redis_server ) ? $redis_server : '127.0.0.1';
+    return isset( $redis_server ) && !empty( $redis_server ) ? $redis_server : '127.0.0.1';
   }
 
   /**
@@ -45,7 +45,7 @@ class Settings {
   */
   public static function RedisPort() {
     $redis_port = get_option( 'wp_redisearch_port' );
-    return isset( $redis_port ) ? $redis_port : '6379';
+    return isset( $redis_port ) && !empty( $redis_port ) ? $redis_port : '6379';
   }
 
   /**
