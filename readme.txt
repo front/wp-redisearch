@@ -57,7 +57,7 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 == Changelog ==
 
 = 0.1.1 =
-* User default values if not set in settings
+* Use default value for settings if not set in settings
 
 = 0.1.0 =
 * Initial plugin
