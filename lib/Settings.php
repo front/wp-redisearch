@@ -66,8 +66,14 @@ class Settings {
   * @return string    $args
   */
   public static function query_args() {
+    $post_types = self::get( 'wp_redisearch_post_types' );
+    if ( isset( $post_types ) && !empty( $post_types ) ) {
+      $post_types = array_keys( $post_types );
+    } elseif ( !isset( $post_types ) || empty( $post_types ) ) {
+      $post_types = array( 'post' );
+    }
     return array(
-			'post_type'              => array_keys( self::get( 'wp_redisearch_post_types' ) ),
+			'post_type'              => $post_types,
 			'post_status'            => array('publish'),
 			'ignore_sticky_posts'    => true,
 			'orderby'                => 'ID',
