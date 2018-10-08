@@ -1,6 +1,6 @@
 === RediSearch ===
 Contributors: foadyousefi
-Author URI: https://frontkom.no
+Author URI: https://7km.co
 Plugin URI: https://github.com/7kmCo/wp-redisearch
 Tags: search, redisearch, redis, fuzzy, aggregation, searching, autosuggest, suggest, advanced search, woocommerce
 Requires at least: 4.6
