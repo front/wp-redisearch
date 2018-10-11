@@ -69,6 +69,30 @@ class Index {
     $permalink_schema = ['permalink', 'TEXT'];
     $date_schema = ['post_date', 'NUMERIC', 'SORTABLE'];
 
+		/**
+		 * Filter index-able post meta
+		 * Allows for specifying public or private meta keys that may be indexed.
+		 * @since 0.1.2
+		 * @param array Array 
+		 */
+    $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
+    
+    $meta_schema = array();
+    
+    if ( isset( $indexable_meta_keys ) && !empty( $indexable_meta_keys ) ) {
+      foreach ($indexable_meta_keys as $meta) {
+        $meta_schema[] = array( $meta, 'TEXT' );
+      }
+    }
+    /**
+     * Filter index-able post meta schema
+     * Allows for manipulating schema of public or private meta keys.
+     * @since 0.1.2
+     * @param array $meta_schema            Array of index-able meta key schemas.
+     * @param array $indexable_meta_keys    Array of index-able meta keys.
+		 */
+    $meta_schema = apply_filters( 'wp_redisearch_indexable_meta_schema', $meta_schema, $indexable_meta_keys );
+
     $indexable_terms = array_keys( Settings::get( 'wp_redisearch_indexable_terms', array() ) );
     $terms_schema = array();
     if ( isset( $indexable_terms ) && !empty( $indexable_terms ) ) {
@@ -76,8 +100,7 @@ class Index {
         $terms_schema[] = [$term, 'TAG'];
       }
     }
-
-    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema );
+    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema, ...$meta_schema );
 
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
