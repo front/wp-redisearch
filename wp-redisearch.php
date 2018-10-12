@@ -31,6 +31,13 @@ if ( ! defined( 'WPRS_VERSION' ) ) {
 	define( 'WPRS_VERSION', '0.1.0' );
 }
 
+/**
+ * Register WP-CLI commands.
+ */
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once( 'bin/wp-cli.php' );
+}
+
 require_once  __DIR__ . '/vendor/autoload.php';
 
 new WPRedisearch\WPRedisearch;
