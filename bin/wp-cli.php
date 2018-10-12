@@ -120,7 +120,7 @@ class Redisearch_CLI extends WP_CLI_Command {
 	/**
 	 * Index all posts for the site
 	 *
-	 * @synopsis [--setup] [--posts-per-page] [--offset] [--post-type] [--post-ids]
+	 * @synopsis [--setup] [--posts-per-page] [--offset] [--post-type] [--post-ids] [--write-to-disk]
 	 *
 	 * @param array $args
 	 * @since 0.1.2
@@ -145,6 +145,10 @@ class Redisearch_CLI extends WP_CLI_Command {
 
 		if ( empty( $assoc_args['post-type'] ) ) {
 			$assoc_args['post-type'] = null;
+		}
+
+		if ( empty( $assoc_args['write-to-disk'] ) ) {
+			$assoc_args['write-to-disk'] = null;
 		}
 
 		$total_indexed = 0;
@@ -286,6 +290,11 @@ class Redisearch_CLI extends WP_CLI_Command {
 		}
 
 		wp_reset_postdata();
+
+		// If --write-to-disk flag passed or it was enabled in settings, after indexing posts, write document to disk to persist it.
+		if ( ! empty( $args['write-to-disk'] ) || Settings::get( 'wp_redisearch_write_to_disk' ) ) {
+      $index->writeToDisk();
+		}
 
 		return array( 'indexed' => $indexed, 'errors' => $errors );
 	}
