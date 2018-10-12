@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: RediSearch
-Version: 0.1.1
+Version: 0.1.2
 Description: Replace Wordpress search by RediSearch.
 Author: Foad Yousefi
 Author URI: https://www.wp-redisearch.com
