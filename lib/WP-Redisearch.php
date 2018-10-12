@@ -106,7 +106,7 @@ class WPRedisearch {
       try {
         $loaded_modules = self::$client->rawCommand('MODULE', ['LIST']);
         if ( isset( $loaded_modules ) && !empty( $loaded_modules ) ) {
-        foreach ($loaded_modules as $module) {
+          foreach ($loaded_modules as $module) {
             if ( !in_array( 'ft', $module ) ) {
               self::$moduleException = true;
             }
