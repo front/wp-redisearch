@@ -89,8 +89,7 @@ class Admin {
       </style>
 EOT;
 
-    Fields::add('header', null, 'Redis dashboard');
-    Fields::add('html', 'stats', 'Status', $status_html );
+    Fields::add('html', 'stats', 'Index status', $status_html );
   }
 
   /**
