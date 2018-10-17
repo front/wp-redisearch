@@ -7,6 +7,7 @@ use WPRedisearch\RediSearch\Setup;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Search;
 use WPRedisearch\Settings;
+use WPRedisearch\Features\Features;
 
 /**
  * WPRedisearch Class.
@@ -79,6 +80,8 @@ class WPRedisearch {
       add_filter( 'the_posts', array( $this, 'filter_the_posts' ), 10, 2 );
       add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
     }
+
+    Features::factory();
   }
 
   /**
@@ -217,6 +220,9 @@ class WPRedisearch {
 
     add_action('wp_ajax_wp_redisearch_get_suggestion', array( $this, 'wp_redisearch_get_suggestion' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_get_suggestion', array( $this, 'wp_redisearch_get_suggestion' ) );
+
+    add_action('wp_ajax_wp_redisearch_save_feature', array( Features::factory(), 'wp_redisearch_save_feature' ) );
+    add_action('wp_ajax_nopriv_wp_redisearch_save_feature', array( Features::factory(), 'wp_redisearch_save_feature' ) );
   }
 
   /**

@@ -1,10 +1,70 @@
 (function ($) {
   $(document).ready(function () {
 
+    var features = $('.wprds-feature')
     var indexingOptions = $('.indexing-options')
     var startIndexing = $('.start-indexing')
     var resumeIndexing = $('.resume-indexing')
 
+    features.on( 'click', '.save-settings', function( event ) {
+      event.preventDefault();
+      var $this = $( this  )
+      if ( $this.hasClass( 'disabled' ) ) {
+        return;
+      }
+      var feature = $this.attr( 'data-feature' );
+      var $feature = features.find( '.wprds-feature-' + feature );
+  
+      var settings = {};
+  
+      var $settings = $feature.find('.setting-field');
+  
+      $settings.each(function() {
+        var type = $( this ).attr( 'type' );
+        var name = $( this ).attr( 'data-field-name' );
+        var value = $( this ).attr( 'value' );
+        if ( 'radio' === type ) {
+          if ( $( this ).attr( 'checked' ) ) {
+            settings[ name ] = value;
+          }
+        } else {
+          settings[ name ] = value;
+        }
+      });
+  
+      $this.parent().addClass( 'saving' );
+
+      $.ajax( {
+        method: 'post',
+        url: ajaxurl,
+        data: {
+          action: 'wp_redisearch_save_feature',
+          feature: feature,
+          nonce: wpRds.nonce,
+          settings: settings
+        }
+      } ).done( function( response ) {
+        setTimeout( function() {
+          $this.parent().removeClass( 'saving' );
+  
+          if ( '1' === settings.active ) {
+            $feature.addClass( 'feature-active' );
+          } else {
+            $feature.removeClass( 'feature-active' );
+          }
+          
+          if ( response.data.reindex ) { 
+            dropIndex();
+          }
+        }, 700 );
+      } ).error( function() {
+        setTimeout( function() {
+          $feature.removeClass( 'saving' );
+          $feature.removeClass( 'feature-active' );
+        }, 700 );
+      } );
+    });
+    
     if (indexingOptions.attr('data-num-docs') == indexingOptions.attr('data-num-posts')) {
       resumeIndexing.css('display', 'none')
     }

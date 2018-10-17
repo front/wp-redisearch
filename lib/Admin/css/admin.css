@@ -25,3 +25,93 @@
 .wprds-form-wraper .form-actions {
   flex: 1;
   margin-left: 10px; }
+
+.wprds-wrapper-grid {
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: 10px; }
+  .wprds-wrapper-grid .postbox {
+    float: left;
+    clear: left;
+    width: 50%;
+    margin: 0 0 16px; }
+    @media only screen and (max-width: 850px) {
+      .wprds-wrapper-grid .postbox {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100%; } }
+    .wprds-wrapper-grid .postbox .inside {
+      margin-bottom: 0; }
+  .wprds-wrapper-grid .postbox:nth-child(odd) {
+    margin-left: -8px; }
+  .wprds-wrapper-grid .postbox:nth-child(even) {
+    float: right;
+    clear: right;
+    margin-right: -8px; }
+  .wprds-wrapper-grid .hndle {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4; }
+  .wprds-wrapper-grid .wprds-fields {
+    border: #ebebeb solid 1px;
+    background: #fafafa;
+    border-radius: 3px; }
+  .wprds-wrapper-grid .action-wrap {
+    text-align: right;
+    margin-top: 20px; }
+  .wprds-wrapper-grid .reindex-required {
+    line-height: 2; }
+  .wprds-wrapper-grid .feature-fields {
+    display: flex; }
+    .wprds-wrapper-grid .feature-fields .field-name {
+      flex: 1; }
+    .wprds-wrapper-grid .feature-fields .input-wrap {
+      flex: 3; }
+  .wprds-wrapper-grid .saving:before,
+  .wprds-wrapper-grid .loading:before {
+    content: ' ';
+    margin-right: 1.4em;
+    top: 4px;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    font-size: 7px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 5px solid #ccc;
+    border-right: 5px solid #ccc;
+    border-bottom: 5px solid #ccc;
+    border-left: 5px solid #999;
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+    -webkit-animation: spinner 1.1s infinite linear;
+            animation: spinner 1.1s infinite linear; }
+  .wprds-wrapper-grid .feature-active:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #ade5b4;
+    width: 6px;
+    height: 100%; }
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+@keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+
+.wprds-feature-notice {
+  padding: 10px; }

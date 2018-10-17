@@ -6,6 +6,7 @@ use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
 
 use WPRedisearch\Settings;
+use WPRedisearch\Features\Features;
 use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Setup;
@@ -33,6 +34,7 @@ class Admin {
     Container::make( __( 'Redisearch', 'wp-redisearch' ), 'redisearch' )
     ->set_menu_position( 20 )
     ->set_icon( 'dashicons-search' )
+    ->plain_page()
     ->add_fields(array( __CLASS__, 'wp_redisearch_status_page'));
     // Redis server configurations.
     Container::make( __( 'Redis server', 'wp-redisearch' ), 'redis-server')
@@ -52,6 +54,28 @@ class Admin {
   * @return object $fields
   */
   public static function wp_redisearch_status_page() {
+    Fields::add('html', 'stats', 'Index status', self::index_status_html() );
+    $features = Features::factory()->features;
+    if ( isset( $features ) && !empty( $features ) ) {
+      echo '<div class="wprds-wrapper-grid">';
+      echo '<div id="normal-sortables" class="meta-box-sortables">';
+      foreach ($features as $feature) {
+      ?>
+        <div class="postbox wprds-feature">
+          <div class="wprds-feature-<?php echo esc_attr( $feature->slug ); ?> <?php if ( $feature->is_active() ) : ?>feature-active<?php endif; ?>">
+            <h2 class="hndle"><span><?php _e( $feature->title, 'wp-redisearch' ); ?></span></h2>
+            <div class="inside">
+              <?php $feature->output_feature_box(); ?>
+            </div>
+          </div>
+        </div>
+      <?php
+      }
+      echo '</div></div>';
+    }
+  }
+
+  public static function index_status_html() {
     $default_args = Settings::query_args();
     $default_args['posts_per_page'] = -1;
     $args = apply_filters( 'wp_redisearch_posts_args', $default_args);
@@ -66,30 +90,37 @@ class Admin {
       $num_docs_offset = array_search( 'num_docs', WPRedisearch::$indexInfo ) + 1;
       $num_docs = WPRedisearch::$indexInfo[$num_docs_offset];
     }
+    
     $status_html = <<<"EOT"
-      <p>This is RediSearch status page.</p>
-      <p>Whith the current settings, there is <strong>${num_posts}</strong> posts to be indexed.</p>
-      <p>Right now, <strong>${num_docs}</strong> posts have been indexed.</p>
-      <div class="indexing-options" data-num-posts="${num_posts}" data-num-docs="${num_docs}">
-        <span>${index_options}</spam>
-        <a class="dashicons indexing-btn start-indexing dashicons-update" title="Dump existing index and re-index."></a>
-        <a class="dashicons indexing-btn resume-indexing dashicons-controls-play" title="Resume indexing from where it stoped."></a>
+      <div id="post-body-content">
+        <div class="postbox" style="display: block;">
+          <div style="padding:20px 20px 0;">
+            <p>This is RediSearch status page.</p>
+            <p>Whith the current settings, there is <strong>${num_posts}</strong> posts to be indexed.</p>
+            <p>Right now, <strong>${num_docs}</strong> posts have been indexed.</p>
+            <div class="indexing-options" data-num-posts="${num_posts}" data-num-docs="${num_docs}">
+              <span>${index_options}</spam>
+              <a class="dashicons indexing-btn start-indexing dashicons-update" title="Dump existing index and re-index."></a>
+              <a class="dashicons indexing-btn resume-indexing dashicons-controls-play" title="Resume indexing from where it stoped."></a>
+            </div>
+          </div>
+          <div id="indexingProgress">
+            <div id="indexBar" data-num-posts="${num_posts}" data-num-docs="${num_docs}"></div>
+            <span id="indexedStat">
+            <span id="statNumDoc">${num_docs}</span>/<span id="statNumPosts">${num_posts}</span></span>
+          </div>
+          <style>
+            .indexing-options{margin-top:20px;}
+            .indexing-btn{position:relative;cursor: pointer}
+            #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
+            #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
+            span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
+          </style>
+        </div>
       </div>
-      <div id="indexingProgress">
-        <div id="indexBar" data-num-posts="${num_posts}" data-num-docs="${num_docs}"></div>
-        <span id="indexedStat">
-        <span id="statNumDoc">${num_docs}</span>/<span id="statNumPosts">${num_posts}</span></span>
-      </div>
-      <style>
-        .indexing-options{margin-top:20px;}
-        .indexing-btn{position:relative;cursor: pointer}
-        #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
-        #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
-        span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
-      </style>
+      <div class="clear"></div>
 EOT;
-
-    Fields::add('html', 'stats', 'Index status', $status_html );
+    return $status_html;
   }
 
   /**
@@ -123,9 +154,13 @@ EOT;
     Fields::add( 'header', null, 'What to be indexed' );
     Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::post_types() );
     Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::get_terms() );
-    Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
-    Fields::add( 'checkbox', 'wp_redisearch_synonym_enable', __( 'Enable synonym support', 'wp-redisearch' ) );
-    Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
+    /**
+     * Only show synonym terms setting, if the feature is active.
+     */
+    if ( Settings::get( 'wp_redisearch_features_synonym', false ) ) {
+      Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
+      Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
+    }
   }
 
   /**
@@ -176,7 +211,8 @@ EOT;
   public function wp_redisearch_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'lib/admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
     $localized_data = array(
-			'ajaxUrl' 				=> admin_url( 'admin-ajax.php' )
+      'ajaxUrl' 				=> admin_url( 'admin-ajax.php' ),
+      'nonce'           => wp_create_nonce( 'wprds_dashboard_nonce' )
 		);
     wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
     wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/admin/css/admin.css', false, 20180914 );
