@@ -20,21 +20,21 @@ class Redisearch_CLI extends WP_CLI_Command {
 	/**
 	 * Holds time until transient expires
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	private $transient_expiration = 900; // 15 min
 
 	/**
 	 * Holds temporary wp_actions when indexing with pagination
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	private $temporary_wp_actions = array();
 
   /**
 	 * Get status of index.
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function info() {
 		$this->_connect_check();
@@ -123,7 +123,7 @@ class Redisearch_CLI extends WP_CLI_Command {
 	 * @synopsis [--setup] [--posts-per-page] [--offset] [--post-type] [--post-ids] [--write-to-disk]
 	 *
 	 * @param array $args
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @param array $assoc_args
 	 */
 	public function index( $args, $assoc_args ) {
