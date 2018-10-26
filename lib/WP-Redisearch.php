@@ -8,6 +8,7 @@ use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Search;
 use WPRedisearch\Settings;
 use WPRedisearch\Features;
+use WPRedisearch\Features\Synonym;
 
 /**
  * WPRedisearch Class.
@@ -81,7 +82,8 @@ class WPRedisearch {
       add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
     }
 
-    Features::factory();
+    Features::init();
+    new Document;
   }
 
   /**
