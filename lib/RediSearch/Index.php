@@ -71,7 +71,7 @@ class Index {
 		/**
 		 * Filter index-able post meta
 		 * Allows for specifying public or private meta keys that may be indexed.
-		 * @since 0.1.2
+		 * @since 0.2.0
 		 * @param array Array 
 		 */
     $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
@@ -86,7 +86,7 @@ class Index {
     /**
      * Filter index-able post meta schema
      * Allows for manipulating schema of public or private meta keys.
-     * @since 0.1.2
+     * @since 0.2.0
      * @param array $meta_schema            Array of index-able meta key schemas.
      * @param array $indexable_meta_keys    Array of index-able meta keys.
 		 */
@@ -103,10 +103,7 @@ class Index {
 
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
-    /**
-     * Initiate and add synonym terms if feature enabled and any synonym group added.
-     */
-    Features\Synonym::init( $this->client );
+    do_action( 'wp_redisearch_after_index_create', $this->client);
 
     return $this;
   }

@@ -1,13 +1,13 @@
 <?php
 
-namespace WPRedisearch\Features;
+namespace WPRedisearch;
 
 class Feature {
 	/**
 	 * Feature slug
 	 *
 	 * @var string
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public $slug;
 
@@ -15,14 +15,14 @@ class Feature {
 	 * Feature title
 	 *
 	 * @var string
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public $title;
 
 	/**
 	 * Optional feature default settings
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var  array
 	 */
 	public $default_settings = array();
@@ -30,7 +30,7 @@ class Feature {
 	/**
 	 * Contains registered callback to execute after setup
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var callback
 	 */
 	public $setup_cb;
@@ -38,7 +38,7 @@ class Feature {
 	/**
 	 * Callback function to check feature requirements
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var callback
 	 */
 	public $requirements_cb;
@@ -46,15 +46,23 @@ class Feature {
 	/**
 	 * Callback function after feature activation
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var callback
 	 */
 	public $activation_cb;
 
 	/**
+	 * Callback function after feature de-activation
+	 *
+	 * @since 0.2.0
+	 * @var callback
+	 */
+	public $deactivation_cb;
+
+	/**
 	 * Callback function that outputs HTML for feature description
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var callback
 	 */
 	public $feature_desc_cb;
@@ -62,7 +70,7 @@ class Feature {
 	/**
 	 * Callback function that outputs custom feature settings
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var callback
 	 */
 	public $feature_settings_cb;
@@ -70,7 +78,7 @@ class Feature {
 	/**
 	 * True if the feature requires content reindexing after activating
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var bool
 	 */
 	public $requires_reindex;
@@ -78,20 +86,18 @@ class Feature {
 	/**
 	 * Initiate the feature, setting all relevant instance variables
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function __construct( $args ) {
 		foreach ( $args as $key => $value ) {
 			$this->$key = $value;
 		}
-
-		do_action( 'wp_redisearch_feature_create', $this );
 	}
 
 	/**
 	 * Returns requirements status of the feature
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @return 
 	 */
 	public function requirements_status() {
@@ -109,7 +115,7 @@ class Feature {
 	/**
 	 * Run on every page load for feature to set itself up
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function setup() {
 		if ( ! empty( $this->setup_cb ) ) {
@@ -120,21 +126,9 @@ class Feature {
 	}
 
 	/**
-	 * Return feature settings
-	 *
-	 * @since 0.1.2
-	 * @return array|bool
-	 */
-	public function get_settings() {
-    $feature_settings = get_option( 'wp_redisearch_feature_settings', array() );
-
-		return ( ! empty( $feature_settings[ $this->slug ] ) ) ? $feature_settings[ $this->slug ] : false;
-	}
-
-	/**
 	 * Returns true if feature is active
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @return boolean
 	 */
 	public function is_active() {
@@ -150,22 +144,35 @@ class Feature {
 	}
 
 	/**
-	 * Ran after a feature is activated
+	 * Run after a feature is activated
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
-	public function activation() {
+	public function after_activation() {
 		if ( ! empty( $this->activation_cb ) ) {
 			call_user_func( $this->activation_cb, $this );
 		}
 
-		do_action( 'wp_redisearch_feature_post_activation', $this->slug, $this );
+		do_action( 'wp_redisearch_feature_after_activation', $this->slug, $this );
 	}
 
 	/**
-	 * Outputs feature box
+	 * Run after a feature is de-activated
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
+	 */
+	public function after_deactivation() {
+		if ( ! empty( $this->deactivation_cb ) ) {
+			call_user_func( $this->deactivation_cb, $this );
+		}
+
+		do_action( 'wp_redisearch_feature_after_deactivation', $this->slug, $this );
+	}
+
+	/**
+	 * Outputs feature box.
+	 *
+	 * @since 0.2.0
 	 */
 	public function output_feature_box() {
 		$requirements_status = $this->requirements_status();
@@ -183,9 +190,9 @@ class Feature {
 	}
 
 	/**
-	 * Outputs feature box long description
+	 * Outputs feature description
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function output_desc() {
 		if ( ! empty( $this->feature_desc_cb ) ) {
@@ -195,6 +202,11 @@ class Feature {
 		do_action( 'wp_redisearch_feature_box_full', $this->slug, $this );
 	}
 
+	/**
+	 * Outputs Settings.
+	 *
+	 * @since 0.2.0
+	 */
 	public function output_settings_box() {
 		$requirements_status = $this->requirements_status();
 		?>
@@ -227,11 +239,8 @@ class Feature {
 			call_user_func( $this->feature_settings_cb, $this );
 			return;
 		}
-
 		do_action( 'wp_redisearch_feature_box_settings_' . $this->slug, $this );
-
 		?>
-
 		<div class="action-wrap">
 			<?php if ( $this->requires_reindex ) : ?>
 				<span class="reindex-required">

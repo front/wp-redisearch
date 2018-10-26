@@ -7,7 +7,7 @@ use WPRedisearch\RediSearch\Setup;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Search;
 use WPRedisearch\Settings;
-use WPRedisearch\Features\Features;
+use WPRedisearch\Features;
 
 /**
  * WPRedisearch Class.

@@ -1,32 +1,48 @@
 <?php
 
-namespace WPRedisearch\Features;
+namespace WPRedisearch;
 
 class Features {
 
 	/**
 	 * Stores all features that have been included (both active and inactive)
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @var array
 	 */
 	public $features = array();
 
 	/**
+	 * Return instance of the class
+	 *
+	 * @return object
+	 * @since 0.2.0
+	 */
+	public static function init() {
+		static $instance = false;
+
+		if ( ! $instance  ) {
+			$instance = new self();
+			$instance->setup();
+		}
+		return $instance;
+	}
+	
+	/**
 	 * Initiate class actions
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function setup() {
-		// add_action( 'init', array( $this, 'feature_activation' ), 0 );
 		add_action( 'init', array( $this, 'setup_features' ), 0 );
 	}
 
 
 	/**
-	 * Save individual feature settings
+	 * Save individual feature settings.
+	 * This method used to save features settings using ajax request.
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public static function wp_redisearch_save_feature() {
 		if ( empty( $_POST['feature'] ) || empty( $_POST['settings'] ) || ! check_ajax_referer( 'wprds_dashboard_nonce', 'nonce', false ) ) {
@@ -50,7 +66,7 @@ class Features {
 	 * @param  string $slug
 	 * @param  array  $args
 	 *
-	 *  Supported parameters:
+	 *  Parameters:
 	 *  "title" (string) - Human readable title
 	 *  "default_settings" (array) - Array of default settings.
 	 *  "setup_cb" (callback) - Callback function when the feature is activated
@@ -59,7 +75,7 @@ class Features {
 	 *  "feature_desc_cb" (callback) - Callback function that outputs HTML for feature description
 	 *  "feature_settings_cb" (callback) - Callback function that outputs custom feature settings
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @return boolean
 	 */
 	public function register_feature( $slug, $args ) {
@@ -78,7 +94,7 @@ class Features {
 	 * @param  string  $slug
 	 * @param  array   $settings
 	 * @param  bool    $force
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 * @return array|bool
 	 */
 	public function update_feature( $slug, $settings ) {
@@ -100,7 +116,7 @@ class Features {
 			$feature_settings[ $slug ] = wp_parse_args( $settings, $feature_settings[ $slug ] );
 		}
 
-		// Make sure active is a proper bool
+		// Make sure active is a bool
 		$feature_settings[ $slug ]['active'] = (bool) $feature_settings[ $slug ]['active'];
 
 		$sanitize_feature_settings = apply_filters( 'wp_redisearch_sanitize_feature_settings', $feature_settings, $feature );
@@ -115,38 +131,29 @@ class Features {
 			if ( ! empty( $feature->requires_reindex ) ) {
 				$data['reindex'] = true;
 			}
-			$feature->activation();
+			$feature->after_activation();
+		} elseif ( !$feature_settings[ $slug ]['active'] && $original_state ) {
+			if ( ! empty( $feature->requires_reindex ) ) {
+				$data['reindex'] = true;
+			}
+			$feature->after_deactivation();
 		}
+    /**
+     * Some features require re-index on deactivatino also.
+		 * This filter, forces re-indexing
+     * @since 0.2.0
+     * @param bool $data['rendex']          reinindex status.
+     * @param object $feature    						The featur itself.
+		 */
+		$data['reindex'] = apply_filters( 'wp_redisearch_feature_reindex', $data['reindex'], $feature );
 
 		return $data;
 	}
 
 	/**
-	 * When plugins are adjusted, we need to determine how to activate/deactivate features
-	 *
-	 * @since 0.1.2
-	 */
-	public function feature_activation() {
-		$feature_settings = get_option( 'wp_redisearch_feature_settings', false );
-
-		if ( false === $feature_settings ) {
-			$features = $this->features;
-
-			foreach ( $features as $slug => $feature ) {
-				$this->update_feature( $slug, array( 'active' => true ) );
-        
-        if ( $feature->requires_reindex ) {
-          update_option( 'wp_redisearch_feature_requires_reindex', sanitize_text_field( $slug ) );
-        }
-			}
-			return;
-		}
-	}
-
-	/**
 	 * Setup all active features
 	 *
-	 * @since 0.1.2
+	 * @since 0.2.0
 	 */
 	public function setup_features() {
 		foreach ( $this->features as $feature_slug => $feature ) {
@@ -155,83 +162,18 @@ class Features {
 			}
 		}
 	}
-
-	/**
-	 * Return instance of the class
-	 *
-	 * @return object
-	 * @since 0.1.2
-	 */
-	public static function factory() {
-		static $instance = false;
-
-		if ( ! $instance  ) {
-			$instance = new self();
-			$instance->setup();
-		}
-		return $instance;
-  }
   
 
   /**
-   * Easy access function to get a Feature object from a slug
+   * Get a Feature object from its slug
    * @param  string $slug
-   * @since 0.1.2
+   * @since 0.2.0
    * @return Feature
    */
-  function get_registered_feature( $slug ) {
+  private function get_registered_feature( $slug ) {
     if ( empty( $this->features[ $slug ] ) ) {
       return false;
     }
     return $this->features[ $slug ];
   }
 }
-
-
-
-
-/**
- * Main function for registering new feature. Since comment above for details
- *
- * @param  string $slug
- * @param  array $args
- * @since 0.1.2
- * @return bool
- */
-// function wprds_register_feature( $slug, $args ) {
-// 	return Features::factory()->register_feature( $slug, $args );
-// }
-
-/**
- * Update a feature
- *
- * @param  string $slug
- * @param  array $settings
- * @param  bool  $force
- * @since 0.1.2
- * @return array
- */
-// function wprds_update_feature( $slug, $settings ) {
-// 	return Features::factory()->update_feature( $slug, $settings );
-// }
-
-// /**
-//  * Activate a feature
-//  *
-//  * @param  string $slug
-//  * @since 0.1.2
-//  */
-// function wprds_activate_feature( $slug ) {
-// 	Features::factory()->update_feature( $slug, array( 'active' => true ) );
-// }
-
-// /**
-//  * Dectivate a feature
-//  *
-//  * @param  string $slug
-//  * @param  bool  $force
-//  * @since 0.1.2
-//  */
-// function wprds_deactivate_feature( $slug ) {
-// 	Features::factory()->update_feature( $slug, array( 'active' => false ) );
-// }

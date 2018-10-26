@@ -6,7 +6,7 @@ use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
 
 use WPRedisearch\Settings;
-use WPRedisearch\Features\Features;
+use WPRedisearch\Features;
 use WPRedisearch\WPRedisearch;
 use WPRedisearch\RediSearch\Index;
 use WPRedisearch\RediSearch\Setup;
@@ -55,7 +55,7 @@ class Admin {
   */
   public static function wp_redisearch_status_page() {
     Fields::add('html', 'stats', 'Index status', self::index_status_html() );
-    $features = Features::factory()->features;
+    $features = Features::init()->features;
     if ( isset( $features ) && !empty( $features ) ) {
       echo '<div class="wprds-wrapper-grid">';
       echo '<div id="normal-sortables" class="meta-box-sortables">';
