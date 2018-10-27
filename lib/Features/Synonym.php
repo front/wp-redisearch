@@ -37,6 +37,7 @@ class Synonym {
       'activation_cb' => array( $this, 'activated' ),
       'deactivation_cb' => array( $this, 'deactivated' ),
       'feature_desc_cb' => array( $this, 'feature_desc' ),
+      'feature_options_cb' => array( $this, 'feature_options' ),
       'requires_reindex' => true,
     ) );
   }
@@ -48,6 +49,7 @@ class Synonym {
 	 * @since 0.2.0
 	 */
   public function setup () {
+    add_action( 'wp_redisearch_after_index_create', array( __CLASS__, 'add' ) );
   }
   
 	/**
@@ -78,6 +80,17 @@ class Synonym {
     ?>
       <p><?php esc_html_e( 'This will add synonym matching support. A synonym is a word or phrase that means exactly or nearly the same as another lexeme (word or phrase) in the same language.', 'wp-redisearch' ) ?></p>
     <?php
+  }
+
+	/**
+	 * Feature option/settings.
+   * Here we're adding fields to plugin options page.
+	 *
+	 * @since 0.2.0
+	 */
+  public function feature_options () {
+    \SevenFields\Fields\Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
+    \SevenFields\Fields\Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
   }
 
   /**
