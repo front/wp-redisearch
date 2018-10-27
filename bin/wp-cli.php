@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WPRedisearch\Settings;
 use WPRedisearch\WPRedisearch;
+use WPRedisearch\Features;
 use WPRedisearch\Redisearch\Setup;
 use WPRedisearch\RediSearch\Index;
 
@@ -69,10 +70,10 @@ class Redisearch_CLI extends WP_CLI_Command {
 	}
 
 	/**
-	 * Creates the index.
+	 * Creates the index with the settings provided.
 	 *
 	 * @subcommand create-index
-	 * @since      0.9
+	 * @since 0.2.0
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -94,11 +95,11 @@ class Redisearch_CLI extends WP_CLI_Command {
 	}
 
 	/**
-	 * Drop current index. 
+	 * Drop (deletes) current index. 
 	 * Warning! This will remove your existing index for the entire site.
 	 *
 	 * @subcommand drop-index
-	 * @since      0.9
+	 * @since 0.2.0
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -120,8 +121,49 @@ class Redisearch_CLI extends WP_CLI_Command {
 	/**
 	 * Index all posts for the site
 	 *
-	 * @synopsis [--setup] [--posts-per-page] [--offset] [--post-type] [--post-ids] [--write-to-disk]
+	 * ## OPTIONS
 	 *
+	 * [--setup]
+	 * Drops existing index, creates new index then indexes the posts
+	 * 
+	 * [--posts-per-page]
+	 * Sets number of posts to be indexed in a batch
+	 * 
+	 * [--offset]
+	 * Bypasses passed number of posts, then indexes them
+	 * 
+	 * [--post-type]
+	 * Sets post type to be indexed
+	 * 
+	 * [--post-ids]
+	 * Only indexes posts from comma separated list
+	 * 
+	 * [--write-to-disk]
+	 * If this option passed, created index, will be written to the disk
+	 * This is usefull in case there was some sort of network issues, you don't need to re-index the whole website
+	 *
+	 * ## EXAMPLES
+   *
+	 *  $ wp redisearch index --setup
+	 *  Drops, creates and indexes
+   *
+	 *  $ wp redisearch index --posts-per-page=20
+	 *  Indexes only 20 posts at a time
+   *
+	 *  $ wp redisearch index --offset=30
+	 *  Starts indexing from post 31
+   *
+	 *  $ wp redisearch index --post-type=page
+	 *  Only indexes pages
+   *
+	 *  $ wp redisearch index --post-ids=10,11,12,14
+	 *  Only indexes posts with which have given ids
+   *
+	 *  $ wp redisearch index --write-to-disk
+	 *  After finished with indexing, writes the index into the disk as a file
+	 * 
+	 * @synopsis [--setup] [--posts-per-page] [--offset] [--post-type] [--post-ids] [--write-to-disk]
+	 * 
 	 * @param array $args
 	 * @since 0.2.0
 	 * @param array $assoc_args
@@ -191,7 +233,7 @@ class Redisearch_CLI extends WP_CLI_Command {
 	 *
 	 * @param array $args
 	 *
-	 * @since 0.9
+	 * @since 0.2.0
 	 * @return array
 	 */
 	private function _index_helper( $args ) {
@@ -338,11 +380,6 @@ class Redisearch_CLI extends WP_CLI_Command {
 		// Prevent wp_actions from growing out of control
 		$wp_actions = $this->temporary_wp_actions;
 
-		// WP_Query class adds filter get_term_metadata using its own instance
-		// what prevents WP_Query class from being destructed by PHP gc.
-		//    if ( $q['update_post_term_cache'] ) {
-		//        add_filter( 'get_term_metadata', array( $this, 'lazyload_term_meta' ), 10, 2 );
-		//    }
 		// It's high memory consuming as WP_Query instance holds all query results inside itself
 		// and in theory $wp_filter will not stop growing until Out Of Memory exception occurs.
 		if ( isset( $wp_filter['get_term_metadata'] ) ) {
@@ -351,9 +388,9 @@ class Redisearch_CLI extends WP_CLI_Command {
 			 * we're accessing the global array properly
 			 */
 			if ( class_exists( 'WP_Hook' ) && $wp_filter['get_term_metadata'] instanceof WP_Hook ) {
-				$filter_callbacks   = &$wp_filter['get_term_metadata']->callbacks;
+				$filter_callbacks = &$wp_filter['get_term_metadata']->callbacks;
 			} else {
-				$filter_callbacks   = &$wp_filter['get_term_metadata'];
+				$filter_callbacks = &$wp_filter['get_term_metadata'];
 			}
 			if ( isset( $filter_callbacks[10] ) ) {
 				foreach ( $filter_callbacks[10] as $hook => $content ) {
@@ -365,10 +402,150 @@ class Redisearch_CLI extends WP_CLI_Command {
 		}
 	}
 
+
+	/**
+	 * Lists all registered features.
+	 *
+	 * ## OPTIONS
+	 * [--all]
+	 * Lists all registered features regardless of their active status
+	 * 
+	 * ## EXAMPLES
+	 * 
+	 *  $ wp redisearch list-features
+	 *  Lists activated features
+	 * 
+	 *  $ wp redisearch list-features --all
+	 *  Lists all regisred features
+	 * 
+	 * @synopsis [--all]
+	 * @subcommand list-features
+	 * @since 0.2.0
+	 * @param array $args
+	 * @param array $assoc_args
+	 */
+	public function list_features( $args, $assoc_args ) {
+		if ( empty( $assoc_args['all'] ) ) {
+			$features = get_option( 'wp_redisearch_feature_settings', array() );
+			WP_CLI::line( __( 'Active features:', 'wp-redisearch' ) );
+
+			foreach ( $features as $key => $feature ) {
+				if( $feature['active'] ) {
+					WP_CLI::line( $key );
+				}
+			}
+		} else {
+			WP_CLI::line( __( 'Registered features:', 'wp-redisearch' ) );
+			$features = wp_list_pluck( Features::init()->features, 'slug' );
+
+			foreach ( $features as $feature ) {
+				WP_CLI::line( $feature );
+			}
+		}
+	}
+
+
+	/**
+	 * Activate a feature.
+	 *
+	 * Activates a feature and returns error, in case there is some
+	 * If feature retuires re-index, returns warning
+	 * 
+	 * ## OPTIONS
+	 * 
+	 * <feature-slug>
+	 * Slug of registered feature to be activated
+	 * 
+	 * ## EXAMPLES
+	 *  
+	 *  $ wp redisearch activate-feature synonym
+	 *  This will activate synonym feature
+	 * 
+	 * @synopsis <feature>
+	 * @subcommand activate-feature
+	 * @since 0.2.0
+	 * @param array $args
+	 * @param array $assoc_args
+	 */
+	public function activate_feature( $args, $assoc_args ) {
+		$feature = Features::init()->get_registered_feature( $args[0] );
+
+		if ( empty( $feature ) ) {
+			WP_CLI::error( __( 'No feature with this slug is registered.', 'wp-redisearch' ) );
+		}
+
+		if ( $feature->is_active() ) {
+			WP_CLI::error( __( 'This feature is already active.', 'wp-redisearch' ) );
+		}
+
+		$status = $feature->requirements_status();
+
+		if ( 1 === $status->code ) {
+			WP_CLI::error( sprintf( __( 'Feature requirements are not met: %s', 'wp-redisearch' ), WP_CLI::colorize( '%R' . implode( "\n\n", (array) $status->message ) . '%N' ) ) );
+		}
+
+		Features::init()->update_feature( $feature->slug, array( 'active' => true ) );
+
+		if ( $feature->requires_reindex ) {
+			WP_CLI::warning( __( 'This feature requires a re-index. It might not work properly until you run the index command.', 'wp-redisearch' ) );
+			WP_CLI::line( sprintf( __( 'Just run %s', 'wp-redisearch' ), WP_CLI::colorize( '%G' . 'wp redisearch index --setup' . '%N' ) ) );
+		}
+
+		WP_CLI::success( sprintf( __( 'Feature %s activated', 'wp-redisearch' ), WP_CLI::colorize( '%G' . $feature->title . '%N' ) ) );
+	}
+
+	/**
+	 * Dectivate a feature.
+	 *
+	 * deactivates a feature and returns error, in case there is some
+	 * If feature retuires re-index, returns warning
+	 * 
+	 * ## OPTIONS
+	 * 
+	 * <feature-slug>
+	 * Slug of registered feature to be deactivated
+	 * 
+	 * ## EXAMPLES
+	 *  
+	 *  $ wp redisearch deactivate-feature synonym
+	 *  This will deactivate synonym feature
+	 * 
+	 *
+	 * @synopsis <feature>
+	 * @subcommand deactivate-feature
+	 * @since 0.2.0
+	 * @param array $args
+	 * @param array $assoc_args
+	 */
+	public function deactivate_feature( $args, $assoc_args ) {
+		$feature = Features::init()->get_registered_feature( $args[0] );
+
+		if ( empty( $feature ) ) {
+			WP_CLI::error( __( 'No feature with this slug is registered.', 'wp-redisearch' ) );
+		}
+
+		$active_features = get_option( 'wp_redisearch_feature_settings', array() );
+
+		$key = array_search( $feature->slug, array_keys( $active_features ) );
+
+		if ( false === $key || empty( $active_features[ $feature->slug ]['active'] ) ) {
+			WP_CLI::error( __( 'This feature is not active', 'wp-redisearch' ) );
+		}
+
+		Features::init()->update_feature( $feature->slug, array( 'active' => false ) );
+
+		// Some features like synonym even on deactivation require re-index.
+		if ( ! empty( $feature->deactivation_requires_reindex ) ) {
+			WP_CLI::warning( __( 'This feature requires a re-index after deactivation also. It might not work properly until you run the index command.', 'wp-redisearch' ) );
+			WP_CLI::line( sprintf( __( 'Just run %s', 'wp-redisearch' ), WP_CLI::colorize( '%G' . 'wp redisearch index --setup' . '%N' ) ) );
+		}
+		WP_CLI::success( sprintf( __( 'Feature %s deactivated', 'wp-redisearch' ), WP_CLI::colorize( '%G' . $feature->title . '%N' ) ) );
+	}
+
 	/**
 	 * Provide better error messaging for common connection errors
 	 *
-	 * @since 0.9.3
+	 * @since 0.2.0
 	 */
 	private function _connect_check() {
 		if ( WPRedisearch::$serverException ) {
@@ -381,7 +558,7 @@ class Redisearch_CLI extends WP_CLI_Command {
 	/**
 	 * Reset transient while indexing
 	 *
-	 * @since 2.2
+	 * @since 0.2.0
 	 */
 	private function reset_transient() {
 		set_transient( 'wp_redisearch_wpcli_indexing', true, $this->transient_expiration );
