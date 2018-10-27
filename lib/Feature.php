@@ -200,8 +200,9 @@ class Feature {
 		$requirements_status = $this->requirements_status();
 		if ( ! empty( $requirements_status->message ) ) {
 			$messages = (array) $requirements_status->message;
+			$notice_class = $requirements_status->code == 1 ? 'error' : 'warning';
 			foreach ( $messages as $message ) {
-				echo '<div class="wprds-feature-notice notice inline notice-error notice-alt">';
+				echo '<div class="wprds-feature-notice notice inline notice-' . $notice_class . ' notice-alt">';
 					echo wp_kses_post( $message );
 				echo '</div>';
 			}

@@ -482,6 +482,8 @@ class Redisearch_CLI extends WP_CLI_Command {
 
 		if ( 1 === $status->code ) {
 			WP_CLI::error( sprintf( __( 'Feature requirements are not met: %s', 'wp-redisearch' ), WP_CLI::colorize( '%R' . implode( "\n\n", (array) $status->message ) . '%N' ) ) );
+		} elseif ( 2 === $status->code ) {
+			WP_CLI::warning( sprintf( __( 'Feature can be used, but there are warnings: %s', 'elasticpress' ), WP_CLI::colorize( '%y' . implode( "\n\n", (array) $status->message ) . '%N' ) ) );
 		}
 
 		Features::init()->update_feature( $feature->slug, array( 'active' => true ) );
