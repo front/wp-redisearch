@@ -169,7 +169,7 @@ class WPRedisearch {
   * @return
   */
   public static function redis_server_connection_notice() {
-    $redis_settings_page = admin_url('admin.php?page=wp-redisearch');
+    $redis_settings_page = admin_url('admin.php?page=redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
       <p><?php printf( __( 'Something went wrong while conencting to Redis Server! go to <a href="%s">settings</a>', 'wp-redisearch' ), $redis_settings_page); ?></p>
