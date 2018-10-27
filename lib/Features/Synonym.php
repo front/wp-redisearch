@@ -59,7 +59,7 @@ class Synonym {
 	 * @since 0.2.0
 	 */
   public function activated () {
-    self::add();
+    // self::add();
   }
   
 	/**
