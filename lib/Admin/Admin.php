@@ -256,14 +256,21 @@ EOT;
     // If post is not published or un-published, delete from index then, return.
     if ( $post->post_status != 'publish' ) {
       $index->deletePosts( $index_name, $post_id );
+
+      /**
+       * Filter wp_redisearch_after_post_deleted fires after post deleted from the index.
+       * 
+       * @since 0.2.0
+       * @param array $index_name         Index name
+       * @param array $post               The post object
+       */
+      do_action( 'wp_redisearch_after_post_deleted', $index_name, $post );
+      
+      
       // If enabled, write to disk
       if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
         $index = new Index( WPRedisearch::$client );
         $index->writeToDisk();
-      }
-      // If suggest enabled, remove post from suggest
-      if ( Settings::get( 'wp_redisearch_suggestion' ) ) {
-        $index->deleteSuggestion($index_name, $post->post_title);
       }
       return;
     }
@@ -279,14 +286,21 @@ EOT;
 
     // Finally, add post to index
     $index->addPosts( $index_name, $post_id, $indexing_options );
+
+    /**
+     * Filter wp_redisearch_after_post_indexed fires after post added to the index.
+     * 
+     * @since 0.2.0
+     * @param array $index_name         Index name
+     * @param array $post               The post object
+     * @param array $indexing_options   Posts extra options like language and fields
+     */
+    do_action( 'wp_redisearch_after_post_published', $index_name, $post, $indexing_options );
+    
     // If enabled, write to disk
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
       $index = new Index( WPRedisearch::$client );
       $index->writeToDisk();
-    }
-    // If suggestion enabled, add to suggest
-    if ( Settings::get( 'wp_redisearch_suggestion' ) ) {
-      $index->addSuggestion($index_name, $permalink, $title, 1);
     }
   }
 

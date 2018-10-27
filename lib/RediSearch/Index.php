@@ -160,9 +160,19 @@ class Index {
         $indexing_options['fields'] = $this->prepare_post( get_the_id() );
 
         $this->addPosts($index_name, $id, $indexing_options);
-        if ( $suggestion ) {
-          $this->addSuggestion($index_name, $permalink, $title, 1);
-        }
+
+        /**
+         * Filter wp_redisearch_after_post_indexed fires after post added to the index.
+         * Since this action called from within post loop, all Wordpress functions for post are available in the calback.
+         * Example:
+         * To get post title, you can simply call 'get_the_title()' function
+         * 
+         * @since 0.2.0
+         * @param array $client             Created redis client instance
+         * @param array $index_name         Index name
+         * @param array $indexing_options   Posts extra options like language and fields
+         */
+        do_action( 'wp_redisearch_after_post_indexed', $this->client, $index_name, $indexing_options );
       }
       $index_meta['offset'] = absint( $index_meta['offset'] + $posts_per_page );
       update_option( 'wp_redisearch_index_meta', $index_meta );
@@ -289,28 +299,6 @@ class Index {
     $command = array( $index_name, $id , 'DD' );
     $this->client->rawCommand('FT.DEL', $command);
     return $this;
-  }
-
-  /**
-  * Add to suggestion list.
-  * @since    0.1.0
-  * @param
-  * @return object $this
-  */
-  public function addSuggestion($index_name, $permalink, $title, $score) {
-    $command = array_merge( [$index_name . 'Sugg', $title , $score, 'PAYLOAD', $permalink] );
-    $this->client->rawCommand('FT.SUGADD', $command);
-  }
-
-  /**
-  * Delete from suggestion list.
-  * @since    0.1.0
-  * @param
-  * @return object $this
-  */
-  public function deleteSuggestion($index_name, $title) {
-    $command = array_merge( [$index_name . 'Sugg', $title] );
-    $this->client->rawCommand('FT.SUGDEL', $command);
   }
 
   /**
