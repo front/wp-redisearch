@@ -154,13 +154,8 @@ EOT;
     Fields::add( 'header', null, 'What to be indexed' );
     Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::post_types() );
     Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::get_terms() );
-    /**
-     * Only show synonym terms setting, if the feature is active.
-     */
-    if ( Settings::get( 'wp_redisearch_features_synonym', false ) ) {
-      Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
-      Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
-    }
+    // In case we need to extend option fields.
+    do_action( 'wp_redisearch_settings_indexing_fields' );    
   }
 
   /**
