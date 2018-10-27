@@ -84,6 +84,16 @@ class Feature {
 	public $requires_reindex;
 
 	/**
+	 * Some features need extra options/settings.
+	 * In the main features listing page, we can only have some basic settings.
+	 * So in case we need more options, we can create fields and pass via this callback method.
+	 *
+	 * @since 0.2.0
+	 * @var bool
+	 */
+	public $feature_options_cb;
+
+	/**
 	 * Initiate the feature, setting all relevant instance variables
 	 *
 	 * @since 0.2.0
@@ -122,6 +132,9 @@ class Feature {
 			call_user_func( $this->setup_cb, $this );
 		}
 
+		//
+		add_action( 'wp_redisearch_settings_indexing_fields', array( $this, 'feature_options_fields' ) );
+
 		do_action( 'wp_redisearch_feature_setup', $this->slug, $this );
 	}
 
@@ -152,7 +165,6 @@ class Feature {
 		if ( ! empty( $this->activation_cb ) ) {
 			call_user_func( $this->activation_cb, $this );
 		}
-
 		do_action( 'wp_redisearch_feature_after_activation', $this->slug, $this );
 	}
 
@@ -165,8 +177,18 @@ class Feature {
 		if ( ! empty( $this->deactivation_cb ) ) {
 			call_user_func( $this->deactivation_cb, $this );
 		}
-
 		do_action( 'wp_redisearch_feature_after_deactivation', $this->slug, $this );
+	}
+	
+	/**
+	 * Outputs feature box.
+	 *
+	 * @since 0.2.0
+	 */
+	public function feature_options_fields() {
+		if ( ! empty( $this->feature_options_cb ) ) {
+			call_user_func( $this->feature_options_cb, $this );
+		}
 	}
 
 	/**
