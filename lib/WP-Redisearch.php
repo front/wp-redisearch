@@ -9,6 +9,7 @@ use WPRedisearch\RediSearch\Search;
 use WPRedisearch\Settings;
 use WPRedisearch\Features;
 use WPRedisearch\Features\Synonym;
+use WPRedisearch\Features\LiveSearch;
 use WPRedisearch\Features\Document;
 
 /**
@@ -84,6 +85,7 @@ class WPRedisearch {
       
       Features::init();
       new Document;
+      new LiveSearch;
       new Synonym;
     }
 
