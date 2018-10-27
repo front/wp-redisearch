@@ -49,7 +49,7 @@ class Synonym {
 	 * @since 0.2.0
 	 */
   public function setup () {
-    add_action( 'wp_redisearch_after_index_create', array( __CLASS__, 'add' ) );
+    add_action( 'wp_redisearch_after_index_created', array( __CLASS__, 'add' ) );
   }
   
 	/**

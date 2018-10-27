@@ -104,7 +104,7 @@ class Index {
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
     /**
-     * Filter wp_redisearch_after_index_create fires after index created.
+     * Filter wp_redisearch_after_index_created fires after index created.
      * Some features need to do something after activation. Some of them trigger re-indexing. 
      * But after they do what they suppose to do with the index, the index will be deleted to re-index the site.
      * So those features can use this filter instead.
@@ -112,7 +112,7 @@ class Index {
      * @since 0.2.0
      * @param array $client       Created redis client instance
 		 */
-    do_action( 'wp_redisearch_after_index_create', $this->client);
+    do_action( 'wp_redisearch_after_index_created', $this->client);
 
     return $this;
   }
