@@ -39,6 +39,7 @@ class Synonym {
       'feature_desc_cb' => array( $this, 'feature_desc' ),
       'feature_options_cb' => array( $this, 'feature_options' ),
       'requires_reindex' => true,
+      'deactivation_requires_reindex' => true,
     ) );
   }
 

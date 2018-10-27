@@ -133,7 +133,7 @@ class Features {
 			}
 			$feature->after_activation();
 		} elseif ( !$feature_settings[ $slug ]['active'] && $original_state ) {
-			if ( ! empty( $feature->requires_reindex ) ) {
+			if ( ! empty( $feature->deactivation_requires_reindex ) ) {
 				$data['reindex'] = true;
 			}
 			$feature->after_deactivation();
@@ -170,7 +170,7 @@ class Features {
    * @since 0.2.0
    * @return Feature
    */
-  private function get_registered_feature( $slug ) {
+  public function get_registered_feature( $slug ) {
     if ( empty( $this->features[ $slug ] ) ) {
       return false;
     }
