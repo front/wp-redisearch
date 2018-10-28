@@ -104,7 +104,7 @@ class Index {
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
     /**
-     * Filter wp_redisearch_after_index_created fires after index created.
+     * Action wp_redisearch_after_index_created fires after index created.
      * Some features need to do something after activation. Some of them trigger re-indexing. 
      * But after they do what they suppose to do with the index, the index will be deleted to re-index the site.
      * So those features can use this filter instead.
@@ -161,7 +161,7 @@ class Index {
         $this->addPosts($index_name, $id, $indexing_options);
 
         /**
-         * Filter wp_redisearch_after_post_indexed fires after post added to the index.
+         * Action wp_redisearch_after_post_indexed fires after post added to the index.
          * Since this action called from within post loop, all Wordpress functions for post are available in the calback.
          * Example:
          * To get post title, you can simply call 'get_the_title()' function
