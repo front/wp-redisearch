@@ -134,9 +134,6 @@ EOT;
     Fields::add('text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ), __( 'Redis server url, usually it is 127.0.0.1', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ), __( 'Redis port number, by default it is 6379', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) );
-    Fields::add( 'header', null, __( 'Auto suggestion | Live search', 'wp-redisearch' ) );
-    Fields::add( 'checkbox', 'wp_redisearch_suggestion', __( 'Enable auto suggestion | Live search', 'wp-redisearch' ), __( 'Auto suggestion is a redisearch built-in feature. It only adds the post title to suggestion group.', 'wp-redisearch' ) );
-    Fields::add( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion.', 'wp-redisearch' ), __( '(something around 5 to 10 is optimal and 10 is maximum allowed number by redisearch.)', 'wp-redisearch' ) );
   }
 
   

@@ -51,12 +51,6 @@ class WPRedisearch {
   public static $indexException = false;
 
 	/**
-   * Set this if suggestion is not added.
-	 * @param object $suggestionException
-	 */
-  public static $suggestionException = false;
-
-	/**
    * Redisearch index info.
 	 * @param object $indexInfo
 	 */
@@ -147,19 +141,6 @@ class WPRedisearch {
           self::$redisearchException = true;
           add_action( 'admin_notices', array(__CLASS__, 'redisearch_index_not_exist_notice' ) );
         }
-        // Check if suggestion exists.
-        if ( Settings::get( 'wp_redisearch_suggestion' )) {
-          try {
-            $suggestion = self::$client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', 'a', 'FUZZY', 'MAX', '2']);
-          } catch (\Exception $e) {
-            if ( isset( $e ) )  {
-              self::$suggestionException = true;
-            }
-          }
-          if ( is_null($suggestion) ) {
-            self::$suggestionException = true;
-          }
-        }
       }
     }
   }
@@ -225,9 +206,6 @@ class WPRedisearch {
     add_action('wp_ajax_wp_redisearch_drop_index', array( $this->admin, 'wp_redisearch_drop_index' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_drop_index', array( $this->admin, 'wp_redisearch_drop_index' ) );
 
-    add_action('wp_ajax_wp_redisearch_get_suggestion', array( $this, 'wp_redisearch_get_suggestion' ) );
-    add_action('wp_ajax_nopriv_wp_redisearch_get_suggestion', array( $this, 'wp_redisearch_get_suggestion' ) );
-
     add_action('wp_ajax_wp_redisearch_save_feature', array( Features::init(), 'wp_redisearch_save_feature' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_save_feature', array( Features::init(), 'wp_redisearch_save_feature' ) );
   }
@@ -240,10 +218,8 @@ class WPRedisearch {
   */
   public function wp_redisearch_public_enqueue_scripts() {
     wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
-    $suggestion = Settings::get( 'wp_redisearch_suggestion' ) && !self::$suggestionException && !self::$redisearchException && !self::$moduleException;
     $localized_data = array(
-			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' ),
-			'suggestionEnabled' 	=> $suggestion
+			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' )
 		);
 		wp_localize_script( 'wp_redisearch_public_js', 'wpRds', $localized_data );
     wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Public/css/wp-redisearch.css', array(), WPRS_VERSION );
@@ -315,12 +291,5 @@ class WPRedisearch {
     
     return "SELECT * FROM $wpdb->posts WHERE 1=0";
   }
-
-  public function wp_redisearch_get_suggestion() {
-    $search = new Search( self::$client );
-    $search_results = $search->suggest( $_POST['term'] );
-    echo json_encode( $search_results );
-    wp_die();
-  } 
 
 }

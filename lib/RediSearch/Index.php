@@ -145,7 +145,6 @@ class Index {
     
     if ( $query->have_posts() ) {
       $index_name = Settings::indexName();
-      $suggestion = Settings::get( 'wp_redisearch_suggestion' );
       
       while ( $query->have_posts() ) {
         $query->the_post();

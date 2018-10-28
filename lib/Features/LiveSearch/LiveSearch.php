@@ -22,6 +22,12 @@ class LiveSearch {
 	 */
   public static $index_name;
 
+	/**
+   * Set this if suggestion is not added.
+	 * @param object $liveSearchException
+	 */
+  public static $liveSearchException = false;
+
   /**
   * Initiate synonym terms to be added to the index
   * @since 0.2.0
@@ -69,6 +75,37 @@ class LiveSearch {
     add_action( 'wp_redisearch_after_post_indexed', array( __CLASS__, 'add_loop' ), 10, 3 );
     add_action( 'wp_redisearch_after_post_published', array( __CLASS__, 'add_post' ), 10, 3 );
     add_action( 'wp_redisearch_after_post_deleted', array( __CLASS__, 'delete' ), 10, 2 );
+    
+    add_action('wp_ajax_wp_redisearch_get_suggestion', array( __CLASS__, 'get_suggestion' ) );
+    add_action('wp_ajax_nopriv_wp_redisearch_get_suggestion', array( __CLASS__, 'get_suggestion' ) );
+
+    // Check if suggestion exists.
+    $liveSearch = null;
+    try {
+      $liveSearch = self::$client->rawCommand('FT.SUGGET', [self::$index_name . 'Sugg', 'a', 'FUZZY', 'MAX', '2']);
+    } catch (\Exception $e) {
+      if ( isset( $e ) )  {
+        self::$liveSearchException = true;
+      }
+    }
+    if ( !is_null($liveSearch) ) {
+      add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_script' ) );
+      self::$liveSearchException = true;
+    }
+  }
+  
+	/**
+	 * Enqueue script and styles for live search
+	 *
+	 * @since 0.2.0
+	 */
+  public function enqueue_script () {
+    wp_enqueue_script( 'wp_redisearch_live_search', WPRS_URL . 'lib/Features/LiveSearch/assets/js/live-search.min.js', array( 'jquery' ), WPRS_VERSION, true );
+    $localized_data = array(
+			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' )
+		);
+		wp_localize_script( 'wp_redisearch_live_search', 'wpRds', $localized_data );
+    wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Features/assets/css/live-search.css', array(), WPRS_VERSION );
   }
   
 	/**
@@ -107,8 +144,8 @@ class LiveSearch {
 	 * @since 0.2.0
 	 */
   public function feature_options () {
-    // \SevenFields\Fields\Fields::add( 'header', null, __( 'Synonyms support', 'wp-redisearch' ) );
-    // \SevenFields\Fields\Fields::add( 'textarea', 'wp_redisearch_synonyms_list', __( 'Synonym words list.', 'wp-redisearch' ), __('Add each group on a line and separate terms by comma. <br /><b>For example: </b><br />boy, child, baby<br />girl, child, baby<br />man, person, adult<br /><br />When these three groups are located inside the synonym data structure, it is possible to search for \'child\' and receive documents contains \'boy\', \'girl\', \'child\' and \'baby\'. <br />Keep in mined, only those posts indexed after adding synonyms list will be affected.', 'wp-redisearch' ) );
+    \SevenFields\Fields\Fields::add( 'header', null, __( 'Auto suggestion | Live search', 'wp-redisearch' ) );
+    \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_suggested_results', __( 'Results count for suggestion.', 'wp-redisearch' ), __( '(something around 5 to 10 is optimal and 10 is maximum allowed number by redisearch.)', 'wp-redisearch' ) );
   }
 
   /**
@@ -170,6 +207,21 @@ class LiveSearch {
     $post_title = $post->post_title;
     $command = array_merge( [$index_name . 'Sugg', $post_title] );
     self::$client->rawCommand('FT.SUGDEL', $command);
+  }
+
+  /**
+  * Ajax callback for getting suggestion results
+  * @since 0.2.0
+  * @param 
+  * @return json $suggestion_results
+  */
+  public static function get_suggestion() {
+    $index_name = Settings::indexName();
+    $results_no = Settings::get( 'wp_redisearch_suggested_results', 10 );
+    $term = $_POST['term'];
+    $suggestion_results = self::$client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', $term, 'FUZZY', 'WITHPAYLOADS', 'MAX', $results_no]);
+    echo json_encode( $suggestion_results );
+    wp_die();
   }
 
 }

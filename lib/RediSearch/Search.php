@@ -35,17 +35,4 @@ class Search {
     $search_results = $this->client->rawCommand('FT.SEARCH', [$index_name, $wprds_query, 'NOCONTENT', 'LIMIT', $from, $offset]);
     return $search_results;
   }
-
-  /**
-  * Return suggestion based on passed term.
-  * @since    0.1.0
-  * @param
-  * @return
-  */
-  public function suggest( $term ) {
-    $index_name = Settings::indexName();
-    $results_no = Settings::get( 'wp_redisearch_suggested_results', 10 );
-    $suggestion = $this->client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', $term, 'FUZZY', 'WITHPAYLOADS', 'MAX', $results_no]);
-    return $suggestion;
-  }
 }

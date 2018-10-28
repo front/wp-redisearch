@@ -322,7 +322,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'WPRedisearch\\Feature' => __DIR__ . '/../..' . '/lib/Feature.php',
         'WPRedisearch\\Features' => __DIR__ . '/../..' . '/lib/Features.php',
         'WPRedisearch\\Features\\Document' => __DIR__ . '/../..' . '/lib/Features/Document.php',
-        'WPRedisearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/lib/Features/LiveSearch.php',
+        'WPRedisearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/lib/Features/LiveSearch/LiveSearch.php',
         'WPRedisearch\\Features\\Synonym' => __DIR__ . '/../..' . '/lib/Features/Synonym.php',
         'WPRedisearch\\RediSearch\\Index' => __DIR__ . '/../..' . '/lib/RediSearch/Index.php',
         'WPRedisearch\\RediSearch\\Search' => __DIR__ . '/../..' . '/lib/RediSearch/Search.php',

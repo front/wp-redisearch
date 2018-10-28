@@ -291,7 +291,7 @@ return array(
     'WPRedisearch\\Feature' => $baseDir . '/lib/Feature.php',
     'WPRedisearch\\Features' => $baseDir . '/lib/Features.php',
     'WPRedisearch\\Features\\Document' => $baseDir . '/lib/Features/Document.php',
-    'WPRedisearch\\Features\\LiveSearch' => $baseDir . '/lib/Features/LiveSearch.php',
+    'WPRedisearch\\Features\\LiveSearch' => $baseDir . '/lib/Features/LiveSearch/LiveSearch.php',
     'WPRedisearch\\Features\\Synonym' => $baseDir . '/lib/Features/Synonym.php',
     'WPRedisearch\\RediSearch\\Index' => $baseDir . '/lib/RediSearch/Index.php',
     'WPRedisearch\\RediSearch\\Search' => $baseDir . '/lib/RediSearch/Search.php',
