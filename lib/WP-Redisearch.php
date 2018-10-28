@@ -10,7 +10,6 @@ use WPRedisearch\Settings;
 use WPRedisearch\Features;
 use WPRedisearch\Features\Synonym;
 use WPRedisearch\Features\LiveSearch;
-use WPRedisearch\Features\Document;
 
 /**
  * WPRedisearch Class.
@@ -77,7 +76,6 @@ class WPRedisearch {
       add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
       
       Features::init();
-      new Document;
       new LiveSearch;
       new Synonym;
     }
