@@ -43,10 +43,16 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 ### Changelog
 
 
-##### 0.1.2
+##### 0.2.0
 * **Added**: WP-CLI support
-* **Added**: 'wp_redisearch_indexable_meta_keys' to add extra meta keys to the index
-* **Added**: 'wp_redisearch_indexable_meta_schema' to manupulate type of post meta fields (default is text)
+* **Added**: Register and activating of Features
+* **Added**: filter hook 'wp_redisearch_indexable_meta_keys' to add extra meta keys to the index
+* **Added**: filter hook 'wp_redisearch_indexable_meta_schema' to manupulate type of post meta fields (default is text)
+* **Added**: action hook 'wp_redisearch_after_post_indexed' fires after posts indexed from the main index command
+* **Added**: action hook 'wp_redisearch_after_post_published' fires after a post have been published
+* **Added**: action hook 'wp_redisearch_after_post_deleted' fires after a post have been deleted
+* **Added**: action hook 'wp_redisearch_after_index_created' fires after main index created
+* **Added**: action hook 'wp_redisearch_settings_indexing_fields' fires after settings fields inside indexing options page
 
 ##### 0.1.1
 * Use default value for settings if not set in settings
