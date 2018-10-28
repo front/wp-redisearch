@@ -67,7 +67,6 @@ class WPRedisearch {
   private $search_query_posts = array();
 
   public function __construct() {
-    add_action( 'wp_enqueue_scripts', array( $this, 'wp_redisearch_public_enqueue_scripts' ) );
     $this->admin = new Admin;
     $this->wp_redisearch_handle_ajax_requests();
     $this->wp_redisearch_admin_notice();
@@ -208,21 +207,6 @@ class WPRedisearch {
 
     add_action('wp_ajax_wp_redisearch_save_feature', array( Features::init(), 'wp_redisearch_save_feature' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_save_feature', array( Features::init(), 'wp_redisearch_save_feature' ) );
-  }
-
-  /**
-  * Ajax actions listeners.
-  * @since    0.1.0
-  * @param
-  * @return
-  */
-  public function wp_redisearch_public_enqueue_scripts() {
-    wp_enqueue_script( 'wp_redisearch_public_js', WPRS_URL . 'lib/Public/js/wp-redisearch.js', array( 'jquery' ), WPRS_VERSION, true );
-    $localized_data = array(
-			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' )
-		);
-		wp_localize_script( 'wp_redisearch_public_js', 'wpRds', $localized_data );
-    wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Public/css/wp-redisearch.css', array(), WPRS_VERSION );
   }
   
   /**
