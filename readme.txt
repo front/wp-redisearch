@@ -4,7 +4,7 @@ Author URI: https://7km.co
 Plugin URI: https://github.com/7kmCo/wp-redisearch
 Tags: search, redisearch, redis, fuzzy, aggregation, searching, autosuggest, suggest, advanced search, woocommerce
 Requires at least: 4.6
-Tested up to: 4.9.8
+Tested up to: 5
 Stable tag: 0.2.0
 Requires PHP: 5.2.4
 License: GPLv2 or later
