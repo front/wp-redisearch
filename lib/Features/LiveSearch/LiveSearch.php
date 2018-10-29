@@ -191,6 +191,12 @@ class LiveSearch {
   * @return
   */
   public static function add( $index_name, $post_title, $post_permalink, $score ) {
+    // First, lets make sure it it does not exists
+    try {
+      $command = array_merge( [$index_name . 'Sugg', $post_title] );
+      self::$client->rawCommand('FT.SUGDEL', $command);
+    } catch (\Exception $e) {
+    }
     // Prepare command for adding post
     $command = array_merge( [$index_name . 'Sugg', $post_title , $score, 'PAYLOAD', $post_permalink] );
     self::$client->rawCommand('FT.SUGADD', $command);
