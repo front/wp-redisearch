@@ -272,15 +272,26 @@ EOT;
       return;
     }
     
-    $title = $post->post_title;
     $content = wp_strip_all_tags( $post->post_content, true );
     $permalink = get_permalink( $post_id );
-    $fields = array( 'postTitle', $title, 'postContent', $content, 'postId', $post_id, 'postLink', $permalink );
-    
-    $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $post_id );
-    $indexing_options['fields'] = array( 'postTitle', $title, 'postContent', $content, 'postId', $post_id, 'postLink', $permalink );
-    $indexing_options['extra_params'] = array( 'REPLACE' );
+    $user = get_userdata( $post->post_author );
 
+		if ( $user instanceof WP_User ) {
+			$user_data = $user->display_name;
+		} else {
+			$user_data = '';
+    }
+    
+		$post_date = $post->post_date;
+    $post_modified = $post->post_modified;
+       // If date is invalid, set it to null
+		if ( ! strtotime( $post_date ) || $post_date === "0000-00-00 00:00:00" ) {
+			$post_date = null;
+		}
+
+    $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $post_id );
+    $indexing_options['fields'] = $index->prepare_post( $post_id );
+    $indexing_options['extra_params'] = array( 'REPLACE' );
     // Finally, add post to index
     $index->addPosts( $index_name, $post_id, $indexing_options );
 
