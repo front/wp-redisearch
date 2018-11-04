@@ -237,7 +237,17 @@ class Index {
   private function prepare_terms( $post ) {
     $indexable_terms = Settings::get( 'wp_redisearch_indexable_terms' );
     $indexable_terms = isset( $indexable_terms ) ? array_keys( $indexable_terms ) : array();
-    
+
+    /**
+     * Filter wp_redisearch_indexable_temrs to manipulate indexable terms list
+     * 
+     * @since 0.2.1
+     * @param array $indexable_terms        Default terms list
+     * @param array $post                   The post object
+     * @return array $indexable_terms       Modified taxobomy terms list
+     */
+		$indexable_terms = apply_filters( 'wp_redisearch_indexable_temrs', $indexable_terms, $post );
+
 		if ( empty( $indexable_terms ) ) {
 			return array();
 		}
