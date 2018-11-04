@@ -10,6 +10,7 @@ use WPRedisearch\Settings;
 use WPRedisearch\Features;
 use WPRedisearch\Features\Synonym;
 use WPRedisearch\Features\LiveSearch;
+use WPRedisearch\Features\WooCommerce;
 
 /**
  * WPRedisearch Class.
@@ -79,6 +80,7 @@ class WPRedisearch {
       Features::init();
       new LiveSearch;
       new Synonym;
+      new WooCommerce;
     }
 
   }
