@@ -75,11 +75,22 @@ class Settings {
   */
   public static function query_args() {
     $post_types = self::get( 'wp_redisearch_post_types' );
+
     if ( isset( $post_types ) && !empty( $post_types ) ) {
       $post_types = array_keys( $post_types );
     } elseif ( !isset( $post_types ) || empty( $post_types ) ) {
       $post_types = array( 'post' );
     }
+
+    /**
+     * Modify indexable post types
+     * 
+     * @since 0.2.1
+     * @param array $post_types        Default terms list
+     * @return array $post_types       Modified taxobomy terms list
+     */
+    $post_types = apply_filters( 'wp_redisearch_indexable_post_types', $post_types );
+    
     return array(
 			'post_type'              => $post_types,
 			'post_status'            => array('publish'),
