@@ -252,16 +252,25 @@ class Redisearch_CLI extends WP_CLI_Command {
 			$offset = absint( $args['offset'] );
 		}
 
-		$post_type = Settings::get( 'wp_redisearch_post_types', 'post' );
+		$post_types = Settings::get( 'wp_redisearch_post_types', 'post' );
 
 		if ( ! empty( $args['post-type'] ) ) {
-			$post_type = explode( ',', $args['post-type'] );
-			$post_type = array_map( 'trim', $post_type );
-		} elseif ( isset( $post_type ) && !empty( $post_type ) ) {
-      $post_type = array_keys( $post_type );
-    } elseif ( !isset( $post_type ) || empty( $post_type ) ) {
-      $post_type = array( 'post' );
+			$post_types = explode( ',', $args['post-type'] );
+			$post_types = array_map( 'trim', $post_types );
+		} elseif ( isset( $post_types ) && !empty( $post_types ) ) {
+      $post_types = array_keys( $post_types );
+    } elseif ( !isset( $post_types ) || empty( $post_types ) ) {
+      $post_types = array( 'post' );
 		}
+
+    /**
+     * Modify indexable post types
+     * 
+     * @since 0.2.1
+     * @param array $post_types        Default terms list
+     * @return array $post_types       Modified taxobomy terms list
+     */
+    $post_types = apply_filters( 'wp_redisearch_indexable_post_types', $post_types );
 
 		$post_in = null;
 
@@ -284,7 +293,7 @@ class Redisearch_CLI extends WP_CLI_Command {
 		while ( true ) {
 
 			$default_args = Settings::query_args();
-			$default_args['post_type'] = $post_type;
+			$default_args['post_type'] = $post_types;
 			$default_args['posts_per_page'] = $posts_per_page;
 			$default_args['offset'] = $offset;
 	
