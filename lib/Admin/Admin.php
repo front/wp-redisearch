@@ -113,7 +113,7 @@ class Admin {
             .indexing-options{margin-top:20px;}
             .indexing-btn{position:relative;cursor: pointer}
             #indexingProgress {position: relative;background:#eee;margin-top:30px;height:20px;width: 100%;}
-            #indexBar {width: 1%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
+            #indexBar {width: 1%;max-width:100%;height: 100%;background-color: #0dbcac;transition: all linear 0.1s;}
             span#indexedStat {position: absolute;bottom: 0;right: 4px;line-height:20px;color: #000000;}
           </style>
         </div>
