@@ -56,6 +56,10 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 == Changelog ==
 
+= 0.2.1 =
+* Added: WooCommerce support added as Feature
+* Fixed: Return option values if empty string stores in database
+
 = 0.2.0 =
 * Added: WP-CLI support
 * Added: Register and activating of Features
