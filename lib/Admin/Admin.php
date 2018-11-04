@@ -169,6 +169,14 @@ EOT;
         'show_ui' => true,
       )
     );
+    /**
+     * We exclude product from indexable post types, since woocommerce support added via Features.
+     * 
+     * @since 0.2.1
+     */
+    if ( function_exists( 'array_diff' ) ) {
+      $post_types = array_diff( $post_types, array( 'product' ) );
+    }
     return $post_types;
   }
 
