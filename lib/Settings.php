@@ -56,6 +56,14 @@ class Settings {
   */
   public static function get( $option, $default = null ) {
     $option_value = get_option( $option, $default );
+    /**
+     * Sometimes, when user clicks on Save Changes without inserting value in option, its value stores as empty into database.
+     * So we need an extra condition to check if value is empty.
+     * 
+     * @since 0.2.1
+     */
+    $option_value = empty( $option_value ) ? $default : $option_value;
+    
     return $option_value;
   }
 
