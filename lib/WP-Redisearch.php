@@ -67,6 +67,14 @@ class WPRedisearch {
   private $search_query_posts = array();
 
   public function __construct() {
+    // First, initiate features
+    if ( !self::$redisearchException ) {
+      Features::init();
+      new LiveSearch;
+      new Synonym;
+      new WooCommerce;
+    }
+    
     $this->admin = new Admin;
     $this->wp_redisearch_handle_ajax_requests();
     $this->wp_redisearch_admin_notice();
@@ -77,10 +85,6 @@ class WPRedisearch {
       add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
       add_action( 'save_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
       
-      Features::init();
-      new LiveSearch;
-      new Synonym;
-      new WooCommerce;
     }
 
   }
