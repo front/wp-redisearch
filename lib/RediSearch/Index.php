@@ -75,7 +75,7 @@ class Index {
 		 * @param array Array 
 		 */
     $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
-    
+
     $meta_schema = array();
     
     if ( isset( $indexable_meta_keys ) && !empty( $indexable_meta_keys ) ) {
@@ -220,8 +220,10 @@ class Index {
     );
     
     $post_terms = apply_filters( 'wp_redisearch_prepared_terms', $this->prepare_terms( $post ), $post );
+
+    $prepared_meta = $this->prepare_meta( $post->ID );
     
-    $post_args = array_merge( $post_args, $post_terms );
+    $post_args = array_merge( $post_args, $post_terms, $prepared_meta );
 
 		$post_args = apply_filters( 'wp_redisearch_prepared_post_args', $post_args, $post );
 
@@ -273,6 +275,40 @@ class Index {
 
 		return $terms;
 	}
+
+  /**
+  * Prepare post meta.
+  * @since    0.2.1
+  * @param integer $post_id
+  * @return array $prepared_meta
+  */
+  public function prepare_meta( $post_id ) {
+    $post_meta = (array) get_post_meta( $post_id );
+    
+		if ( empty( $post_meta ) ) {
+      return array();
+    }
+    
+    $prepared_meta = array();
+    
+		/**
+		 * Filter index-able post meta
+		 * Allows for specifying public or private meta keys that may be indexed.
+		 * @since 0.2.0
+		 * @param array Array 
+		 */
+    $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
+
+		foreach( $post_meta as $key => $value ) {
+      if ( in_array( $key, $indexable_meta_keys ) ) {
+        $prepared_meta[] = $key;
+        $extracted_value = maybe_unserialize( $value[0] );
+        $prepared_meta[] = is_array( $extracted_value ) ? json_encode( maybe_unserialize( $value[0] ) ) : $extracted_value;
+			}
+		}
+
+		return $prepared_meta; 
+  }
 
   /**
   * Add to index or in other term, index items.
