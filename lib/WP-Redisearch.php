@@ -67,6 +67,7 @@ class WPRedisearch {
   private $search_query_posts = array();
 
   public function __construct() {
+    $this->wp_redisearch_admin_notice();
     // First, initiate features
     if ( !self::$redisearchException ) {
       Features::init();
@@ -77,7 +78,6 @@ class WPRedisearch {
     
     $this->admin = new Admin;
     $this->wp_redisearch_handle_ajax_requests();
-    $this->wp_redisearch_admin_notice();
     // Do the search
     if ( !self::$redisearchException ) {
       add_filter( 'posts_request', array( $this, 'wp_redisearch_posts_request' ), 10, 2 );
