@@ -41,8 +41,9 @@ class Redisearch_CLI extends WP_CLI_Command {
 		$this->_connect_check();
     
     try {
-      $client = Setup::connect();
-      $info = $client->rawCommand('FT.INFO', ['myIndex']);
+			$client = Setup::connect();
+			$index_name = Settings::indexName();
+      $info = $client->rawCommand('FT.INFO', [ $index_name ]);
 
 			WP_CLI::log( WP_CLI::colorize( '%G' . __( '===== Info =====', 'wp-redisearch' ) . '%N' ) );
 			foreach ($info as $key => $value) {
