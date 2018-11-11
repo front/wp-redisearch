@@ -215,7 +215,7 @@ EOT;
       'nonce'           => wp_create_nonce( 'wprds_dashboard_nonce' )
 		);
     wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
-    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/admin/css/admin.css', false, 20180914 );
+    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/admin/css/admin.css', false, WPRS_VERSION );
   }
 
   /**
