@@ -69,13 +69,13 @@ class WPRedisearch {
   public function __construct() {
     $this->wp_redisearch_admin_notice();
     // First, initiate features
-    if ( !self::$redisearchException ) {
+    if ( !self::$moduleException ) {
       Features::init();
       new LiveSearch;
       new Synonym;
       new WooCommerce;
     }
-    
+
     $this->admin = new Admin;
     $this->wp_redisearch_handle_ajax_requests();
     // Do the search
