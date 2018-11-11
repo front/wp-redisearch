@@ -69,7 +69,7 @@ class WPRedisearch {
   public function __construct() {
     $this->wp_redisearch_admin_notice();
     // First, initiate features
-    if ( !self::$moduleException ) {
+    if ( !self::$serverException && !self::$moduleException ) {
       Features::init();
       new LiveSearch;
       new Synonym;
