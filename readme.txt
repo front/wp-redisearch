@@ -32,7 +32,6 @@ And even more features will be added in upcoming versions soon.
 
 Some planned features are:
 
-*   WooCommerce support: RediSearch is a perfect choice for E-commerce websites.
 *   Binary documents indexing: Searching through binary files like pdf, word, powerpoint and ...
 *   Advanced search: Adding advanced search functionality.
 
@@ -59,12 +58,16 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 = 0.2.1 =
 * Added: WooCommerce support added as Feature
 * Fixed: Return option values if empty string stores in database
+* Fixed: Fix incorrect link to settings page
+* Fixed: Fix harcoded index name in WP-CLI INFO command
+* Added: filter hook 'wp_redisearch_indexable_temrs' to manipulate indexable terms list
+* Added: filter hook 'wp_redisearch_indexable_post_types' to manipulate indexable post types
 
 = 0.2.0 =
 * Added: WP-CLI support
 * Added: Register and activating of Features
 * Added: filter hook 'wp_redisearch_indexable_meta_keys' to add extra meta keys to the index
-* Added: filter hook 'wp_redisearch_indexable_meta_schema' to manupulate type of post meta fields (default is text)
+* Added: filter hook 'wp_redisearch_indexable_meta_schema' to manipulate type of post meta fields (default is text)
 * Added: action hook 'wp_redisearch_after_post_indexed' fires after posts indexed from the main index command
 * Added: action hook 'wp_redisearch_after_post_published' fires after a post have been published
 * Added: action hook 'wp_redisearch_after_post_deleted' fires after a post have been deleted
