@@ -14,12 +14,13 @@ Here you find a list of RediSearch features included in the plugin:
 
 **Synonyms**: RediSearch supports synonyms, that is searching for synonyms words defined by the synonym data structure.
 
-And even more features will be added in upcoming versions soon.
+### Existing features
 
-Some planned features are:
+* WooCommerce: Index and search through most of existing products meta data.
+* Document: Index content of binary files such as pdf, word, excel and powerpoint.
+* Synonym: Adding synonym groups is simple. Just add each comma separated group on a new line in synonym settings and done.
+* Live search (aka autosuggest): Search as you type regardless of misspelling.
 
-*   Binary documents indexing: Searching through binary files like pdf, word, powerpoint and ...
-*   Advanced search: Adding advanced search functionality.
 
 ### Installation
 1. First, you will need to properly install and configure [Redis](https://redis.io/topics/quickstart) and [RediSearch](https://oss.redislabs.com/redisearch/Quick_Start/).
@@ -41,6 +42,13 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 ### Changelog
 
+##### 0.2.2
+* **Added**: Document feature for indexing binary file contents
+* **Added**: Filter hook 'wp_redisearch_indexable_post_status' to manipulate indexable post status
+* **Added**: Filter hook 'wp_redisearch_before_admin_wp_query' Applies to main query args. This is mainly for showing number of indexable posts
+* **Added**: Filter hook 'wp_redisearch_after_admin_wp_query' Applies after main query and recieves args and the $query object. This is mainly for showing number of indexable posts
+* **Added**: Filter hook 'wp_redisearch_before_index_wp_query' Applies to main query args. This hook is for manipulating arguments for indexing process
+* **Added**: Filter hook 'wp_redisearch_after_index_wp_query' Applies after main query and recieves args and the $query object. This hook is for manipulating $query object used for indexing posts
 
 ##### 0.2.1
 * **Added**: WooCommerce support added as Feature
