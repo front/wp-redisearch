@@ -19,6 +19,10 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         array (
             'Predis\\' => 7,
         ),
+        'A' => 
+        array (
+            'Asika\\' => 6,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -34,9 +38,14 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
+        'Asika\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/asika/pdf2text/src',
+        ),
     );
 
     public static $classMap = array (
+        'Asika\\Pdf2text' => __DIR__ . '/..' . '/asika/pdf2text/src/Pdf2text.php',
         'Predis\\Autoloader' => __DIR__ . '/..' . '/predis/predis/src/Autoloader.php',
         'Predis\\Client' => __DIR__ . '/..' . '/predis/predis/src/Client.php',
         'Predis\\ClientContextInterface' => __DIR__ . '/..' . '/predis/predis/src/ClientContextInterface.php',
@@ -324,6 +333,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'WPRedisearch\\Features\\Document' => __DIR__ . '/../..' . '/lib/Features/Document.php',
         'WPRedisearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/lib/Features/LiveSearch/LiveSearch.php',
         'WPRedisearch\\Features\\Synonym' => __DIR__ . '/../..' . '/lib/Features/Synonym.php',
+        'WPRedisearch\\Features\\WooCommerce' => __DIR__ . '/../..' . '/lib/Features/Woocommerce.php',
         'WPRedisearch\\RediSearch\\Index' => __DIR__ . '/../..' . '/lib/RediSearch/Index.php',
         'WPRedisearch\\RediSearch\\Search' => __DIR__ . '/../..' . '/lib/RediSearch/Search.php',
         'WPRedisearch\\RediSearch\\Setup' => __DIR__ . '/../..' . '/lib/RediSearch/Setup.php',

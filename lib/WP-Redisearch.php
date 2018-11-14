@@ -11,6 +11,7 @@ use WPRedisearch\Features;
 use WPRedisearch\Features\Synonym;
 use WPRedisearch\Features\LiveSearch;
 use WPRedisearch\Features\WooCommerce;
+use WPRedisearch\Features\Document;
 
 /**
  * WPRedisearch Class.
@@ -74,6 +75,7 @@ class WPRedisearch {
       new LiveSearch;
       new Synonym;
       new WooCommerce;
+      new Document;
     }
 
     $this->admin = new Admin;
@@ -272,7 +274,28 @@ class WPRedisearch {
       'orderby'       => 'post__in',
       'post__in'      => $search_results
     );
+
+    /**
+     * filter wp_redisearch_before_search_wp_query
+     * Fires before wp_query. This is useful if you want for some reasons, manipulate WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args             Array of arguments passed to WP_Query
+     * @return array $args            Array of manipulated arguments
+		 */
+    $args = apply_filters( 'wp_redisearch_before_search_wp_query', $args );
+    
     $searched_posts = new \WP_Query( $args );
+    /**
+     * filter wp_redisearch_after_search_wp_query
+     * Fires after wp_query. This is useful if you want to manipulate results of WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args               Array of arguments passed to WP_Query
+     * @param object $searched_posts    Result object of WP_Query
+     */
+    $query = apply_filters( 'wp_redisearch_after_search_wp_query', $searched_posts, $args );
+
     $this->search_query_posts = $searched_posts->posts;
     $query->found_posts = $search_count;
     $query->redisearch_success = true;

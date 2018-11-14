@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Asika\\Pdf2text' => $vendorDir . '/asika/pdf2text/src/Pdf2text.php',
     'Predis\\Autoloader' => $vendorDir . '/predis/predis/src/Autoloader.php',
     'Predis\\Client' => $vendorDir . '/predis/predis/src/Client.php',
     'Predis\\ClientContextInterface' => $vendorDir . '/predis/predis/src/ClientContextInterface.php',
@@ -293,6 +294,7 @@ return array(
     'WPRedisearch\\Features\\Document' => $baseDir . '/lib/Features/Document.php',
     'WPRedisearch\\Features\\LiveSearch' => $baseDir . '/lib/Features/LiveSearch/LiveSearch.php',
     'WPRedisearch\\Features\\Synonym' => $baseDir . '/lib/Features/Synonym.php',
+    'WPRedisearch\\Features\\WooCommerce' => $baseDir . '/lib/Features/Woocommerce.php',
     'WPRedisearch\\RediSearch\\Index' => $baseDir . '/lib/RediSearch/Index.php',
     'WPRedisearch\\RediSearch\\Search' => $baseDir . '/lib/RediSearch/Search.php',
     'WPRedisearch\\RediSearch\\Setup' => $baseDir . '/lib/RediSearch/Setup.php',

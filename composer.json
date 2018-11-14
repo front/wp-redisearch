@@ -22,6 +22,7 @@
     "minimum-stability": "dev",
     "require": {
         "predis/predis": "^1.1",
-        "foadyousefi/seven-fields": "dev-master"
+        "foadyousefi/seven-fields": "dev-master",
+        "asika/pdf2text": "dev-master"
     }
 }

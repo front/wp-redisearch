@@ -4,8 +4,41 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9278beb38ee25d9494e2ce907c9b6708",
+    "content-hash": "2f7b841344612f894d610dfc8e0d6d8c",
     "packages": [
+        {
+            "name": "asika/pdf2text",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/asika32764/php-pdf-2-text.git",
+                "reference": "a14ea95695a277e385dbc03caeddb91c5e10319f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/asika32764/php-pdf-2-text/zipball/a14ea95695a277e385dbc03caeddb91c5e10319f",
+                "reference": "a14ea95695a277e385dbc03caeddb91c5e10319f",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Asika\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL v2"
+            ],
+            "authors": [
+                {
+                    "name": "Simon Asika",
+                    "email": "asika32764@gmail.com"
+                }
+            ],
+            "description": "Simple PHP PDF to text class.",
+            "time": "2016-11-02T03:47:29+00:00"
+        },
         {
             "name": "foadyousefi/seven-fields",
             "version": "dev-master",
@@ -99,7 +132,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "foadyousefi/seven-fields": 20
+        "foadyousefi/seven-fields": 20,
+        "asika/pdf2text": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
