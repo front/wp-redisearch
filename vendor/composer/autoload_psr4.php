@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'WPRedisearch\\' => array($baseDir . '/lib'),
+    'Vaites\\ApacheTika\\' => array($vendorDir . '/vaites/php-apache-tika/src'),
     'SevenFields\\' => array($vendorDir . '/foadyousefi/seven-fields/src'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Asika\\' => array($vendorDir . '/asika/pdf2text/src'),

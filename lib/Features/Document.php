@@ -7,6 +7,7 @@ use WPRedisearch\Settings;
 use WPRedisearch\Features;
 use Asika\Pdf2text;
 use WPRedisearch\Utils\MsOfficeParser;
+use Vaites\ApacheTika\Client as TikaClient;
 
 class Document {
 
@@ -164,6 +165,10 @@ class Document {
   public function feature_desc () {
     ?>
       <p><?php esc_html_e( 'Indexes text inside popular document file types, and adds those files types to search results. Supported file types are: pdf, ppt, pptx, doc, docx, xls, xlsx.', 'wp-redisearch' ) ?></p>
+      <p><?php 
+      echo sprintf( __( 'For faster file parsing and cleaner indexes, highly recommend to install %s on the server.', 'wp-redisearch' ), '<a href="https://tika.apache.org/index.html" target="_blank">Apache Tika</a>' )
+      ?></p>
+      
     <?php
   }
 
@@ -174,6 +179,9 @@ class Document {
 	 * @since 0.2.2
 	 */
   public function feature_options () {
+    \SevenFields\Fields\Fields::add( 'header', null, __( 'Apache Tika', 'wp-redisearch' ) );
+    \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_tika_host',  __( 'Apache Tika host', 'wp-redisearch' ), __( 'Default value is 127.0.0.1', 'wp-redisearch') );
+    \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_tika_port',  __( 'Apache Tika post number', 'wp-redisearch' ), __( 'The default port number usually is 9998', 'wp-redisearch' ) );
   }
 
   /**
@@ -198,19 +206,34 @@ class Document {
       $file_name = get_attached_file( $post->ID );
 
       if ( $wp_filesystem->exists( $file_name, false, 'f' ) ) {
+        $file_content = '';
         /**
          * Parse file contents base on their file mime_type
+         * 
+         * First, we will try to use Apache Tika rest server, a toolkit to extract file content from virtually any file types.
+         * Apache Tika is faster to read files and output file is way cleaner than pure php method.
          */
-        // If pdf attachment is pdf
-        if ( $post->post_mime_type == 'application/pdf'  ) {
-          $pdf2text = new \Asika\Pdf2text;
-          $file_content = $pdf2text->decode( $file_name );
-        // Or if attachment is word, excel or powepoint
-        } elseif ( in_array( $post->post_mime_type, array( 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ) ) ) {
-          $file_content = MsOfficeParser::getText( $file_name );
-        // Or if its another allowed mime_type
-        } else {
-          $file_content = $wp_filesystem->get_contents( $file_name );
+        try {
+          $tika_host = Settings::get( 'wp_redisearch_tika_host', '127.0.0.1' );
+          $tika_port = Settings::get( 'wp_redisearch_tika_port', 9998 );
+          $tika_client = TikaClient::make( $tika_host, $tika_port );
+          $file_content = $tika_client->getText( $file_name );
+          $file_content = str_replace(array("\r", "\\n"), '', $file_content);
+        } catch ( \Exception $e ) {
+        }
+        // If Tika rest server is down or for some reason was not able to do the tricks, we try php methods.
+        if ( !$file_content ) {
+          // If pdf attachment is pdf
+          if ( $post->post_mime_type == 'application/pdf'  ) {
+            $pdf2text = new \Asika\Pdf2text;
+            $file_content = $pdf2text->decode( $file_name );
+          // Or if attachment is word, excel or powepoint
+          } elseif ( in_array( $post->post_mime_type, array( 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ) ) ) {
+            $file_content = MsOfficeParser::getText( $file_name );
+          // Or if its another allowed mime_type
+          } else {
+            $file_content = $wp_filesystem->get_contents( $file_name );
+          }
         }
         $post_args = array_merge( $post_args, array( 'document', $file_content ) );
       }

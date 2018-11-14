@@ -1,4 +1,5 @@
 .DS_Store
+bin
 node_modules
 vendor/predis/predis/.git
 vendor/predis/predis/tests

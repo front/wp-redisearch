@@ -1,0 +1,20 @@
+{
+    "name": "asika/pdf2text",
+    "description": "Simple PHP PDF to text class.",
+    "license": "GPL v2",
+    "authors": [
+        {
+            "name": "Simon Asika",
+            "email": "asika32764@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+
+    },
+	"autoload": {
+		"psr-4": {
+			"Asika\\" : "src"
+		}
+	}
+}

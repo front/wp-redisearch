@@ -11,6 +11,10 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         array (
             'WPRedisearch\\' => 13,
         ),
+        'V' => 
+        array (
+            'Vaites\\ApacheTika\\' => 18,
+        ),
         'S' => 
         array (
             'SevenFields\\' => 12,
@@ -29,6 +33,10 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'WPRedisearch\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib',
+        ),
+        'Vaites\\ApacheTika\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vaites/php-apache-tika/src',
         ),
         'SevenFields\\' => 
         array (
@@ -327,6 +335,12 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'SevenFields\\Fields\\Select' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Select.php',
         'SevenFields\\Fields\\Text' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Text.php',
         'SevenFields\\Fields\\Textarea' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Textarea.php',
+        'Vaites\\ApacheTika\\Client' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Client.php',
+        'Vaites\\ApacheTika\\Clients\\CLIClient' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Clients/CLIClient.php',
+        'Vaites\\ApacheTika\\Clients\\WebClient' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Clients/WebClient.php',
+        'Vaites\\ApacheTika\\Metadata\\DocumentMetadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/DocumentMetadata.php',
+        'Vaites\\ApacheTika\\Metadata\\ImageMetadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/ImageMetadata.php',
+        'Vaites\\ApacheTika\\Metadata\\Metadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/Metadata.php',
         'WPRedisearch\\Admin' => __DIR__ . '/../..' . '/lib/Admin/Admin.php',
         'WPRedisearch\\Feature' => __DIR__ . '/../..' . '/lib/Feature.php',
         'WPRedisearch\\Features' => __DIR__ . '/../..' . '/lib/Features.php',
@@ -341,6 +355,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'WPRedisearch\\RedisRaw\\PredisAdapter' => __DIR__ . '/../..' . '/lib/RedisRaw/PredisAdapter.php',
         'WPRedisearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/../..' . '/lib/RedisRaw/RedisRawClientInterface.php',
         'WPRedisearch\\Settings' => __DIR__ . '/../..' . '/lib/Settings.php',
+        'WPRedisearch\\Utils\\MsOfficeParser' => __DIR__ . '/../..' . '/lib/Utils/MsOfficeParser.php',
         'WPRedisearch\\WPRedisearch' => __DIR__ . '/../..' . '/lib/WP-Redisearch.php',
     );
 
