@@ -4,7 +4,7 @@ Plugin Name: RediSearch
 Version: 0.2.1
 Description: Replace Wordpress search by RediSearch.
 Author: Foad Yousefi
-Author URI: https://www.wp-redisearch.com
+Author URI: https://github.com/7kmCo/wp-redisearch
 */
 
 if ( ! defined( 'WPINC' ) ) {
