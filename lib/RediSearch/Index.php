@@ -136,7 +136,28 @@ class Index {
 
     $args = apply_filters( 'wp_redisearch_posts_args', $default_args);
 
+    /**
+     * filter wp_redisearch_before_index_wp_query
+     * Fires before wp_query. This is useful if you want for some reasons, manipulate WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args             Array of arguments passed to WP_Query
+     * @return array $args            Array of manipulated arguments
+		 */
+    $args = apply_filters( 'wp_redisearch_before_index_wp_query', $args );
+
     $query = new \WP_Query( $args );
+
+    /**
+     * filter wp_redisearch_after_index_wp_query
+     * Fires after wp_query. This is useful if you want to manipulate results of WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args            Array of arguments passed to WP_Query
+     * @param object $query          Result object of WP_Query
+		 */
+    $query = apply_filters( 'wp_redisearch_after_index_wp_query', $query, $args );
+
     $index_meta['found_posts'] = $query->found_posts;
 
     if ( $index_meta['offset'] >= $index_meta['found_posts'] ) {
