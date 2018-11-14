@@ -80,7 +80,28 @@ class Admin {
     $default_args['posts_per_page'] = -1;
     $args = apply_filters( 'wp_redisearch_posts_args', $default_args);
 
+    /**
+     * filter wp_redisearch_before_admin_wp_query
+     * Fires before wp_query. This is useful if you want for some reasons, manipulate WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args             Array of arguments passed to WP_Query
+     * @return array $args            Array of manipulated arguments
+		 */
+    $args = apply_filters( 'wp_redisearch_before_admin_wp_query', $args );
+    
     $query = new \WP_Query( $args );
+
+    /**
+     * filter wp_redisearch_after_admin_wp_query
+     * Fires after wp_query. This is useful if you want to manipulate results of WP_Query
+     * 
+     * @since 0.2.2
+     * @param array $args            Array of arguments passed to WP_Query
+     * @param object $query          Result object of WP_Query
+		 */
+    $query = apply_filters( 'wp_redisearch_after_admin_wp_query', $query, $args );
+    
     $num_posts = $query->found_posts;
 
     $index_options = __( 'Indexing options:', 'wp-redisearch' );
@@ -176,6 +197,14 @@ EOT;
      */
     if ( function_exists( 'array_diff' ) ) {
       $post_types = array_diff( $post_types, array( 'product' ) );
+    }
+    /**
+     * We exclude attachment from indexable post types, since document support added via Features.
+     * 
+     * @since 0.2.1
+     */
+    if ( function_exists( 'array_diff' ) ) {
+      $post_types = array_diff( $post_types, array( 'attachment' ) );
     }
     return $post_types;
   }
