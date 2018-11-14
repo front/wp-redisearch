@@ -87,17 +87,26 @@ class Settings {
      * 
      * @since 0.2.1
      * @param array $post_types        Default terms list
-     * @return array $post_types       Modified taxobomy terms list
+     * @return array $post_types       Modified post types list
      */
     $post_types = apply_filters( 'wp_redisearch_indexable_post_types', $post_types );
     
+    /**
+     * Allowed post status to be indexed and searched
+     * 
+     * @since 0.2.2
+     * @param array $post_status       Default post status
+     * @return array $post_status      Modified post status
+     */
+    $post_status = apply_filters( 'wp_redisearch_indexable_post_status', array( 'publish' ) );
+    
     return array(
 			'post_type'              => $post_types,
-			'post_status'            => array('publish'),
+			'post_status'            => $post_status,
 			'ignore_sticky_posts'    => true,
 			'orderby'                => 'ID',
 			'order'                  => 'DESC',
-			'fields'                 => 'all',
+      'fields'                 => 'all',
     );
   }
 
