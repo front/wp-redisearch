@@ -4,9 +4,9 @@ Author URI: https://7km.co
 Plugin URI: https://github.com/7kmCo/wp-redisearch
 Tags: search, redisearch, redis, fuzzy, aggregation, searching, autosuggest, suggest, advanced search, woocommerce
 Requires at least: 4.6
-Tested up to: 5
-Stable tag: 0.2.1
-Requires PHP: 5.2.4
+Tested up to: 5.0
+Stable tag: 0.2.2
+Requires PHP: 5.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,7 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 == Changelog ==
 
-== 0.2.2 ==
+= 0.2.2 =
 * Added: Document feature for indexing binary file contents
 * Added: Filter hook 'wp_redisearch_indexable_post_status' to manipulate indexable post status
 * Added: Filter hook 'wp_redisearch_before_admin_wp_query' Applies to main query args. This is mainly for showing number of indexable posts
