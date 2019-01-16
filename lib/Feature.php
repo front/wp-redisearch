@@ -119,6 +119,17 @@ class Feature {
 			$status = call_user_func( $this->requirements_cb, $this );
 		}
 
+		/**
+		 * If feature is active but requirements are not satisfied
+		 * deactivate the feature.
+		 * This is usefull in case for example, for some reasons WooCommerce plugin being deactivated.
+		 * 
+		 * @since 0.2.3
+		 */
+		if ( $status->code == 1 && $this->is_active() ) {
+		 	Features::init()->update_feature( $this->slug, array( 'active' => false ) );
+		}
+
 		return apply_filters( 'wp_redisearch_feature_requirements_status', $status, $this );
   }
   
