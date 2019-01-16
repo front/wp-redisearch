@@ -29,6 +29,14 @@ Here you find a list of RediSearch features included in the plugin:
 4. In RediSearch dashboard page, click on Index button.
 5. Let you visitors enjoy.
 
+Optionaly, you can pass settings in your wp-config.php file like following. If you are using [Redis Object Cache](https://wordpress.org/plugins/redis-cache/) plugin, these settings may already exist.
+
+```
+define('WP_REDIS_HOST', '127.0.0.1');
+define('WP_REDIS_PORT', '6379');
+define('WP_REDIS_PASSWORD', 'your-password');
+```
+
 
 ### Frequently Asked Questions
 
@@ -41,6 +49,10 @@ Although mySql is a great database to storing relational data, It acts very poor
 Yes, ElasticSearch is a great search engine and it has very good performance compared to mySql. But RediSearch has almost 5 to 10 times better performance and also its way easier to create index, sync your data and send query requests.
 
 ### Changelog
+
+##### 0.2.3
+* **Added**: Added password option.
+* **Added**: Ability to set redis server configurations in wp-config.php file.
 
 ##### 0.2.2
 * **Added**: Document feature for indexing binary file contents
