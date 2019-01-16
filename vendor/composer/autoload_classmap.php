@@ -285,6 +285,7 @@ return array(
     'SevenFields\\Fields\\Header' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Header.php',
     'SevenFields\\Fields\\Html' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Html.php',
     'SevenFields\\Fields\\Multiselect' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Multiselect.php',
+    'SevenFields\\Fields\\Password' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Password.php',
     'SevenFields\\Fields\\Select' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Select.php',
     'SevenFields\\Fields\\Text' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Text.php',
     'SevenFields\\Fields\\Textarea' => $vendorDir . '/foadyousefi/seven-fields/src/Fields/Textarea.php',

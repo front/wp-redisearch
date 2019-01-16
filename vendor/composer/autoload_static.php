@@ -332,6 +332,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'SevenFields\\Fields\\Header' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Header.php',
         'SevenFields\\Fields\\Html' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Html.php',
         'SevenFields\\Fields\\Multiselect' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Multiselect.php',
+        'SevenFields\\Fields\\Password' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Password.php',
         'SevenFields\\Fields\\Select' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Select.php',
         'SevenFields\\Fields\\Text' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Text.php',
         'SevenFields\\Fields\\Textarea' => __DIR__ . '/..' . '/foadyousefi/seven-fields/src/Fields/Textarea.php',
