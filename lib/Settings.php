@@ -33,7 +33,12 @@ class Settings {
   * @return string    $redis_server
   */
   public static function RedisServer() {
-    $redis_server = get_option( 'wp_redisearch_server' );
+    /**
+     * First we try to get the WP_REDIS_HOST option from wp-config.php 
+     * @since 0.2.3
+     */
+    $redis_server = ( defined( 'WP_REDIS_HOST' ) ) ? WP_REDIS_HOST : get_option( 'wp_redisearch_server' );
+    
     return isset( $redis_server ) && !empty( $redis_server ) ? $redis_server : '127.0.0.1';
   }
 
@@ -44,7 +49,12 @@ class Settings {
   * @return string    $redis_port
   */
   public static function RedisPort() {
-    $redis_port = get_option( 'wp_redisearch_port' );
+    /**
+     * First we try to get the WP_REDIS_PORT option from wp-config.php 
+     * @since 0.2.3
+     */
+    $redis_port = ( defined( 'WP_REDIS_PORT' ) ) ? WP_REDIS_PORT : get_option( 'wp_redisearch_port' );
+    
     return isset( $redis_port ) && !empty( $redis_port ) ? $redis_port : '6379';
   }
 
