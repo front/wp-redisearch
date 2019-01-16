@@ -154,6 +154,7 @@ EOT;
     Fields::add('header', null, __( 'Redis server configurations', 'wp-redisearch' ));
     Fields::add('text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ), __( 'Redis server url, usually it is 127.0.0.1', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ), __( 'Redis port number, by default it is 6379', 'wp-redisearch' ) );
+    Fields::add( 'password', 'wp_redisearch_password', __( 'Redis server password', 'wp-redisearch' ), __( 'If your redis server is not password protected, leave this field blank', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) );
   }
 
