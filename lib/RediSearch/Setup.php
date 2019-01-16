@@ -24,8 +24,9 @@ class Setup {
   public static function connect() {
     $redis_server = Settings::RedisServer();
     $redis_port = Settings::RedisPort();
+    $redis_password = Settings::RedisPassword();
     // Connect to server
-    $client = ( new PredisAdapter() )->connect( $redis_server, $redis_port );
+    $client = ( new PredisAdapter() )->connect( $redis_server, $redis_port, 0, $redis_password );
     return $client;
   }
   
