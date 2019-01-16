@@ -44,11 +44,9 @@ __Synonyms__: RediSearch supports synonyms, that is searching for synonyms words
 
 Optionaly, you can pass settings in your wp-config.php file like following. If you are using [Redis Object Cache](https://wordpress.org/plugins/redis-cache/) plugin, these settings may already exist.
 
-```
 define('WP_REDIS_HOST', '127.0.0.1');
 define('WP_REDIS_PORT', '6379');
 define('WP_REDIS_PASSWORD', 'your-password');
-```
 
 == Frequently Asked Questions ==
 
