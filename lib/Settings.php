@@ -49,6 +49,22 @@ class Settings {
   }
 
   /**
+  * Return redis password.
+  * @since    0.2.3
+  * @param
+  * @return string    $redis_password
+  */
+  public static function RedisPassword() {
+    /**
+     * First we try to get the WP_REDIS_PASSWORD option from wp-config.php 
+     * @since 0.2.3
+     */
+    $redis_password = ( defined( 'WP_REDIS_PASSWORD' ) ) ? WP_REDIS_PASSWORD : get_option( 'wp_redisearch_password' );
+
+    return isset( $redis_password ) && !empty( $redis_password ) ? $redis_password : null;
+  }
+
+  /**
   * Get options
   * @since    0.1.0
   * @param
