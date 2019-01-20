@@ -239,13 +239,13 @@ EOT;
   * @return
   */
   public function wp_redisearch_enqueue_scripts() {
-    wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'lib/admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
+    wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'lib/Admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
     $localized_data = array(
       'ajaxUrl' 				=> admin_url( 'admin-ajax.php' ),
       'nonce'           => wp_create_nonce( 'wprds_dashboard_nonce' )
 		);
     wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
-    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/admin/css/admin.css', false, WPRS_VERSION );
+    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/Admin/css/admin.css', false, WPRS_VERSION );
   }
 
   /**
