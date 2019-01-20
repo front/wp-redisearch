@@ -50,6 +50,9 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 ### Changelog
 
+##### 0.2.4
+* **Fix**: Fix admin js and css files enqueue directory name case issue
+
 ##### 0.2.3
 * **Added**: Added password option.
 * **Added**: Ability to set redis server configurations in wp-config.php file.
