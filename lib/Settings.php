@@ -13,8 +13,12 @@ class Settings {
   * @return string    $index_name
   */
   public static function indexName() {
-    $index_name = get_option( 'wp_redisearch_index_name' );
-
+    /**
+     * First we try to get the WP_REDIS_INDEX_NAME option from wp-config.php
+     * @since 0.2.5
+     */
+    $index_name = ( defined( 'WP_REDIS_INDEX_NAME' ) ) ? WP_REDIS_INDEX_NAME : get_option( 'wp_redisearch_index_name' );
+    
     if ( !isset( $index_name) || empty( $index_name ) ) {
       $site_url = get_bloginfo('wpurl');
       $site_url = preg_replace('/^https?:\/\//m', '', $site_url);
