@@ -47,6 +47,7 @@ Optionaly, you can pass settings in your wp-config.php file like following. If y
 define('WP_REDIS_HOST', '127.0.0.1');
 define('WP_REDIS_PORT', '6379');
 define('WP_REDIS_PASSWORD', 'your-password');
+define('WP_REDIS_INDEX_NAME', 'indexName');
 
 == Frequently Asked Questions ==
 
@@ -59,6 +60,12 @@ Although mySql is a great database to storing relational data, It acts very poor
 Yes, ElasticSearch is a great search engine and it has very good performance compared to mySql. But RediSearch has almost 5 to 10 times better performance and also its way easier to create index, sync your data and send query requests.
 
 == Changelog ==
+
+= 0.2.5 =
+* Added: Get index name option from wp-config
+* Added: Option for disabling stop words
+* Added: Adding a comma separated and user defined list of stop words
+* Fixed: Make search fields parent elements position to 'relative' so auto suggestion will appear in correct place
 
 = 0.2.4 =
 * Fix: Fix admin js and css files enqueue directory name case issue
