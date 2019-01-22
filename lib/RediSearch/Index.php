@@ -99,7 +99,30 @@ class Index {
         $terms_schema[] = [$term, 'TAG'];
       }
     }
-    $schema = array_merge( [$index_name, 'SCHEMA'], $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema, ...$meta_schema );
+
+    $schema = array( $index_name );
+    /**
+     * Stop words support.
+     * If disabled from settings page, then we will add no stop words.
+     * @since 0.2.5
+     */
+    $stop_words_disabled = Settings::get( 'wp_redisearch_disable_stop_words', false );
+    if ( $stop_words_disabled ) {
+      $schema = array_merge( $schema, array( 'STOPWORDS', 0 ) );
+    } else {
+      $stop_words_list = Settings::get( 'wp_redisearch_stop_words', null );
+      
+      if ( isset( $stop_words_list ) && $stop_words_list != null ) {
+        $stop_words_arr = explode( ',', $stop_words_list);
+        $stop_words_arr = array_map( 'trim', $stop_words_arr );
+        $stop_words_count = count( $stop_words_arr );
+        if ( $stop_words_count != 0 ) {
+          $schema = array_merge( $schema, array( 'STOPWORDS', $stop_words_count ), $stop_words_arr );
+        }
+      }
+    }
+
+    $schema = array_merge( $schema, array( 'SCHEMA' ), $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema, ...$meta_schema );
 
     $this->index = $this->client->rawCommand('FT.CREATE', $schema);
 
