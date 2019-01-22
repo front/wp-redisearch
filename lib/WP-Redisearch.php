@@ -291,15 +291,17 @@ class WPRedisearch {
      * Fires after wp_query. This is useful if you want to manipulate results of WP_Query
      * 
      * @since 0.2.2
+     * @param object $query             WP_Query
      * @param array $args               Array of arguments passed to WP_Query
      * @param object $searched_posts    Result object of WP_Query
      */
-    $query = apply_filters( 'wp_redisearch_after_search_wp_query', $searched_posts, $args );
-
+    $query = apply_filters( 'wp_redisearch_after_search_wp_query', $query, $searched_posts, $args );
+    
     $this->search_query_posts = $searched_posts->posts;
     $query->found_posts = $search_count;
     $query->redisearch_success = true;
     $query->max_num_pages = ceil( $search_count / $query->get( 'posts_per_page' ) );
+
     
     return "SELECT * FROM $wpdb->posts WHERE 1=0";
   }
