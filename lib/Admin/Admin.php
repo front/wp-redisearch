@@ -173,6 +173,9 @@ EOT;
     Fields::add( 'header', null, 'What to be indexed' );
     Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::post_types() );
     Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::get_terms() );
+    Fields::add( 'header', null, 'Stop-words' );
+    Fields::add( 'checkbox', 'wp_redisearch_disable_stop_words', __( 'Disable stop words support. (Not recommended)', 'wp-redisearch' ), __( 'If this checkbox checked, no any words will be discarded from being indexed.', 'wp-redisearch') );
+    Fields::add( 'textarea', 'wp_redisearch_stop_words', __( 'A list of comma separated stop-words.', 'wp-redisearch' ), __('RediSearch support stop-words out of the box, but the list of default stop-words and languages, are limited. <br />Here you can add a list of stop-words in your language.<br />Just remember after editing this list, only posts published after this setting will be affected. So re-indexing after changing this list is highly recommended. If you leave this blank, RediSearch will fall back to default wtop-words.', 'wp-redisearch' ) );
     // In case we need to extend option fields.
     do_action( 'wp_redisearch_settings_indexing_fields' );    
   }
