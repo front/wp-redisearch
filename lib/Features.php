@@ -44,7 +44,7 @@ class Features {
 	 *
 	 * @since 0.2.0
 	 */
-	public static function wp_redisearch_save_feature() {
+	public function wp_redisearch_save_feature() {
 		if ( empty( $_POST['feature'] ) || empty( $_POST['settings'] ) || ! check_ajax_referer( 'wprds_dashboard_nonce', 'nonce', false ) ) {
 			wp_send_json_error();
 			exit;
