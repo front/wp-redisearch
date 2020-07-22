@@ -51,6 +51,9 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 ### Changelog
 
+##### 0.2.6
+* **FIXED**: Fix a bug preventing saving og feature settings.
+
 ##### 0.2.5
 * **Added**: Get index name option from wp-config
 * **Added**: Option for disabling stop words
