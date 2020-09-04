@@ -23,7 +23,7 @@
     "babel-preset-minify": "^0.4.3",
     "babel-watch": "^2.0.7",
     "concurrently": "^3.5.1",
-    "node-sass": "^4.9.0",
+    "node-sass": "^4.13.1",
     "postcss-cli": "^5.0.0"
   },
   "dependencies": {}
