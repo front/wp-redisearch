@@ -4,13 +4,13 @@
   "description": "Replace Wordpress search with Redisearch",
   "scripts": {
     "styles:compile-admin": "node-sass -w assets/scss/admin.scss -o assets/scss/",
-    "styles:prefix-admin": "postcss assets/scss/admin.css -u autoprefixer -b \"last 2 versions\" --no-map -o lib/Admin/css/admin.css -w",
+    "styles:prefix-admin": "postcss assets/scss/admin.css -u autoprefixer -b \"last 2 versions\" --no-map -o src/Admin/css/admin.css -w",
     "styles:admin": "concurrently \"npm run styles:compile-admin\" \"npm run styles:prefix-admin\"",
     "styles:compile-public": "node-sass -w assets/scss/public.scss -o assets/scss/",
-    "styles:prefix-public": "postcss assets/scss/public.css --use autoprefixer -b \"last 2 versions\" --no-map -o lib/public/css/wp-redisearch.css -w",
+    "styles:prefix-public": "postcss assets/scss/public.css --use autoprefixer -b \"last 2 versions\" --no-map -o src/public/css/wp-redisearch.css -w",
     "styles:public": "concurrently \"npm run styles:compile-public\" \"npm run styles:prefix-public\"",
-    "babel:admin": "babel --presets minify assets/scripts/admin.js -o lib/Admin/js/admin.js",
-    "babel:public": "babel --presets minify assets/scripts/public.js -o lib/public/js/wp-redisearch.js"
+    "babel:admin": "babel --presets minify assets/scripts/admin.js -o src/Admin/js/admin.js",
+    "babel:public": "babel --presets minify assets/scripts/public.js -o src/public/js/wp-redisearch.js"
   },
   "author": "Foad Yousefi",
   "license": "GPL",

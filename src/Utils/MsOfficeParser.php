@@ -1,6 +1,6 @@
 <?php
 
-namespace WPRedisearch\Utils;
+namespace WpRediSearch\Utils;
 
 /*
 * this class is used to convert any doc,docx file to simple text format.

@@ -1,15 +1,14 @@
 <?php
-
-namespace WPRedisearch;
+namespace WpRediSearch;
 
 use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
 
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
-use WPRedisearch\WPRedisearch;
-use WPRedisearch\RediSearch\Index;
-use WPRedisearch\RediSearch\Setup;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
+use WpRediSearch\WpRediSearch;
+use WpRediSearch\RediSearch\Index;
+use WpRediSearch\RediSearch\Setup;
 
 class Admin {
 
@@ -107,9 +106,9 @@ class Admin {
     $index_options = __( 'Indexing options:', 'wp-redisearch' );
     $index_btn = __( 'Index posts', 'wp-redisearch' );
     $num_docs = 0;
-    if ( isset( WPRedisearch::$indexInfo ) && gettype( WPRedisearch::$indexInfo ) == 'array' ) {
-      $num_docs_offset = array_search( 'num_docs', WPRedisearch::$indexInfo ) + 1;
-      $num_docs = WPRedisearch::$indexInfo[$num_docs_offset];
+    if ( isset( WpRediSearch::$indexInfo ) && gettype( WpRediSearch::$indexInfo ) == 'array' ) {
+      $num_docs_offset = array_search( 'num_docs', WpRediSearch::$indexInfo ) + 1;
+      $num_docs = WpRediSearch::$indexInfo[$num_docs_offset];
     }
     
     $status_html = <<<"EOT"
@@ -242,13 +241,13 @@ EOT;
   * @return
   */
   public function wp_redisearch_enqueue_scripts() {
-    wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'lib/Admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
+    wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'src/Admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
     $localized_data = array(
       'ajaxUrl' 				=> admin_url( 'admin-ajax.php' ),
       'nonce'           => wp_create_nonce( 'wprds_dashboard_nonce' )
 		);
     wp_localize_script( 'wp_redisearch_admin_js', 'wpRds', $localized_data );
-    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'lib/Admin/css/admin.css', false, WPRS_VERSION );
+    wp_enqueue_style( 'wp_redisearch_admin_styles', WPRS_URL . 'src/Admin/css/admin.css', false, WPRS_VERSION );
   }
 
   /**
@@ -258,7 +257,7 @@ EOT;
   * @return
   */
   public static function wp_redisearch_add_to_index() {
-    $index = new Index( WPRedisearch::$client );
+    $index = new Index( WpRediSearch::$client );
     $results = $index->create()->add();
     wp_send_json_success( $results );
   }
@@ -271,7 +270,7 @@ EOT;
   */
   public static function wp_redisearch_write_to_disk() {
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-      $index = new Index( WPRedisearch::$client );
+      $index = new Index( WpRediSearch::$client );
       $result = $index->writeToDisk();
       wp_send_json_success( $result );
     }
@@ -288,7 +287,7 @@ EOT;
     if ( wp_is_post_revision( $post_id ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) )
       return;
 
-    $index = new Index( WPRedisearch::$client );
+    $index = new Index( WpRediSearch::$client );
     $index_name = Settings::indexName();
 
     // If post is not published or un-published, delete from index then, return.
@@ -307,7 +306,7 @@ EOT;
       
       // If enabled, write to disk
       if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-        $index = new Index( WPRedisearch::$client );
+        $index = new Index( WpRediSearch::$client );
         $index->writeToDisk();
       }
       return;
@@ -348,7 +347,7 @@ EOT;
     
     // If enabled, write to disk
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-      $index = new Index( WPRedisearch::$client );
+      $index = new Index( WpRediSearch::$client );
       $index->writeToDisk();
     }
   }
@@ -360,7 +359,7 @@ EOT;
   * @return
   */
   public static function wp_redisearch_drop_index() {
-    $index = new Index( WPRedisearch::$client );
+    $index = new Index( WpRediSearch::$client );
     $results = $index->drop();
     wp_send_json_success( $results );
   }

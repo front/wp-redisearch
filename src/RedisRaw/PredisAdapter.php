@@ -1,6 +1,6 @@
 <?php
 
-namespace WPRedisearch\RedisRaw;
+namespace WpRediSearch\RedisRaw;
 
 use Predis\Client;
 

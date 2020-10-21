@@ -1,5 +1,5 @@
 {
-    "name": "WPRedisearch/WPRedisearch",
+    "name": "wp-redisearch/wp-redisearch",
     "description": "RediSearch plugin for Wordpress",
     "keywords": ["wordpress", "redis", "redisearch"],
     "homepage": "http://github.com/7kmco/wp-redisearch",
@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "WPRedisearch\\": "lib/"
+            "WpRediSearch\\": "src/"
         }
     },
     "minimum-stability": "dev",
@@ -24,6 +24,7 @@
         "predis/predis": "^1.1",
         "foadyousefi/seven-fields": "dev-master",
         "asika/pdf2text": "dev-master",
-        "vaites/php-apache-tika": "dev-master"
+        "vaites/php-apache-tika": "dev-master",
+        "front/redisearch": "dev-master"
     }
 }

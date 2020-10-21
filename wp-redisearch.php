@@ -40,4 +40,4 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 require_once  __DIR__ . '/vendor/autoload.php';
 
-new WPRedisearch\WPRedisearch;
+new WpRediSearch\WpRediSearch;

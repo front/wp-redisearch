@@ -1,12 +1,12 @@
 <?php
 
-namespace WPRedisearch\Features;
+namespace WpRediSearch\Features;
 
-use WPRedisearch\Redisearch\Setup;
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
+use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
 use Asika\Pdf2text;
-use WPRedisearch\Utils\MsOfficeParser;
+use WpRediSearch\Utils\MsOfficeParser;
 use Vaites\ApacheTika\Client as TikaClient;
 
 class Document {

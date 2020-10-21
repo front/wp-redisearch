@@ -1,10 +1,10 @@
 <?php
 
-namespace WPRedisearch\Features;
+namespace WpRediSearch\Features;
 
-use WPRedisearch\Redisearch\Setup;
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
+use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
 
 class LiveSearch {
 
@@ -100,12 +100,12 @@ class LiveSearch {
 	 * @since 0.2.0
 	 */
   public function enqueue_script () {
-    wp_enqueue_script( 'wp_redisearch_live_search', WPRS_URL . 'lib/Features/LiveSearch/assets/js/live-search.min.js', array( 'jquery' ), WPRS_VERSION, true );
+    wp_enqueue_script( 'wp_redisearch_live_search', WPRS_URL . 'src/Features/LiveSearch/assets/js/live-search.min.js', array( 'jquery' ), WPRS_VERSION, true );
     $localized_data = array(
 			'ajaxUrl' 				    => admin_url( 'admin-ajax.php' )
 		);
 		wp_localize_script( 'wp_redisearch_live_search', 'wpRds', $localized_data );
-    wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'lib/Features/LiveSearch/assets/css/live-search.css', array(), WPRS_VERSION );
+    wp_enqueue_style( 'wp_redisearch_public_css', WPRS_URL . 'src/Features/LiveSearch/assets/css/live-search.css', array(), WPRS_VERSION );
   }
   
 	/**

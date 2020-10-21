@@ -1,12 +1,12 @@
 <?php
 
-namespace WPRedisearch\RediSearch;
+namespace WpRediSearch\RediSearch;
 
-use WPRedisearch\WPRedisearch;
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
-use WPRedisearch\RediSearch\Setup;
-use WPRedisearch\RedisRaw\PredisAdapter;
+use WpRediSearch\WpRediSearch;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
+use WpRediSearch\RediSearch\Setup;
+use WpRediSearch\RedisRaw\PredisAdapter;
 
 class Index {
 
@@ -47,9 +47,9 @@ class Index {
   public function create() {
     // First of all, we reset saved index_meta from optinos
     $num_docs = 0;
-    if ( isset( WPRedisearch::$indexInfo ) && gettype( WPRedisearch::$indexInfo ) == 'array' ) {
-      $num_docs_offset = array_search( 'num_docs', WPRedisearch::$indexInfo ) + 1;
-      $num_docs = WPRedisearch::$indexInfo[$num_docs_offset];
+    if ( isset( WpRediSearch::$indexInfo ) && gettype( WpRediSearch::$indexInfo ) == 'array' ) {
+      $num_docs_offset = array_search( 'num_docs', WpRediSearch::$indexInfo ) + 1;
+      $num_docs = WpRediSearch::$indexInfo[$num_docs_offset];
     }
     if ( $num_docs == 0 ) {
       delete_option( 'wp_redisearch_index_meta' );

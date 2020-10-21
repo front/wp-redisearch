@@ -1,6 +1,6 @@
 <?php
 
-namespace WPRedisearch;
+namespace WpRediSearch;
 
 class Feature {
 	/**

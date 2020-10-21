@@ -1,10 +1,10 @@
 <?php
 
-namespace WPRedisearch\RediSearch;
+namespace WpRediSearch\RediSearch;
 
-use WPRedisearch\Settings;
-use WPRedisearch\RediSearch\Setup;
-use WPRedisearch\RedisRaw\PredisAdapter;
+use WpRediSearch\Settings;
+use WpRediSearch\RediSearch\Setup;
+use WpRediSearch\RedisRaw\PredisAdapter;
 
 class Search {
 

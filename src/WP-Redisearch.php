@@ -1,25 +1,25 @@
 <?php
 
-namespace WPRedisearch;
+namespace WpRediSearch;
 
-use WPRedisearch\Admin;
-use WPRedisearch\RediSearch\Setup;
-use WPRedisearch\RediSearch\Index;
-use WPRedisearch\RediSearch\Search;
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
-use WPRedisearch\Features\Synonym;
-use WPRedisearch\Features\LiveSearch;
-use WPRedisearch\Features\WooCommerce;
-use WPRedisearch\Features\Document;
+use WpRediSearch\Admin;
+use WpRediSearch\RediSearch\Setup;
+use WpRediSearch\RediSearch\Index;
+use WpRediSearch\RediSearch\Search;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
+use WpRediSearch\Features\Synonym;
+use WpRediSearch\Features\LiveSearch;
+use WpRediSearch\Features\WooCommerce;
+use WpRediSearch\Features\Document;
 
 /**
- * WPRedisearch Class.
+ * WpRediSearch Class.
  *
  * This is main class called to initiate all functionalities this plugin provides.
  *
  */
-class WPRedisearch {
+class WpRediSearch {
 
 	/**
    * Redis client to be used through entire website.

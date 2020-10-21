@@ -9,7 +9,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
     public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
-            'WPRedisearch\\' => 13,
+            'WpRediSearch\\' => 13,
         ),
         'V' => 
         array (
@@ -23,6 +23,10 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         array (
             'Predis\\' => 7,
         ),
+        'F' => 
+        array (
+            'FKRediSearch\\' => 13,
+        ),
         'A' => 
         array (
             'Asika\\' => 6,
@@ -30,9 +34,9 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPRedisearch\\' => 
+        'WpRediSearch\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/lib',
+            0 => __DIR__ . '/../..' . '/src',
         ),
         'Vaites\\ApacheTika\\' => 
         array (
@@ -46,6 +50,10 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         array (
             0 => __DIR__ . '/..' . '/predis/predis/src',
         ),
+        'FKRediSearch\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/front/redisearch/src',
+        ),
         'Asika\\' => 
         array (
             0 => __DIR__ . '/..' . '/asika/pdf2text/src',
@@ -54,6 +62,24 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
 
     public static $classMap = array (
         'Asika\\Pdf2text' => __DIR__ . '/..' . '/asika/pdf2text/src/Pdf2text.php',
+        'FKRediSearch\\Document' => __DIR__ . '/..' . '/front/redisearch/src/Document.php',
+        'FKRediSearch\\Fields\\AbstractField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/AbstractField.php',
+        'FKRediSearch\\Fields\\FieldInterface' => __DIR__ . '/..' . '/front/redisearch/src/Fields/FieldInterface.php',
+        'FKRediSearch\\Fields\\GeoField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/GeoField.php',
+        'FKRediSearch\\Fields\\GeoLocation' => __DIR__ . '/..' . '/front/redisearch/src/Fields/GeoLocation.php',
+        'FKRediSearch\\Fields\\Noindex' => __DIR__ . '/..' . '/front/redisearch/src/Fields/Noindex.php',
+        'FKRediSearch\\Fields\\NumericField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/NumericField.php',
+        'FKRediSearch\\Fields\\Sortable' => __DIR__ . '/..' . '/front/redisearch/src/Fields/Sortable.php',
+        'FKRediSearch\\Fields\\TagField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/TagField.php',
+        'FKRediSearch\\Fields\\TextField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/TextField.php',
+        'FKRediSearch\\Index' => __DIR__ . '/..' . '/front/redisearch/src/Index.php',
+        'FKRediSearch\\Query\\Query' => __DIR__ . '/..' . '/front/redisearch/src/Query/Query.php',
+        'FKRediSearch\\Query\\QueryBuilder' => __DIR__ . '/..' . '/front/redisearch/src/Query/QueryBuilder.php',
+        'FKRediSearch\\Query\\SearchResult' => __DIR__ . '/..' . '/front/redisearch/src/Query/SearchResult.php',
+        'FKRediSearch\\RedisRaw\\AbstractRedisRawClient' => __DIR__ . '/..' . '/front/redisearch/src/RedisRaw/AbstractRedisRawClient.php',
+        'FKRediSearch\\RedisRaw\\PredisAdapter' => __DIR__ . '/..' . '/front/redisearch/src/RedisRaw/PredisAdapter.php',
+        'FKRediSearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/..' . '/front/redisearch/src/RedisRaw/RedisRawClientInterface.php',
+        'FKRediSearch\\Setup' => __DIR__ . '/..' . '/front/redisearch/src/Setup.php',
         'Predis\\Autoloader' => __DIR__ . '/..' . '/predis/predis/src/Autoloader.php',
         'Predis\\Client' => __DIR__ . '/..' . '/predis/predis/src/Client.php',
         'Predis\\ClientContextInterface' => __DIR__ . '/..' . '/predis/predis/src/ClientContextInterface.php',
@@ -342,22 +368,23 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'Vaites\\ApacheTika\\Metadata\\DocumentMetadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/DocumentMetadata.php',
         'Vaites\\ApacheTika\\Metadata\\ImageMetadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/ImageMetadata.php',
         'Vaites\\ApacheTika\\Metadata\\Metadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/Metadata.php',
-        'WPRedisearch\\Admin' => __DIR__ . '/../..' . '/lib/Admin/Admin.php',
-        'WPRedisearch\\Feature' => __DIR__ . '/../..' . '/lib/Feature.php',
-        'WPRedisearch\\Features' => __DIR__ . '/../..' . '/lib/Features.php',
-        'WPRedisearch\\Features\\Document' => __DIR__ . '/../..' . '/lib/Features/Document.php',
-        'WPRedisearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/lib/Features/LiveSearch/LiveSearch.php',
-        'WPRedisearch\\Features\\Synonym' => __DIR__ . '/../..' . '/lib/Features/Synonym.php',
-        'WPRedisearch\\Features\\WooCommerce' => __DIR__ . '/../..' . '/lib/Features/Woocommerce.php',
-        'WPRedisearch\\RediSearch\\Index' => __DIR__ . '/../..' . '/lib/RediSearch/Index.php',
-        'WPRedisearch\\RediSearch\\Search' => __DIR__ . '/../..' . '/lib/RediSearch/Search.php',
-        'WPRedisearch\\RediSearch\\Setup' => __DIR__ . '/../..' . '/lib/RediSearch/Setup.php',
-        'WPRedisearch\\RedisRaw\\AbstractRedisRawClient' => __DIR__ . '/../..' . '/lib/RedisRaw/AbstractRedisRawClient.php',
-        'WPRedisearch\\RedisRaw\\PredisAdapter' => __DIR__ . '/../..' . '/lib/RedisRaw/PredisAdapter.php',
-        'WPRedisearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/../..' . '/lib/RedisRaw/RedisRawClientInterface.php',
-        'WPRedisearch\\Settings' => __DIR__ . '/../..' . '/lib/Settings.php',
-        'WPRedisearch\\Utils\\MsOfficeParser' => __DIR__ . '/../..' . '/lib/Utils/MsOfficeParser.php',
-        'WPRedisearch\\WPRedisearch' => __DIR__ . '/../..' . '/lib/WP-Redisearch.php',
+        'Vaites\\ApacheTika\\Metadata\\MetadataInterface' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/MetadataInterface.php',
+        'WpRediSearch\\Admin' => __DIR__ . '/../..' . '/src/Admin/Admin.php',
+        'WpRediSearch\\Feature' => __DIR__ . '/../..' . '/src/Feature.php',
+        'WpRediSearch\\Features' => __DIR__ . '/../..' . '/src/Features.php',
+        'WpRediSearch\\Features\\Document' => __DIR__ . '/../..' . '/src/Features/Document.php',
+        'WpRediSearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/src/Features/LiveSearch/LiveSearch.php',
+        'WpRediSearch\\Features\\Synonym' => __DIR__ . '/../..' . '/src/Features/Synonym.php',
+        'WpRediSearch\\Features\\WooCommerce' => __DIR__ . '/../..' . '/src/Features/Woocommerce.php',
+        'WpRediSearch\\RediSearch\\Index' => __DIR__ . '/../..' . '/src/RediSearch/Index.php',
+        'WpRediSearch\\RediSearch\\Search' => __DIR__ . '/../..' . '/src/RediSearch/Search.php',
+        'WpRediSearch\\RediSearch\\Setup' => __DIR__ . '/../..' . '/src/RediSearch/Setup.php',
+        'WpRediSearch\\RedisRaw\\AbstractRedisRawClient' => __DIR__ . '/../..' . '/src/RedisRaw/AbstractRedisRawClient.php',
+        'WpRediSearch\\RedisRaw\\PredisAdapter' => __DIR__ . '/../..' . '/src/RedisRaw/PredisAdapter.php',
+        'WpRediSearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/../..' . '/src/RedisRaw/RedisRawClientInterface.php',
+        'WpRediSearch\\Settings' => __DIR__ . '/../..' . '/src/Settings.php',
+        'WpRediSearch\\Utils\\MsOfficeParser' => __DIR__ . '/../..' . '/src/Utils/MsOfficeParser.php',
+        'WpRediSearch\\WpRediSearch' => __DIR__ . '/../..' . '/src/WP-Redisearch.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

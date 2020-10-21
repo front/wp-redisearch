@@ -1,10 +1,10 @@
 <?php
 
-namespace WPRedisearch\Features;
+namespace WpRediSearch\Features;
 
-use WPRedisearch\Redisearch\Setup;
-use WPRedisearch\Settings;
-use WPRedisearch\Features;
+use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\Settings;
+use WpRediSearch\Features;
 
 class Synonym {
 
