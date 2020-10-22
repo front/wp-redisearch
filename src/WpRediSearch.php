@@ -2,6 +2,7 @@
 
 namespace WpRediSearch;
 
+use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Admin;
 use WpRediSearch\RediSearch\Index;
 use WpRediSearch\RediSearch\Search;
@@ -103,12 +104,7 @@ class WpRediSearch {
   */
   public function redisearchAdminNotice() {
     try {
-      $this->client = Setup::connect(
-        Settings::RedisServer(),
-        Settings::RedisPort(),
-        Settings::RedisPassword(),
-        0
-      );
+      $this->client = (new Client())->return();
     } catch (\Exception $e) {
       if ( isset( $e ) )  {
         self::$serverException = true;
@@ -243,12 +239,14 @@ class WpRediSearch {
   /**
    * Filter search query and return posts found in redisearch.
    * Reset query to return nothing.
-   * @since    0.1.0
+   *
    * @param string $request
-	 * @param object $query
-	 * @return string
+   * @param object $query
+   *
+   * @return string
+   * @since    0.1.0
    */
-  public function redisearchPostsRequest( $request, $query ) {
+  public function redisearchPostsRequest( string $request, $query ) {
     global $wpdb;
     if ( self::$redisearchException ) {
       $query->redisearch_success = false;

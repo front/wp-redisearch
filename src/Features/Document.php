@@ -2,7 +2,7 @@
 
 namespace WpRediSearch\Features;
 
-use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 use Asika\Pdf2text;
@@ -32,7 +32,7 @@ class Document {
   * @return
   */
   public function __construct() {
-    self::$client = Setup::connect();
+    self::$client = (new Client())->return();
     self::$index_name = Settings::indexName();
     Features::init()->register_feature( 'document', array(
       'title' => 'Document',

@@ -1,7 +1,7 @@
 <?php
 namespace WpRediSearch\Features;
 
-use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 
@@ -28,7 +28,7 @@ class WooCommerce {
   * @return
   */
   public function __construct() {
-    self::$client = Setup::connect();
+    self::$client = (new Client())->return();
     self::$index_name = Settings::indexName();
     Features::init()->register_feature( 'woocommerce', array(
       'title' => 'WooCommerce',

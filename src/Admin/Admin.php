@@ -4,6 +4,7 @@ namespace WpRediSearch;
 use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
 
+use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 use WpRediSearch\WpRediSearch;
@@ -255,7 +256,7 @@ EOT;
   * @return
   */
   public static function wp_redisearch_add_to_index() {
-    $index = new Index( WpRediSearch::$client );
+    $index = new Index( (new Client())->return() );
     $results = $index->create()->add();
     wp_send_json_success( $results );
   }

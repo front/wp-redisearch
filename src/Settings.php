@@ -108,11 +108,10 @@ class Settings {
   }
 
   /**
-  * args for WP_Query for indexing
-  * @since    0.1.0
-  * @param
-  * @return string    $args
-  */
+   * args for WP_Query for indexing
+   * @return array $args
+   * @since    0.1.0
+   */
   public static function query_args() {
     $post_types = self::get( 'wp_redisearch_post_types' );
 

@@ -7,6 +7,7 @@ use WpRediSearch\Settings;
 use WpRediSearch\Features;
 use WpRediSearch\RediSearch\Setup;
 use WpRediSearch\RedisRaw\PredisAdapter;
+use FKRediSearch\Index as RedisearchIndex;
 
 class Index {
 
@@ -45,7 +46,7 @@ class Index {
   * @return
   */
   public function create() {
-    // First of all, we reset saved index_meta from optinos
+    // First of all, we reset saved index_meta from options
     $num_docs = 0;
     if ( isset( WpRediSearch::$indexInfo ) && gettype( WpRediSearch::$indexInfo ) == 'array' ) {
       $num_docs_offset = array_search( 'num_docs', WpRediSearch::$indexInfo ) + 1;
@@ -55,18 +56,63 @@ class Index {
       delete_option( 'wp_redisearch_index_meta' );
     }
 
-    $index_name = Settings::indexName();
+    $indexName = Settings::indexName();
 
-    $title_schema = ['post_title', 'TEXT', 'WEIGHT', 5.0, 'SORTABLE'];
-    $content_schema = ['post_content', 'TEXT'];
-    $content_filtered_schema = ['post_content_filtered', 'TEXT'];
-    $excerpt_schema = ['post_excerpt', 'TEXT'];
-    $post_type_schema = ['post_type', 'TEXT'];
-    $author_schema = ['post_author', 'TEXT'];
-    $id_schema = ['post_id', 'NUMERIC', 'SORTABLE'];
-    $menu_order_schema = ['menu_order', 'NUMERIC'];
-    $permalink_schema = ['permalink', 'TEXT'];
-    $date_schema = ['post_date', 'NUMERIC', 'SORTABLE'];
+    $index = new RedisearchIndex($this->client);
+    // Set index name.
+    $index->setIndexName(Settings::indexName());
+
+    $index->on('HASH');
+
+    $prefixes = array();
+    $postTypes = Settings::get( 'wp_redisearch_post_types' ) ?? array( 'post' );
+    foreach ($postTypes as $postType => $value ) {
+      if ( $value === 'on' ) {
+        $prefixes[] = $indexName . ':' . $postType;
+      }
+    }
+    $index->setPrefix($prefixes);
+    // Setting a field name for score so we don't need to parse index info everytime
+    $index->setScoreField('documentScore');
+    // Delete the index.
+    $index->drop();
+
+    $indexableFields = array(
+      'post_title'      => array(
+        'type'            => 'TEXT',
+        'weight'          => 5.0,
+        'sortable'        => TRUE
+      ),
+      'post_content'    => array(
+        'type'            => 'TEXT'
+      ),
+      'post_content_filtered'  => array(
+        'type'            => 'TEXT'
+      ),
+      'post_excerpt'    => array(
+        'type'            => 'TEXT'
+      ),
+      'post_type'       => array(
+        'type'            =>'TEXT'
+      ),
+      'post_author'     => array(
+        'type'            => 'TEXT'
+      ),
+      'post_id'         => array(
+        'type'            => 'NUMERIC',
+        'sortable'        => TRUE
+      ),
+      'menu_order'      => array(
+        'type'            => 'NUMERIC'
+      ),
+      'permalink'       => array(
+        'type'            => 'TEXT'
+      ),
+      'post_date'       => array(
+        'type'            => 'NUMERIC',
+        'sortable'        => TRUE
+      )
+    );
 
 		/**
 		 * Filter index-able post meta
@@ -74,33 +120,42 @@ class Index {
 		 * @since 0.2.0
 		 * @param array Array 
 		 */
-    $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
+    $indexableMetaKeys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
 
-    $meta_schema = array();
+    $metaSchema = array();
     
-    if ( isset( $indexable_meta_keys ) && !empty( $indexable_meta_keys ) ) {
-      foreach ($indexable_meta_keys as $meta) {
-        $meta_schema[] = array( $meta, 'TEXT' );
+    if ( isset( $indexableMetaKeys ) && !empty( $indexableMetaKeys ) ) {
+      foreach ($indexableMetaKeys as $meta) {
+        $metaSchema[] = array(
+          $meta     => array(
+            'type'    => 'TEXT'
+          )
+        );
       }
     }
     /**
      * Filter index-able post meta schema
      * Allows for manipulating schema of public or private meta keys.
      * @since 0.2.0
-     * @param array $meta_schema            Array of index-able meta key schemas.
-     * @param array $indexable_meta_keys    Array of index-able meta keys.
+     * @param array $metaSchema            Array of index-able meta key schemas.
+     * @param array $indexableMetaKeys    Array of index-able meta keys.
 		 */
-    $meta_schema = apply_filters( 'wp_redisearch_indexable_meta_schema', $meta_schema, $indexable_meta_keys );
+    $metaSchema = apply_filters( 'wp_redisearch_indexable_meta_schema', $metaSchema, $indexableMetaKeys );
 
-    $indexable_terms = array_keys( Settings::get( 'wp_redisearch_indexable_terms', array() ) );
-    $terms_schema = array();
-    if ( isset( $indexable_terms ) && !empty( $indexable_terms ) ) {
-      foreach ($indexable_terms as $term) {
-        $terms_schema[] = [$term, 'TAG'];
+    $indexableTerms = array_keys( Settings::get( 'wp_redisearch_indexable_terms', array() ) );
+    $termsSchema = array();
+    if ( isset( $indexableTerms ) && !empty( $indexableTerms ) ) {
+      foreach ($indexableTerms as $term) {
+        $termsSchema[] = array(
+          $term     => array(
+            'type'    => 'TAG'
+          ),
+        );
       }
     }
 
-    $schema = array( $index_name );
+    $indexableFields = array_merge( $indexableFields, $metaSchema, $termsSchema );
+
     /**
      * Stop words support.
      * If disabled from settings page, then we will add no stop words.
@@ -108,23 +163,48 @@ class Index {
      */
     $stop_words_disabled = Settings::get( 'wp_redisearch_disable_stop_words', false );
     if ( $stop_words_disabled ) {
-      $schema = array_merge( $schema, array( 'STOPWORDS', 0 ) );
+      $index->noStopWords();
     } else {
-      $stop_words_list = Settings::get( 'wp_redisearch_stop_words', null );
-      
-      if ( isset( $stop_words_list ) && $stop_words_list != null ) {
-        $stop_words_arr = explode( ',', $stop_words_list);
-        $stop_words_arr = array_map( 'trim', $stop_words_arr );
-        $stop_words_count = count( $stop_words_arr );
-        if ( $stop_words_count != 0 ) {
-          $schema = array_merge( $schema, array( 'STOPWORDS', $stop_words_count ), $stop_words_arr );
+      $stopWords = Settings::get( 'wp_redisearch_stop_words', null );
+      if ( isset( $stopWords ) && $stopWords != null ) {
+        $stopWordsArray = explode( ',', $stopWords);
+        $stopWordsArray = array_map( 'trim', $stopWordsArray );
+        if ( count( $stopWordsArray ) !== 0 ) {
+          $index->setStopWords( $stopWordsArray );
         }
       }
     }
 
-    $schema = array_merge( $schema, array( 'SCHEMA' ), $title_schema, $content_schema, $content_filtered_schema, $excerpt_schema, $post_type_schema, $author_schema, $id_schema, $menu_order_schema, $permalink_schema, $date_schema, ...$terms_schema, ...$meta_schema );
+    // Loop through the fields.
+    foreach ( $indexableFields as $name => $field ) {
+      $type = $field['type'];
+      if (!empty($type)) {
+        switch ($type) {
+          case 'NUMERIC':
+            $index->addNumericField( $name, $field['sortable'] ?? FALSE );
+            break;
 
-    $this->index = $this->client->rawCommand('FT.CREATE', $schema);
+          case 'TAG':
+            $index->addTagField( $name );
+            break;
+
+          case 'GEO':
+            $index->addGeoField( $name );
+            break;
+
+          default:
+            $weight = '1.0';
+            if ( isset( $field['weight'] ) ) {
+              $weight = $field['weight'];
+            }
+            $index->addTextField( $name, $weight, $field['sortable'] ?? FALSE );
+        }
+      }
+    }
+
+    // Save/Create the Index.
+    $index->create();
+
 
     /**
      * Action wp_redisearch_after_index_created fires after index created.
@@ -281,25 +361,25 @@ class Index {
   * @return string
   */
   private function prepare_terms( $post ) {
-    $indexable_terms = Settings::get( 'wp_redisearch_indexable_terms' );
-    $indexable_terms = isset( $indexable_terms ) ? array_keys( $indexable_terms ) : array();
+    $indexableTerms = Settings::get( 'wp_redisearch_indexable_terms' );
+    $indexableTerms = isset( $indexableTerms ) ? array_keys( $indexableTerms ) : array();
 
     /**
      * Filter wp_redisearch_indexable_temrs to manipulate indexable terms list
      * 
      * @since 0.2.1
-     * @param array $indexable_terms        Default terms list
+     * @param array $indexableTerms        Default terms list
      * @param array $post                   The post object
-     * @return array $indexable_terms       Modified taxobomy terms list
+     * @return array $indexableTerms       Modified taxobomy terms list
      */
-		$indexable_terms = apply_filters( 'wp_redisearch_indexable_temrs', $indexable_terms, $post );
+		$indexableTerms = apply_filters( 'wp_redisearch_indexable_temrs', $indexableTerms, $post );
 
-		if ( empty( $indexable_terms ) ) {
+		if ( empty( $indexableTerms ) ) {
 			return array();
 		}
 
 		$terms = array();
-		foreach ( $indexable_terms as $taxonomy ) {
+		foreach ( $indexableTerms as $taxonomy ) {
 
 			$post_terms = get_the_terms( $post->ID, $taxonomy );
 
@@ -341,10 +421,10 @@ class Index {
 		 * @since 0.2.0
 		 * @param array Array 
 		 */
-    $indexable_meta_keys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
+    $indexableMetaKeys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
 
 		foreach( $post_meta as $key => $value ) {
-      if ( in_array( $key, $indexable_meta_keys ) ) {
+      if ( in_array( $key, $indexableMetaKeys ) ) {
         $prepared_meta[] = $key;
         $extracted_value = maybe_unserialize( $value[0] );
         $prepared_meta[] = is_array( $extracted_value ) ? json_encode( maybe_unserialize( $value[0] ) ) : $extracted_value;

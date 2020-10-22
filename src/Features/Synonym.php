@@ -2,7 +2,7 @@
 
 namespace WpRediSearch\Features;
 
-use WpRediSearch\Redisearch\Setup;
+use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 
@@ -29,7 +29,7 @@ class Synonym {
   * @return
   */
   public function __construct() {
-    self::$client = Setup::connect();
+    self::$client = (new Client())->return();
     self::$index_name = Settings::indexName();
     Features::init()->register_feature( 'synonym', array(
       'title' => 'Synonym',
