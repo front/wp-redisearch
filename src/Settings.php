@@ -79,6 +79,16 @@ class Settings {
   }
 
   /**
+  * Search in admin.
+  * @since    1.0.0
+  * @param
+  * @return bool
+  */
+  public static function SearchInAdmin() {
+    return get_option( 'wp_redisearch_search_in_admin' ) ?? FALSE;
+  }
+
+  /**
   * Get options
   * @since    0.1.0
   * @param

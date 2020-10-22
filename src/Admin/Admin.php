@@ -13,7 +13,7 @@ use WpRediSearch\RediSearch\Setup;
 class Admin {
 
   public function __construct() {
-    add_action( 'admin_enqueue_scripts', array( $this, 'wp_redisearch_enqueue_scripts' ) );
+    add_action( 'admin_enqueue_scripts', array( $this, 'redisearchEnqueueScripts' ) );
     self::init();
   }
 
@@ -25,35 +25,34 @@ class Admin {
   * @return 
   */
   public static function init() {
-    add_action( 'admin_menu', array( __CLASS__, 'setting_pages_init' ) );
+    add_action( 'admin_menu', array( __CLASS__, 'settingPages' ) );
   }
 
-  public static function setting_pages_init() {
+  public static function settingPages() {
     // Redisearch Dashboard
     Container::make( __( 'Redisearch', 'wp-redisearch' ), 'redisearch' )
     ->set_menu_position( 20 )
     ->set_icon( 'dashicons-search' )
     ->plain_page()
-    ->add_fields(array( __CLASS__, 'wp_redisearch_status_page'));
+    ->add_fields(array( __CLASS__, 'redisearchStatusPage'));
     // Redis server configurations.
     Container::make( __( 'Redis server', 'wp-redisearch' ), 'redis-server')
     ->set_parent('redisearch')
-    ->add_fields(array( __CLASS__, 'wp_redisearch_redis_server_conf') );
+    ->add_fields(array( __CLASS__, 'RedisServerConf') );
     // Indexing options and configurations.
     Container::make( __( 'Indexing options', 'wp-redisearch' ), 'indexing-options')
     ->set_parent('redisearch')
-    ->add_fields(array( __CLASS__, 'wp_redisearch_indexing_fields') );
+    ->add_fields(array( __CLASS__, 'redisearchIndexingFields') );
   }
 
 
   /**
-  * Fields for Redis Status option page.
-  * @since    0.1.0
-  * @param
-  * @return object $fields
-  */
-  public static function wp_redisearch_status_page() {
-    Fields::add('html', 'stats', 'Index status', self::index_status_html() );
+   * Fields for Redis Status option page.
+   * @return void $fields
+   * @since    0.1.0
+   */
+  public static function redisearchStatusPage() {
+    Fields::add('html', 'stats', 'Index status', self::indexStatusHtml() );
     $features = Features::init()->features;
     if ( isset( $features ) && !empty( $features ) ) {
       echo '<div class="wprds-wrapper-grid">';
@@ -74,7 +73,7 @@ class Admin {
     }
   }
 
-  public static function index_status_html() {
+  public static function indexStatusHtml() {
     $default_args = Settings::query_args();
     $default_args['posts_per_page'] = -1;
     $args = apply_filters( 'wp_redisearch_posts_args', $default_args);
@@ -149,9 +148,9 @@ EOT;
   * @param
   * @return object $fields
   */
-  public static function wp_redisearch_redis_server_conf() {
-    Fields::add('header', null, __( 'Redis server configurations', 'wp-redisearch' ));
-    Fields::add('text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ), __( 'Redis server url, usually it is 127.0.0.1', 'wp-redisearch' ) );
+  public static function RedisServerConf() {
+    Fields::add( 'header', null, __( 'Redis server configurations', 'wp-redisearch' ) );
+    Fields::add( 'text', 'wp_redisearch_server', __( 'Redis server', 'wp-redisearch' ), __( 'Redis server url, usually it is 127.0.0.1', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_port', __( 'Redis port', 'wp-redisearch' ), __( 'Redis port number, by default it is 6379', 'wp-redisearch' ) );
     Fields::add( 'password', 'wp_redisearch_password', __( 'Redis server password', 'wp-redisearch' ), __( 'If your redis server is not password protected, leave this field blank', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_index_name', __( 'Redisearch index name', 'wp-redisearch' ) );
@@ -164,14 +163,15 @@ EOT;
   * @param
   * @return object $fields
   */
-  public static function wp_redisearch_indexing_fields() {
+  public static function redisearchIndexingFields() {
     Fields::add( 'header', null, __( 'General indexing settings', 'wp-redisearch' ) );
     Fields::add( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) );
+    Fields::add( 'checkbox', 'wp_redisearch_search_in_admin', __( 'Allow RediSearch in admin', 'wp-redisearch' ), __( 'If enabled, the plugin overrides searches done in admin area.', 'wp-redisearch') );
     Fields::add( 'header', null, __( 'Persist index after server restart.', 'wp-redisearch' ), __( 'Redisearch is in-memory database, which means after server restart (for any reason), all data in the redis database will be lost. But redis also can write to the disk.', 'wp-redisearch' ) );
     Fields::add( 'checkbox', 'wp_redisearch_write_to_disk', __( 'Write redis data to the disk', 'wp-redisearch' ), __( 'If enabled, after indexing manualy in redisearch dashboard or adding new post to the site, entire redisearch index will be written to the disk and after server restart, you won\'t loos any data', 'wp-redisearch') );
     Fields::add( 'header', null, 'What to be indexed' );
-    Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::post_types() );
-    Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::get_terms() );
+    Fields::add( 'multiselect', 'wp_redisearch_post_types',  __( 'Post types', 'wp-redisearch' ), __( 'Post types to be indexed', 'wp-redisearch' ), self::postTypes() );
+    Fields::add( 'multiselect', 'wp_redisearch_indexable_terms',  __( 'Taxonomies', 'wp-redisearch' ), __( 'Post tag, category and custom taxonomies to be indexed', 'wp-redisearch' ), self::getTerms() );
     Fields::add( 'header', null, 'Stop-words' );
     Fields::add( 'checkbox', 'wp_redisearch_disable_stop_words', __( 'Disable stop words support. (Not recommended)', 'wp-redisearch' ), __( 'If this checkbox checked, no any words will be discarded from being indexed.', 'wp-redisearch') );
     Fields::add( 'textarea', 'wp_redisearch_stop_words', __( 'A list of comma separated stop-words.', 'wp-redisearch' ), __('RediSearch support stop-words out of the box, but the list of default stop-words and languages, are limited. <br />Here you can add a list of stop-words in your language.<br />Just remember after editing this list, only posts published after this setting will be affected. So re-indexing after changing this list is highly recommended. If you leave this blank, RediSearch will fall back to default wtop-words.', 'wp-redisearch' ) );
@@ -180,12 +180,11 @@ EOT;
   }
 
   /**
-  * List of all post types.
-  * @since    0.1.0
-  * @param integer $post
-  * @return string
-  */
-  private static function post_types() {
+   * List of all post types.
+   * @return array
+   * @since    0.1.0
+   */
+  private static function postTypes() {
     $post_types = get_post_types(
       array(
         'public' => true,
@@ -213,13 +212,12 @@ EOT;
   }
 
   /**
-  * Get all terms.
-  * @since    0.1.0
-  * @param integer $post
-  * @return array $terms
-  */
-  private static function get_terms() {
-    $post_types = self::post_types();
+   * Get all terms.
+   * @return array $terms
+   * @since    0.1.0
+   */
+  private static function getTerms() {
+    $post_types = self::postTypes();
     $indexable_taxonomies = array();
 
     foreach ( $post_types as $post_type ) {
@@ -240,7 +238,7 @@ EOT;
   * @param
   * @return
   */
-  public function wp_redisearch_enqueue_scripts() {
+  public function redisearchEnqueueScripts() {
     wp_enqueue_script( 'wp_redisearch_admin_js', WPRS_URL . 'src/Admin/js/admin.js', array( 'jquery' ), WPRS_VERSION, true );
     $localized_data = array(
       'ajaxUrl' 				=> admin_url( 'admin-ajax.php' ),

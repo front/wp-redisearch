@@ -181,7 +181,7 @@ class Document {
   public function feature_options () {
     \SevenFields\Fields\Fields::add( 'header', null, __( 'Apache Tika', 'wp-redisearch' ) );
     \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_tika_host',  __( 'Apache Tika host', 'wp-redisearch' ), __( 'Default value is 127.0.0.1', 'wp-redisearch') );
-    \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_tika_port',  __( 'Apache Tika post number', 'wp-redisearch' ), __( 'The default port number usually is 9998', 'wp-redisearch' ) );
+    \SevenFields\Fields\Fields::add( 'text', 'wp_redisearch_tika_port',  __( 'Apache Tika port number', 'wp-redisearch' ), __( 'The default port number usually is 9998', 'wp-redisearch' ) );
   }
 
   /**

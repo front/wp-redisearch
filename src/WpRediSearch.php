@@ -3,15 +3,15 @@
 namespace WpRediSearch;
 
 use WpRediSearch\Admin;
-use WpRediSearch\RediSearch\Setup;
 use WpRediSearch\RediSearch\Index;
 use WpRediSearch\RediSearch\Search;
-use WpRediSearch\Settings;
 use WpRediSearch\Features;
 use WpRediSearch\Features\Synonym;
 use WpRediSearch\Features\LiveSearch;
 use WpRediSearch\Features\WooCommerce;
 use WpRediSearch\Features\Document;
+use FKRediSearch\Setup;
+use WpRediSearch\Settings;
 
 /**
  * WpRediSearch Class.
@@ -21,11 +21,12 @@ use WpRediSearch\Features\Document;
  */
 class WpRediSearch {
 
-	/**
-   * Redis client to be used through entire website.
-	 * @param object $client
-	 */
-  public static $client;
+  /**
+   * The redisearch client connection.
+   *
+   * @var Setup
+   */
+  private $client;
 
 	/**
    * Set this if there is any kind of errors.
@@ -65,10 +66,10 @@ class WpRediSearch {
 	/**
 	 * @param object $admin
 	 */
-  private $search_query_posts = array();
+  private $searchQueryPosts = array();
 
   public function __construct() {
-    $this->wp_redisearch_admin_notice();
+    $this->redisearchAdminNotice();
     // First, initiate features
     if ( !self::$serverException && !self::$moduleException ) {
       Features::init();
@@ -79,11 +80,11 @@ class WpRediSearch {
     }
 
     $this->admin = new Admin;
-    $this->wp_redisearch_handle_ajax_requests();
+    $this->handleAjaxRequests();
     // Do the search
     if ( !self::$redisearchException ) {
-      add_filter( 'posts_request', array( $this, 'wp_redisearch_posts_request' ), 10, 2 );
-      add_filter( 'the_posts', array( $this, 'filter_the_posts' ), 10, 2 );
+      add_filter( 'posts_request', array( $this, 'redisearchPostsRequest' ), 10, 2 );
+      add_filter( 'the_posts', array( $this, 'filterThePosts' ), 10, 2 );
       add_action( 'wp_insert_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
       add_action( 'save_post', array( $this->admin, 'wp_redisearch_index_post_on_publish' ), 10, 3 );
       
@@ -100,9 +101,14 @@ class WpRediSearch {
   * @param
   * @return
   */
-  public function wp_redisearch_admin_notice() {
+  public function redisearchAdminNotice() {
     try {
-      self::$client = Setup::connect();
+      $this->client = Setup::connect(
+        Settings::RedisServer(),
+        Settings::RedisPort(),
+        Settings::RedisPassword(),
+        0
+      );
     } catch (\Exception $e) {
       if ( isset( $e ) )  {
         self::$serverException = true;
@@ -110,14 +116,14 @@ class WpRediSearch {
     }
     if ( self::$serverException ) {
       self::$redisearchException = true;
-      add_action( 'admin_notices', array(__CLASS__, 'redis_server_connection_notice' ) );
+      add_action( 'admin_notices', array(__CLASS__, 'redisServerConnectionNotice' ) );
     } else {
       // Check if RediSearch module is loaded.
       try {
-        $loaded_modules = self::$client->rawCommand('MODULE', ['LIST']);
+        $loaded_modules = $this->client->rawCommand('MODULE', ['LIST']);
         if ( isset( $loaded_modules ) && !empty( $loaded_modules ) ) {
           foreach ($loaded_modules as $module) {
-            if ( !in_array( 'ft', $module ) ) {
+            if ( !in_array( 'search', $module ) ) {
               self::$moduleException = true;
             }
           }
@@ -131,21 +137,21 @@ class WpRediSearch {
       }
       if ( self::$moduleException ) {
         self::$redisearchException = true;
-        add_action( 'admin_notices', array(__CLASS__, 'redisearch_not_loaded_notice' ) );
+        add_action( 'admin_notices', array(__CLASS__, 'redisearchNotLoadedNotice' ) );
       } else {
         $index_name = Settings::indexName();
         // Check if index exists.
         try {
-          self::$indexInfo = self::$client->rawCommand('FT.INFO', [$index_name]);
+          self::$indexInfo = $this->client->rawCommand('FT.INFO', [$index_name]);
         } catch (\Exception $e) {
           if ( isset( $e ) )  {
-            $index_not_found = true;
+            $indexNotFound = true;
           }
         }
-        if ( self::$indexInfo == 'Unknown Index name' || isset( $index_not_found ) ) {
+        if ( self::$indexInfo === 'Unknown Index name' || isset( $indexNotFound ) ) {
           self::$indexException = true;
           self::$redisearchException = true;
-          add_action( 'admin_notices', array(__CLASS__, 'redisearch_index_not_exist_notice' ) );
+          add_action( 'admin_notices', array(__CLASS__, 'redisearchIndexNotExistNotice' ) );
         }
       }
     }
@@ -157,7 +163,7 @@ class WpRediSearch {
   * @param
   * @return
   */
-  public static function redis_server_connection_notice() {
+  public static function redisServerConnectionNotice() {
     $redis_settings_page = admin_url('admin.php?page=redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
@@ -172,7 +178,7 @@ class WpRediSearch {
   * @param
   * @return
   */
-  public static function redisearch_not_loaded_notice() {
+  public static function redisearchNotLoadedNotice() {
     $redis_settings_page = admin_url('admin.php?page=redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
@@ -187,7 +193,7 @@ class WpRediSearch {
   * @param
   * @return
   */
-  public static function redisearch_index_not_exist_notice() {
+  public static function redisearchIndexNotExistNotice() {
     $redis_settings_page = admin_url('admin.php?page=redisearch');
     ?>
     <div class="notice notice-error is-dismissible">
@@ -202,7 +208,7 @@ class WpRediSearch {
   * @param
   * @return
   */
-  public function wp_redisearch_handle_ajax_requests() {
+  public function handleAjaxRequests() {
     add_action('wp_ajax_wp_redisearch_add_to_index', array( $this->admin, 'wp_redisearch_add_to_index' ) );
     add_action('wp_ajax_nopriv_wp_redisearch_add_to_index', array( $this->admin, 'wp_redisearch_add_to_index' ) );
     
@@ -223,16 +229,15 @@ class WpRediSearch {
 	 * @param object $query
 	 * @return array $new_posts
    */
-	public function filter_the_posts( $posts, $query ) {
-    if ( is_admin() ||
+	public function filterThePosts( $posts, $query ) {
+    if ( !Settings::SearchInAdmin() ||
         !$query->is_main_query() ||
         ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
         empty( $query->query_vars['s'] )
       ) {
       return $posts;
     }
-		$new_posts = $this->search_query_posts;
-    return $new_posts;
+    return $this->searchQueryPosts;
 	}
 
   /**
@@ -243,14 +248,14 @@ class WpRediSearch {
 	 * @param object $query
 	 * @return string
    */
-  public function wp_redisearch_posts_request( $request, $query ) {
+  public function redisearchPostsRequest( $request, $query ) {
     global $wpdb;
     if ( self::$redisearchException ) {
       $query->redisearch_success = false;
       return $request;
     }
     
-    if ( is_admin() ||
+    if ( !Settings::SearchInAdmin() ||
         !$query->is_main_query() ||
         ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
         empty( $query->query_vars['s'] )
@@ -258,7 +263,7 @@ class WpRediSearch {
       return $request;
     }
     
-    $search = new Search( self::$client );
+    $search = new Search( $this->client );
     $search_results = $search->search( $query );
     $search_count = $search_results[0];
 
@@ -297,7 +302,7 @@ class WpRediSearch {
      */
     $query = apply_filters( 'wp_redisearch_after_search_wp_query', $query, $searched_posts, $args );
     
-    $this->search_query_posts = $searched_posts->posts;
+    $this->searchQueryPosts = $searched_posts->posts;
     $query->found_posts = $search_count;
     $query->redisearch_success = true;
     $query->max_num_pages = ceil( $search_count / $query->get( 'posts_per_page' ) );

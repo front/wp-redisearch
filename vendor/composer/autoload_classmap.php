@@ -329,5 +329,5 @@ return array(
     'WpRediSearch\\RedisRaw\\RedisRawClientInterface' => $baseDir . '/src/RedisRaw/RedisRawClientInterface.php',
     'WpRediSearch\\Settings' => $baseDir . '/src/Settings.php',
     'WpRediSearch\\Utils\\MsOfficeParser' => $baseDir . '/src/Utils/MsOfficeParser.php',
-    'WpRediSearch\\WpRediSearch' => $baseDir . '/src/WP-Redisearch.php',
+    'WpRediSearch\\WpRediSearch' => $baseDir . '/src/WpRediSearch.php',
 );

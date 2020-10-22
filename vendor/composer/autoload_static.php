@@ -384,7 +384,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'WpRediSearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/../..' . '/src/RedisRaw/RedisRawClientInterface.php',
         'WpRediSearch\\Settings' => __DIR__ . '/../..' . '/src/Settings.php',
         'WpRediSearch\\Utils\\MsOfficeParser' => __DIR__ . '/../..' . '/src/Utils/MsOfficeParser.php',
-        'WpRediSearch\\WpRediSearch' => __DIR__ . '/../..' . '/src/WP-Redisearch.php',
+        'WpRediSearch\\WpRediSearch' => __DIR__ . '/../..' . '/src/WpRediSearch.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
