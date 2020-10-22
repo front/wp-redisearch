@@ -26,20 +26,6 @@ class Index {
   }
 
   /**
-  * Drop existing index.
-  * @since    0.1.0
-  * @param
-  * @return
-  */
-  public function drop() {
-    // First of all, we reset saved index_meta from optinos
-    delete_option( 'wp_redisearch_index_meta' );
-
-    $index_name = Settings::indexName();
-    return $this->client->rawCommand('FT.DROP', [$index_name]);
-  }
-
-  /**
   * Create connection to redis server.
   * @since    0.1.0
   * @param
@@ -205,6 +191,7 @@ class Index {
     // Save/Create the Index.
     $index->create();
 
+    $this->index = $index;
 
     /**
      * Action wp_redisearch_after_index_created fires after index created.
@@ -268,21 +255,21 @@ class Index {
     }
     
     if ( $query->have_posts() ) {
-      $index_name = Settings::indexName();
+      $indexName = Settings::indexName();
       
       while ( $query->have_posts() ) {
         $query->the_post();
-        $indexing_options = array();
+        $indexingOptions = array();
 
         $title = get_the_title();
         $permalink = get_permalink();
         $content = wp_strip_all_tags( get_the_content(), true );
         $id = get_the_id();
         // Post language. This could be useful to do some stop word, stemming and etc.
-        $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
-        $indexing_options['fields'] = $this->prepare_post( get_the_id() );
+        $indexingOptions['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
+        $indexingOptions['fields'] = $this->preparePost( get_the_id() );
 
-        $this->addPosts($index_name, $id, $indexing_options);
+        $this->addPosts( $id, $indexingOptions );
 
         /**
          * Action wp_redisearch_after_post_indexed fires after post added to the index.
@@ -292,10 +279,10 @@ class Index {
          * 
          * @since 0.2.0
          * @param array $client             Created redis client instance
-         * @param array $index_name         Index name
-         * @param array $indexing_options   Posts extra options like language and fields
+         * @param array $indexName         Index name
+         * @param array $indexingOptions   Posts extra options like language and fields
          */
-        do_action( 'wp_redisearch_after_post_indexed', $this->client, $index_name, $indexing_options );
+        do_action( 'wp_redisearch_after_post_indexed', $this->client, $indexName, $indexingOptions );
       }
       $index_meta['offset'] = absint( $index_meta['offset'] + $posts_per_page );
       update_option( 'wp_redisearch_index_meta', $index_meta );
@@ -310,7 +297,7 @@ class Index {
 	 * @since 0.1.0
 	 * @return bool|array
 	 */
-	public function prepare_post( $post_id ) {
+	public function preparePost( $post_id ) {
     $post = get_post( $post_id );
 		$user = get_userdata( $post->post_author );
 
@@ -331,16 +318,16 @@ class Index {
     $post_categories = get_the_category( $post->ID );
 
 		$post_args = array(
-			'post_id', $post->ID,
-			'post_author', $user_data,
-			'post_date', strtotime( $post_date ),
-			'post_title', $post->post_title,
-			'post_excerpt', $post->post_excerpt,
-			'post_content_filtered', wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ), true ),
-			'post_content', wp_strip_all_tags( $post->post_content, true ),
-			'post_type', $post->post_type,
-			'permalink', get_permalink( $post->ID ),
-			'menu_order', absint( $post->menu_order )
+		  'post_id'           => $post->ID,
+      'post_author'       => $user_data,
+      'post_date'         => strtotime( $post_date ),
+      'post_title'        => $post->post_title,
+      'post_excerpt'      => $post->post_excerpt,
+      'post_content_filtered' => wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ), true ),
+			'post_content'      => wp_strip_all_tags( $post->post_content, true ),
+			'post_type'         => $post->post_type,
+			'permalink'         => get_permalink( $post->ID ),
+			'menu_order'        => absint( $post->menu_order )
     );
     
     $post_terms = apply_filters( 'wp_redisearch_prepared_terms', $this->prepare_terms( $post ), $post );
@@ -435,27 +422,29 @@ class Index {
   }
 
   /**
-  * Add to index or in other term, index items.
-  * @since    0.1.0
-  * @param integer $post_id
-  * @param array $post
-  * @param array $indexing_options
-  * @return object $index
-  */
-  public function addPosts($index_name, $id, $indexing_options) {
-    $command = array_merge( [$index_name, $id , 1, 'LANGUAGE', $indexing_options['language']] );
+   * Add to index or in other term, index items.
+   *
+   * @param $id
+   * @param array $indexingOptions
+   *
+   * @return object $index
+   * @since    0.1.0
+   */
+  public function addPosts( $id, array $indexingOptions ) {
 
-    $extra_params = isset( $indexing_options['extra_params'] ) ? $indexing_options['extra_params'] : array();
-    $extra_params = apply_filters( 'wp_redisearch_index_extra_params', $extra_params );
-    // If any extra options passed, merge it to $command
-    if ( isset( $extra_params ) ) {
-      $command = array_merge( $command, $extra_params );
-    }
+    update_option( 'fj_tests_index', $indexingOptions );
+    $document = new \FKRediSearch\Document;
+    $document->setLanguage( $indexingOptions['language'] );
 
-    $command = array_merge( $command, array( 'FIELDS' ), $indexing_options['fields'] );
+    $documentScore = $indexingOptions['score'] ?? 1;
+    $document->setScore( $documentScore );
+    $document->setId(  $this->index->getIndexName() . ':' . get_post_type( $id ) . ':' . $id );
 
-    $index = $this->client->rawCommand('FT.ADD', $command);
-    return $index;
+    $document->setFields( $indexingOptions['fields'] );
+
+    $this->index->add( $document );
+
+    return $this;
   }
 
   /**
@@ -464,8 +453,8 @@ class Index {
   * @param
   * @return object $this
   */
-  public function deletePosts($index_name, $id) {
-    $command = array( $index_name, $id , 'DD' );
+  public function deletePosts($indexName, $id) {
+    $command = array( $indexName, $id , 'DD' );
     $this->client->rawCommand('FT.DEL', $command);
     return $this;
   }

@@ -358,7 +358,7 @@ EOT;
   * @return
   */
   public static function wp_redisearch_drop_index() {
-    $index = new Index( WpRediSearch::$client );
+    $index = new Index( (new Client())->return() );
     $results = $index->drop();
     wp_send_json_success( $results );
   }
