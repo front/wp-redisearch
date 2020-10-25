@@ -432,7 +432,6 @@ class Index {
    */
   public function addPosts( $id, array $indexingOptions ) {
 
-    update_option( 'fj_tests_index', $indexingOptions );
     $document = new \FKRediSearch\Document;
     $document->setLanguage( $indexingOptions['language'] );
 
