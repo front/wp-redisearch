@@ -372,8 +372,7 @@ class Index {
         $terms_dic[] = $term->name;
       }
       $terms_dic = implode( ',', $terms_dic );
-			$terms[] = $taxonomy;
-			$terms[] = ltrim( $terms_dic );
+			$terms[$taxonomy] = ltrim( $terms_dic );
 		}
 
 		return $terms;
@@ -404,13 +403,12 @@ class Index {
 
 		foreach( $post_meta as $key => $value ) {
       if ( in_array( $key, $indexableMetaKeys ) ) {
-        $prepared_meta[] = $key;
         $extracted_value = maybe_unserialize( $value[0] );
-        $prepared_meta[] = is_array( $extracted_value ) ? json_encode( maybe_unserialize( $value[0] ) ) : $extracted_value;
+        $prepared_meta[$key] = is_array( $extracted_value ) ? json_encode( maybe_unserialize( $value[0] ) ) : $extracted_value;
 			}
 		}
-
-		return $prepared_meta; 
+		
+		return $prepared_meta;
   }
 
   /**
