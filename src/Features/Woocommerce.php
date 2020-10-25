@@ -1,25 +1,19 @@
 <?php
 namespace WpRediSearch\Features;
 
+use FKRediSearch\Index;
 use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 
 class WooCommerce {
 
-	/**
-   * Redis client.
-   * @since 0.2.1
-	 * @var object
-	 */
-  public static $client;
-
-	/**
-   * Index name for this website.
-   * @since 0.2.1
-	 * @var string
-	 */
-  public static $index_name;
+  /**
+   * The Index object
+   * @since 1.0.0
+   * @var string
+   */
+  public $index;
 
   /**
   * Initiate synonym terms to be added to the index
@@ -28,8 +22,10 @@ class WooCommerce {
   * @return
   */
   public function __construct() {
-    self::$client = (new Client())->return();
-    self::$index_name = Settings::indexName();
+    $client = (new Client())->return();
+    $this->index = new Index($client);
+    $this->index->setIndexName( Settings::indexName() );
+
     Features::init()->register_feature( 'woocommerce', array(
       'title' => 'WooCommerce',
       'setup_cb' => array( $this, 'setup' ),

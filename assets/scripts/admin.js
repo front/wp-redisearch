@@ -24,14 +24,14 @@
         var name = $( this ).attr( 'data-field-name' );
         var value = $( this ).attr( 'value' );
         if ( 'radio' === type ) {
-          if ( $( this ).attr( 'checked' ) ) {
+          if ( this.checked ) {
             settings[ name ] = value;
           }
         } else {
           settings[ name ] = value;
         }
       });
-  
+  console.log(settings)
       $this.parent().addClass( 'saving' );
 
       $.ajax( {

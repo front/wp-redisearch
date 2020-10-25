@@ -115,7 +115,9 @@ class Features {
 			// If exist just merge changed values into current
 			$feature_settings[ $slug ] = wp_parse_args( $settings, $feature_settings[ $slug ] );
 		}
-
+    update_option( 'fj_tests_fea', $feature_settings );
+    update_option( 'fj_tests_fea_sl', $slug );
+    update_option( 'fj_tests_fea_sett', $settings );
 		// Make sure active is a bool
 		$feature_settings[ $slug ]['active'] = (bool) $feature_settings[ $slug ]['active'];
 

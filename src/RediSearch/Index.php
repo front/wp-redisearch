@@ -407,7 +407,7 @@ class Index {
         $prepared_meta[$key] = is_array( $extracted_value ) ? json_encode( maybe_unserialize( $value[0] ) ) : $extracted_value;
 			}
 		}
-		
+
 		return $prepared_meta;
   }
 
