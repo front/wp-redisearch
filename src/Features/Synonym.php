@@ -2,6 +2,7 @@
 
 namespace WpRediSearch\Features;
 
+use FKRediSearch\Index;
 use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
@@ -9,18 +10,11 @@ use WpRediSearch\Features;
 class Synonym {
 
 	/**
-   * Redis client.
-   * @since 0.2.0
-	 * @var object
-	 */
-  public static $client;
-
-	/**
-   * Index name for this website.
-   * @since 0.2.0
+   * The Index object
+   * @since 1.0.0
 	 * @var string
 	 */
-  public static $index_name;
+  public $index;
 
   /**
   * Initiate synonym terms to be added to the index
@@ -29,8 +23,10 @@ class Synonym {
   * @return
   */
   public function __construct() {
-    self::$client = (new Client())->return();
-    self::$index_name = Settings::indexName();
+    $client = (new Client())->return();
+    $this->index = new Index($client);
+    $this->index->setIndexName( Settings::indexName() );
+
     Features::init()->register_feature( 'synonym', array(
       'title' => 'Synonym',
       'setup_cb' => array( $this, 'setup' ),
@@ -50,7 +46,7 @@ class Synonym {
 	 * @since 0.2.0
 	 */
   public function setup () {
-    add_action( 'wp_redisearch_after_index_created', array( __CLASS__, 'add' ) );
+    add_action( 'wp_redisearch_after_index_created', array( $this, 'add' ) );
   }
   
 	/**
@@ -68,7 +64,7 @@ class Synonym {
 	 * @since 0.2.0
 	 */
   public function deactivated () {
-    self::delete();
+    $this->delete();
   }
 
 	/**
@@ -95,35 +91,29 @@ class Synonym {
   }
 
   /**
-  * Add synonym terms to the index
-  * @since 0.2.0
-  * @param
-  * @return
-  */
-  public static function add() {
+   * Add synonym terms to the index
+   * @return void
+   * @since 0.2.0
+   */
+  public function add() {
     $synonym_terms = Settings::get( 'wp_redisearch_synonyms_list' );
     if ( !isset( $synonym_terms ) || empty( $synonym_terms ) ) {
       return;
     }
     $synonym_terms = preg_split("/\\r\\n|\\r|\\n/", $synonym_terms );
-    $synonym_terms = array_map( 'trim', $synonym_terms );
-    foreach ($synonym_terms as $synonym) {
-      $synonym_group = array_map( 'trim', explode( ',', $synonym) );
-      $synonym_command = array_merge( [ self::$index_name ], $synonym_group );
-
-      self::$client->rawCommand('FT.SYNADD', $synonym_command);
-    }
+    $synonym_terms = array_map( function ($terms) {
+      return explode(',', $terms);
+    }, $synonym_terms );
+    $this->index->synonymAdd( $synonym_terms );
   }
 
   /**
-  * Remove synonym terms from the index
-  * @since 0.2.0
-  * @param
-  * @return
-  */
-  public static function delete() {
-    $deactivation_command = array_merge( [ self::$index_name ] );
-    self::$client->rawCommand('FT.SYNDUMP', $deactivation_command);
+   * Remove synonym terms from the index
+   * @return void
+   * @since 0.2.0
+   */
+  public function delete() {
+    $this->index->synonymDump();
   }
 
 }
