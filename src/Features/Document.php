@@ -2,6 +2,7 @@
 
 namespace WpRediSearch\Features;
 
+use FKRediSearch\Index;
 use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
@@ -11,19 +12,12 @@ use Vaites\ApacheTika\Client as TikaClient;
 
 class Document {
 
-	/**
-   * Redis client.
-   * @since 0.2.2
-	 * @var object
-	 */
-  public static $client;
-
-	/**
-   * Index name for this website.
-   * @since 0.2.2
-	 * @var string
-	 */
-  public static $index_name;
+  /**
+   * The Index object
+   * @since 1.0.0
+   * @var string
+   */
+  public $index;
 
   /**
   * Initiate document terms to be added to the index
@@ -32,8 +26,10 @@ class Document {
   * @return
   */
   public function __construct() {
-    self::$client = (new Client())->return();
-    self::$index_name = Settings::indexName();
+    $client = (new Client())->return();
+    $this->index = new Index($client);
+    $this->index->setIndexName( Settings::indexName() );
+
     Features::init()->register_feature( 'document', array(
       'title' => 'Document',
       'setup_cb' => array( $this, 'setup' ),
@@ -85,14 +81,15 @@ class Document {
     return array_merge( $post_status, array( 'inherit' ) );
   }
 
-	/**
-	 * Add document field to the index
-   * 
-	 * @param array $meta         Existing meta keys
-   * @since 0.2.2
+  /**
+   * Add document field to the index
+   *
+   * @param array $meta Existing meta keys
+   *
    * @return  array
-	 */
-  public static function indexable_meta_keys( $meta ) {
+   * @since 0.2.2
+   */
+  public static function indexable_meta_keys( array $meta ) {
     $indexable_keys = array( 'document' );
 
     return array_merge( $meta, $indexable_keys );
@@ -135,7 +132,6 @@ class Document {
     }
 
     $where .= ' AND post_mime_type IN( ' . $where_mime_types . '"") ';
-    update_option( 'wp_redisearch_query_where', $where );
     return $where;
   }
   
@@ -201,7 +197,7 @@ class Document {
     }
 
     $allowed_mime_types = self::allowed_mime_types();
-
+    
     if ( $post->post_type == 'attachment' && in_array( $post->post_mime_type, $allowed_mime_types ) ) {
       $file_name = get_attached_file( $post->ID );
 
@@ -235,7 +231,7 @@ class Document {
             $file_content = $wp_filesystem->get_contents( $file_name );
           }
         }
-        $post_args = array_merge( $post_args, array( 'document', $file_content ) );
+        $post_args = array_merge( $post_args, array( 'document' => $file_content ) );
       }
     }
 

@@ -109,13 +109,11 @@ class Index {
     $indexableMetaKeys = apply_filters( 'wp_redisearch_indexable_meta_keys', array() );
 
     $metaSchema = array();
-    
+
     if ( isset( $indexableMetaKeys ) && !empty( $indexableMetaKeys ) ) {
       foreach ($indexableMetaKeys as $meta) {
-        $metaSchema[] = array(
-          $meta     => array(
-            'type'    => 'TEXT'
-          )
+        $metaSchema[$meta] = array(
+          'type'    => 'TEXT'
         );
       }
     }
@@ -132,10 +130,8 @@ class Index {
     $termsSchema = array();
     if ( isset( $indexableTerms ) && !empty( $indexableTerms ) ) {
       foreach ($indexableTerms as $term) {
-        $termsSchema[] = array(
-          $term     => array(
-            'type'    => 'TAG'
-          ),
+        $termsSchema[$term] = array(
+          'type'    => 'TAG'
         );
       }
     }
@@ -261,9 +257,6 @@ class Index {
         $query->the_post();
         $indexingOptions = array();
 
-        $title = get_the_title();
-        $permalink = get_permalink();
-        $content = wp_strip_all_tags( get_the_content(), true );
         $id = get_the_id();
         // Post language. This could be useful to do some stop word, stemming and etc.
         $indexingOptions['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $id );
@@ -308,8 +301,7 @@ class Index {
 		}
 
 		$post_date = $post->post_date;
-    $post_modified = $post->post_modified;
-       // If date is invalid, set it to null
+		// If date is invalid, set it to null
 		if ( ! strtotime( $post_date ) || $post_date === "0000-00-00 00:00:00" ) {
 			$post_date = null;
 		}
