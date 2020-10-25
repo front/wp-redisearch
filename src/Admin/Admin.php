@@ -9,7 +9,6 @@ use WpRediSearch\Settings;
 use WpRediSearch\Features;
 use WpRediSearch\WpRediSearch;
 use WpRediSearch\RediSearch\Index;
-use WpRediSearch\RediSearch\Setup;
 
 class Admin {
 
@@ -269,7 +268,9 @@ EOT;
   */
   public static function wp_redisearch_write_to_disk() {
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-      $index = new Index( WpRediSearch::$client );
+      $client = (new Client())->return();
+      $index = new \FKRediSearch\Index($client);
+      $index->setIndexName( Settings::indexName() );
       $result = $index->writeToDisk();
       wp_send_json_success( $result );
     }
@@ -286,7 +287,10 @@ EOT;
     if ( wp_is_post_revision( $post_id ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) )
       return;
 
-    $index = new Index( WpRediSearch::$client );
+    $client = (new Client())->return();
+    $index = new \FKRediSearch\Index($client);
+    $index->setIndexName( Settings::indexName() );
+
     $index_name = Settings::indexName();
 
     // If post is not published or un-published, delete from index then, return.
@@ -305,7 +309,6 @@ EOT;
       
       // If enabled, write to disk
       if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-        $index = new Index( WpRediSearch::$client );
         $index->writeToDisk();
       }
       return;
@@ -346,7 +349,6 @@ EOT;
     
     // If enabled, write to disk
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-      $index = new Index( WpRediSearch::$client );
       $index->writeToDisk();
     }
   }
@@ -358,8 +360,10 @@ EOT;
   * @return
   */
   public static function wp_redisearch_drop_index() {
-    $index = new Index( (new Client())->return() );
-    $results = $index->drop();
+    $client = (new Client())->return();
+    $index = new \FKRediSearch\Index($client);
+    $index->setIndexName( Settings::indexName() );
+    $results = $index->drop( TRUE );
     wp_send_json_success( $results );
   }
 
