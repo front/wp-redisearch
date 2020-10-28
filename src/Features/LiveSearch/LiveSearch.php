@@ -2,25 +2,19 @@
 
 namespace WpRediSearch\Features;
 
+use FKRediSearch\Query\Query;
 use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Settings;
 use WpRediSearch\Features;
 
 class LiveSearch {
 
-	/**
-   * Redis client.
-   * @since 0.2.0
-	 * @var object
-	 */
-  public static $client;
-
-	/**
-   * Index name for this website.
-   * @since 0.2.0
-	 * @var string
-	 */
-  public static $index_name;
+  /**
+   * The query to get results
+   * @since 1.0.0
+   * @var string
+   */
+  public $query;
 
 	/**
    * Set this if suggestion is not added.
@@ -35,8 +29,9 @@ class LiveSearch {
   * @return
   */
   public function __construct() {
-    self::$client = (new Client())->return();
-    self::$index_name = Settings::indexName();
+    $client = (new Client())->return();
+    $this->query = new Query( $client, Settings::indexName() );
+
     Features::init()->register_feature( 'live-search', array(
       'title' => 'Live Search',
       'setup_cb' => array( $this, 'setup' ),
@@ -72,26 +67,9 @@ class LiveSearch {
 	 * @since 0.2.0
 	 */
   public function setup () {
-    add_action( 'wp_redisearch_after_post_indexed', array( __CLASS__, 'add_loop' ), 10, 3 );
-    add_action( 'wp_redisearch_after_post_published', array( __CLASS__, 'add_post' ), 10, 3 );
-    add_action( 'wp_redisearch_after_post_deleted', array( __CLASS__, 'delete' ), 10, 2 );
-    
-    add_action('wp_ajax_wp_redisearch_get_suggestion', array( __CLASS__, 'get_suggestion' ) );
-    add_action('wp_ajax_nopriv_wp_redisearch_get_suggestion', array( __CLASS__, 'get_suggestion' ) );
-
-    // Check if suggestion exists.
-    $liveSearch = null;
-    try {
-      $liveSearch = self::$client->rawCommand('FT.SUGGET', [self::$index_name . 'Sugg', 'a', 'FUZZY', 'MAX', '2']);
-    } catch (\Exception $e) {
-      if ( isset( $e ) )  {
-        self::$liveSearchException = true;
-      }
-    }
-    if ( !is_null($liveSearch) ) {
-      add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_script' ) );
-      self::$liveSearchException = true;
-    }
+    add_action('wp_ajax_wp_redisearch_get_suggestion', array( $this, 'get_suggestion' ) );
+    add_action('wp_ajax_nopriv_wp_redisearch_get_suggestion', array( $this, 'get_suggestion' ) );
+    add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_script' ) );
   }
   
 	/**
@@ -219,15 +197,15 @@ class LiveSearch {
   * Ajax callback for getting suggestion results
   * @since 0.2.0
   * @param 
-  * @return json $suggestion_results
+  * @return string $suggestion_results
   */
-  public static function get_suggestion() {
-    $index_name = Settings::indexName();
-    $results_no = Settings::get( 'wp_redisearch_suggested_results', 10 );
+  public function get_suggestion() {
+    $noResults = Settings::get( 'wp_redisearch_suggested_results', 10 );
     $term = $_POST['term'];
-    $suggestion_results = self::$client->rawCommand('FT.SUGGET', [$index_name . 'Sugg', $term, 'FUZZY', 'WITHPAYLOADS', 'MAX', $results_no]);
-    echo json_encode( $suggestion_results );
-    wp_die();
+    $suggestion_results = $this->query
+      ->limit(0, $noResults )
+      ->search( $term . '*' );
+    wp_send_json( $suggestion_results->getDocuments() );
   }
 
 }
