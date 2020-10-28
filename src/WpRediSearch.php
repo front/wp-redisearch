@@ -277,7 +277,7 @@ class WpRediSearch {
     $searchResults = $results->getDocuments();
 
     $searchCount = $results->getCount();
-
+    
     if ( $searchCount == 0 ) {
       $query->redisearch_success = true;
       return $request;
@@ -286,7 +286,6 @@ class WpRediSearch {
     $searchResults = array_map( function( $res ) {
       return $res->post_id;
     }, $searchResults );
-
     $args = array(
       'post_type'     => 'any',
       'post_status'   => 'any',

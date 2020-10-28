@@ -188,6 +188,10 @@ class Document {
   * @return
   */
   public static function index_document($post_args, $post) {
+    if ( $post->post_type !== 'attachment' ) {
+      return $post_args;
+    }
+
     global $wp_filesystem;
 
     require_once( ABSPATH . 'wp-admin/includes/file.php' );
@@ -198,7 +202,7 @@ class Document {
 
     $allowed_mime_types = self::allowed_mime_types();
     
-    if ( $post->post_type == 'attachment' && in_array( $post->post_mime_type, $allowed_mime_types ) ) {
+    if ( in_array( $post->post_mime_type, $allowed_mime_types ) ) {
       $file_name = get_attached_file( $post->ID );
 
       if ( $wp_filesystem->exists( $file_name, false, 'f' ) ) {
