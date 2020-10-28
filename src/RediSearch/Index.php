@@ -51,11 +51,19 @@ class Index {
     $index->on('HASH');
 
     $prefixes = array();
-    $postTypes = Settings::get( 'wp_redisearch_post_types' ) ?? array( 'post' );
-    foreach ($postTypes as $postType => $value ) {
-      if ( $value === 'on' ) {
-        $prefixes[] = $indexName . ':' . $postType;
-      }
+
+    $postTypes = Settings::get( 'wp_redisearch_post_types' );
+
+    if ( isset( $postTypes ) && !empty( $postTypes ) ) {
+      $postTypes = array_keys( $postTypes );
+    } elseif ( !isset( $postTypes ) || empty( $postTypes ) ) {
+      $postTypes = array( 'post' );
+    }
+
+    $postTypes = apply_filters( 'wp_redisearch_indexable_post_types', $postTypes );
+
+    foreach ($postTypes as $postType ) {
+      $prefixes[] = $indexName . ':' . $postType;
     }
     $index->setPrefix($prefixes);
     // Setting a field name for score so we don't need to parse index info everytime
