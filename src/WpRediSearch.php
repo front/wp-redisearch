@@ -2,6 +2,7 @@
 
 namespace WpRediSearch;
 
+use FKRediSearch\Query\Query;
 use WpRediSearch\RediSearch\Client;
 use WpRediSearch\Admin;
 use WpRediSearch\RediSearch\Index;
@@ -11,7 +12,7 @@ use WpRediSearch\Features\Synonym;
 use WpRediSearch\Features\LiveSearch;
 use WpRediSearch\Features\WooCommerce;
 use WpRediSearch\Features\Document;
-use FKRediSearch\Setup;
+use WpRediSearch\RedisRaw\PredisAdapter;
 use WpRediSearch\Settings;
 
 /**
@@ -25,7 +26,7 @@ class WpRediSearch {
   /**
    * The redisearch client connection.
    *
-   * @var Setup
+   * @var PredisAdapter
    */
   private $client;
 
@@ -260,22 +261,37 @@ class WpRediSearch {
       ) {
       return $request;
     }
-    
-    $search = new Search( $this->client );
-    $search_results = $search->search( $query );
-    $search_count = $search_results[0];
 
-    if ( $search_results[0] == 0 ) {
+    $search = new Query( $this->client, Settings::indexName() );
+
+    // Offset search results based on pagination
+    $from = 0;
+    $offset = $query->query_vars['posts_per_page'];
+    if ( isset( $query->query_vars['paged'] ) && $query->query_vars['paged'] > 1 ) {
+      $from = $query->query_vars['posts_per_page'] * ( $query->query_vars['paged'] - 1 );
+    }
+    $results = $search
+      ->limit( $from, $offset )
+      ->return( array( 'post_id' ) )
+      ->search( $query->query_vars['s'] );
+    $searchResults = $results->getDocuments();
+
+    $searchCount = $results->getCount();
+
+    if ( $searchCount == 0 ) {
       $query->redisearch_success = true;
       return $request;
     }
-    unset( $search_results[0] );
+
+    $searchResults = array_map( function( $res ) {
+      return $res->post_id;
+    }, $searchResults );
 
     $args = array(
       'post_type'     => 'any',
       'post_status'   => 'any',
       'orderby'       => 'post__in',
-      'post__in'      => $search_results
+      'post__in'      => $searchResults
     );
 
     /**
@@ -301,9 +317,9 @@ class WpRediSearch {
     $query = apply_filters( 'wp_redisearch_after_search_wp_query', $query, $searched_posts, $args );
     
     $this->searchQueryPosts = $searched_posts->posts;
-    $query->found_posts = $search_count;
+    $query->found_posts = $searchCount;
     $query->redisearch_success = true;
-    $query->max_num_pages = ceil( $search_count / $query->get( 'posts_per_page' ) );
+    $query->max_num_pages = ceil( $searchCount / $query->get( 'posts_per_page' ) );
 
     
     return "SELECT * FROM $wpdb->posts WHERE 1=0";
