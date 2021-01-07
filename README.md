@@ -1,5 +1,7 @@
 # RediSearch
 
+**IMPORTANT**: The latest version of this plugin supports RediSearch version 2.0 (or higher) which runs on Redis 6.0 (or higher). If you have version prior to 2.0, please use this plugins 0.2.7. 
+
 Redisearch implements a search engine on top of Redis. It has lots of advanced features, like exact phrase matching and numeric filtering for text queries, that are nearly not possible or inefficient with mysql search queries.
 
 Here you find a list of RediSearch features included in the plugin:
@@ -50,6 +52,9 @@ Although mySql is a great database to storing relational data, It acts very poor
 Yes, ElasticSearch is a great search engine and it has very good performance compared to mySql. But RediSearch has almost 5 to 10 times better performance and also its way easier to create index, sync your data and send query requests.
 
 ### Changelog
+
+##### 0.3.0
+* **Updated**: Implemented RediSearch version 2.0
 
 ##### 0.2.7
 * **FIXED**: Fix some bugs.
