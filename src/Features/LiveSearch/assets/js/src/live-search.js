@@ -70,10 +70,10 @@
                 b = document.createElement("DIV");
                 b.innerHTML = "<strong>" + results[i].post_title.substr(0, term.length) + "</strong>";
                 b.innerHTML += results[i].post_title.substr(term.length);
-                b.innerHTML += "<input type='hidden' value='" + results[i] + "'>";
+                b.innerHTML += "<input type='hidden' value='" + results[i].post_title + "'>";
                 b.addEventListener("click", function(e) {
                   inp.value = this.getElementsByTagName("input")[0].value;
-                  inp.parentNode.submit();
+                  inp.closest('form').submit();
                   closeAllLists();
                 });
                 a.appendChild(b);
