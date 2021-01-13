@@ -19,10 +19,17 @@ class Index {
 	/**
 	 * @param object $index
 	 */
-  private $index;
+  public $index;
 
   public function __construct( $client ) {
     $this->client = $client;
+
+    $index = new RedisearchIndex($this->client);
+    // Set index name.
+    $index->setIndexName(Settings::indexName());
+
+    $index->on('HASH');
+    $this->index = $index;
   }
 
   /**
@@ -44,12 +51,6 @@ class Index {
 
     $indexName = Settings::indexName();
 
-    $index = new RedisearchIndex($this->client);
-    // Set index name.
-    $index->setIndexName(Settings::indexName());
-
-    $index->on('HASH');
-
     $prefixes = array();
 
     $postTypes = Settings::get( 'wp_redisearch_post_types' );
@@ -65,11 +66,11 @@ class Index {
     foreach ($postTypes as $postType ) {
       $prefixes[] = $indexName . ':' . $postType;
     }
-    $index->setPrefix($prefixes);
+    $this->index->setPrefix($prefixes);
     // Setting a field name for score so we don't need to parse index info everytime
-    $index->setScoreField('documentScore');
+    $this->index->setScoreField('documentScore');
     // Delete the index.
-    $index->drop();
+    $this->index->drop();
 
     $indexableFields = array(
       'post_title'      => array(
@@ -153,14 +154,14 @@ class Index {
      */
     $stop_words_disabled = Settings::get( 'wp_redisearch_disable_stop_words', false );
     if ( $stop_words_disabled ) {
-      $index->noStopWords();
+      $this->index->noStopWords();
     } else {
       $stopWords = Settings::get( 'wp_redisearch_stop_words', null );
       if ( isset( $stopWords ) && $stopWords != null ) {
         $stopWordsArray = explode( ',', $stopWords);
         $stopWordsArray = array_map( 'trim', $stopWordsArray );
         if ( count( $stopWordsArray ) !== 0 ) {
-          $index->setStopWords( $stopWordsArray );
+          $this->index->setStopWords( $stopWordsArray );
         }
       }
     }
@@ -171,15 +172,15 @@ class Index {
       if (!empty($type)) {
         switch ($type) {
           case 'NUMERIC':
-            $index->addNumericField( $name, $field['sortable'] ?? FALSE );
+            $this->index->addNumericField( $name, $field['sortable'] ?? FALSE );
             break;
 
           case 'TAG':
-            $index->addTagField( $name );
+            $this->index->addTagField( $name );
             break;
 
           case 'GEO':
-            $index->addGeoField( $name );
+            $this->index->addGeoField( $name );
             break;
 
           default:
@@ -187,15 +188,13 @@ class Index {
             if ( isset( $field['weight'] ) ) {
               $weight = $field['weight'];
             }
-            $index->addTextField( $name, $weight, $field['sortable'] ?? FALSE );
+            $this->index->addTextField( $name, $weight, $field['sortable'] ?? FALSE );
         }
       }
     }
 
     // Save/Create the Index.
-    $index->create();
-
-    $this->index = $index;
+    $this->index->create();
 
     /**
      * Action wp_redisearch_after_index_created fires after index created.
@@ -450,8 +449,8 @@ class Index {
   * @param
   * @return object $this
   */
-  public function deletePosts($indexName, $id) {
-    $command = array( $indexName, $id , 'DD' );
+  public function deletePost($id) {
+    $command = array( $this->index->getIndexName(), $id , 'DD' );
     $this->client->rawCommand('FT.DEL', $command);
     return $this;
   }

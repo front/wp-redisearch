@@ -287,15 +287,13 @@ EOT;
     if ( wp_is_post_revision( $post_id ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) )
       return;
 
-    $client = (new Client())->return();
-    $index = new \FKRediSearch\Index($client);
-    $index->setIndexName( Settings::indexName() );
+    $wprdsIndex = new Index( (new Client())->return() );
 
     $index_name = Settings::indexName();
 
     // If post is not published or un-published, delete from index then, return.
     if ( $post->post_status != 'publish' ) {
-      $index->delete( $post_id );
+      $wprdsIndex->deletePost( $post_id );
 
       /**
        * Filter wp_redisearch_after_post_deleted fires after post deleted from the index.
@@ -309,7 +307,7 @@ EOT;
       
       // If enabled, write to disk
       if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-        $index->writeToDisk();
+        $wprdsIndex->writeToDisk();
       }
       return;
     }
@@ -332,10 +330,10 @@ EOT;
 		}
 
     $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $post_id );
-    $indexing_options['fields'] = $index->prepare_post( $post_id );
+    $indexing_options['fields'] = $wprdsIndex->preparePost( $post_id );
     $indexing_options['extra_params'] = array( 'REPLACE' );
     // Finally, add post to index
-    $index->addPosts( $index_name, $post_id, $indexing_options );
+    $wprdsIndex->addPosts( $post_id, $indexing_options );
 
     /**
      * Filter wp_redisearch_after_post_indexed fires after post added to the index.
@@ -349,7 +347,7 @@ EOT;
     
     // If enabled, write to disk
     if ( Settings::get( 'wp_redisearch_write_to_disk' ) ) {
-      $index->writeToDisk();
+      $wprdsIndex->writeToDisk();
     }
   }
 
