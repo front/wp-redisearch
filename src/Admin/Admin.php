@@ -295,7 +295,7 @@ EOT;
 
     // If post is not published or un-published, delete from index then, return.
     if ( $post->post_status != 'publish' ) {
-      $index->deletePosts( $index_name, $post_id );
+      $index->delete( $post_id );
 
       /**
        * Filter wp_redisearch_after_post_deleted fires after post deleted from the index.
