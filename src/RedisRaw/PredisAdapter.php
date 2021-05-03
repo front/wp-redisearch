@@ -16,14 +16,23 @@ class PredisAdapter extends AbstractRedisRawClient {
    */
   public $redis;
   
-  public function connect($hostname = '127.0.0.1', $port = 6379, $db = 0, $password = null): RedisRawClientInterface {
-    $this->redis = new Client([
-      'scheme' => 'tcp',
-      'host' => $hostname,
-      'port' => $port,
-      'database' => $db,
-      'password' => $password,
-    ]);
+  public function connect($hostname = '127.0.0.1', $port = 6379, $db = 0, $password = null, $scheme = 'tcp'): RedisRawClientInterface {
+    $clientArgs = array();
+    if ( $scheme === 'tcp' ) {
+      $clientArgs = array(
+      'scheme'    => 'tcp',
+      'host'      => $hostname,
+      'port'      => $port,
+      'database'  => $db,
+      'password'  => $password,
+      );
+    } else {
+      $clientArgs = array(
+        'scheme'    => 'unix',
+        'path'      => $host
+      );
+    }
+    $this->redis = new Client( $clientArgs );
     $this->redis->connect();
     return $this;
   }

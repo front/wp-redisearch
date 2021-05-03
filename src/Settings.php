@@ -47,6 +47,22 @@ class Settings {
   }
 
   /**
+  * Using UNIX socket for communicating with Redis server or not.
+  * @since    0.1.0
+  * @param
+  * @return bool    $unixServer
+  */
+  public static function RedisScheme() {
+    /**
+     * First we try to get the WP_REDIS_SCHEME option from wp-config.php
+     * @since 0.3.3
+     */
+    $redis_server = ( defined( 'WP_REDIS_SCHEME' ) ) ? WP_REDIS_SCHEME : get_option( 'wp_redisearch_connection_scheme' );
+
+    return get_option( 'wp_redisearch_connection_scheme' );
+  }
+
+  /**
   * Return redis port.
   * @since    0.1.0
   * @param

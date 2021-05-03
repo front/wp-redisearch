@@ -18,7 +18,8 @@ class Client {
       Settings::RedisServer(),
       Settings::RedisPort(),
       Settings::RedisPassword(),
-      0
+      0,
+      Settings::RedisScheme()
     );
   }
 
