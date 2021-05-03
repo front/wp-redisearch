@@ -166,6 +166,7 @@ EOT;
   */
   public static function redisearchIndexingFields() {
     Fields::add( 'header', null, __( 'General indexing settings', 'wp-redisearch' ) );
+    Fields::add( 'select', 'wp_redisearch_default_language',  __( 'Default language', 'wp-redisearch' ), __( 'Set sites default language. This setting can be changed per post by utilizing "wp_redisearch_index_language" filter', 'wp-redisearch' ), self::supportedLanguages() );
     Fields::add( 'text', 'wp_redisearch_indexing_batches',  __( 'Posts will be indexed in baches of:', 'wp-redisearch' ) );
     Fields::add( 'checkbox', 'wp_redisearch_search_in_admin', __( 'Allow RediSearch in admin', 'wp-redisearch' ), __( 'If enabled, the plugin overrides searches done in admin area.', 'wp-redisearch') );
     Fields::add( 'header', null, __( 'Persist index after server restart.', 'wp-redisearch' ), __( 'Redisearch is in-memory database, which means after server restart (for any reason), all data in the redis database will be lost. But redis also can write to the disk.', 'wp-redisearch' ) );
@@ -330,7 +331,8 @@ EOT;
 			$post_date = null;
 		}
 
-    $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', 'english', $post_id );
+		$defaultLanguage = get_option( 'wp_redisearch_default_language', 'english');
+    $indexing_options['language'] = apply_filters( 'wp_redisearch_index_language', $defaultLanguage, $post_id );
     $indexing_options['fields'] = $wprdsIndex->preparePost( $post_id );
     $indexing_options['extra_params'] = array( 'REPLACE' );
     // Finally, add post to index
@@ -364,6 +366,29 @@ EOT;
     $index->setIndexName( Settings::indexName() );
     $results = $index->drop( TRUE );
     wp_send_json_success( $results );
+  }
+
+  public function supportedLanguages() {
+    return array(
+      'arabic'      => 'Arabic',
+      'danish'      => 'Danish',
+      'dutch'       => 'Dutch',
+      'english'     => 'English',
+      'finnish'     => 'Finnish',
+      'french'      => 'French',
+      'german'      => 'German',
+      'hungarian'   => 'Hungarian',
+      'italian'     => 'Italian',
+      'norwegian'   => 'Norwegian',
+      'portuguese'  => 'Portuguese',
+      'romanian'    => 'Romanian',
+      'russian'     => 'Russian',
+      'spanish'     => 'Spanish',
+      'swedish'     => 'Swedish',
+      'tamil'       => 'Tamil',
+      'turkish'     => 'Turkish',
+      'chinese'     => 'Chinese',
+    );
   }
 
 }
