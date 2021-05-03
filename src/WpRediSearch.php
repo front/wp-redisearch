@@ -227,10 +227,12 @@ class WpRediSearch {
 	 * @return array $new_posts
    */
 	public function filterThePosts( $posts, $query ) {
-    if ( !Settings::SearchInAdmin() ||
-        !$query->is_main_query() ||
-        ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
-        empty( $query->query_vars['s'] )
+    if ( !apply_filters( 'wp_redisearch_force_redisearch', FALSE, $query ) &&
+         ( !Settings::SearchInAdmin() ||
+          !$query->is_main_query() ||
+          ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
+          empty( $query->query_vars['s'] )
+         )
       ) {
       return $posts;
     }
@@ -254,10 +256,12 @@ class WpRediSearch {
       return $request;
     }
     
-    if ( !Settings::SearchInAdmin() ||
-        !$query->is_main_query() ||
-        ( method_exists( $query, 'is_search' ) && ! $query->is_search() ) ||
-        empty( $query->query_vars['s'] )
+    if ( !apply_filters( 'wp_redisearch_force_redisearch', FALSE, $query ) &&
+         ( !Settings::SearchInAdmin() ||
+            !$query->is_main_query() ||
+            ( method_exists( $query, 'is_search' ) && !$query->is_search() ) ||
+            empty( $query->query_vars['s'] )
+         )
       ) {
       return $request;
     }
