@@ -5,8 +5,8 @@ Plugin URI: https://github.com/7kmCo/wp-redisearch
 Donate link: https://www.paypal.me/foadyousefi
 Tags: search, redisearch, redis, fuzzy, aggregation, searching, autosuggest, suggest, advanced search, woocommerce
 Requires at least: 5.0
-Tested up to: 5.6
-Stable tag: 0.3.2
+Tested up to: 5.7
+Stable tag: 0.3.3
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -65,6 +65,9 @@ Although mySql is a great database to storing relational data, It acts very poor
 Yes, ElasticSearch is a great search engine and it has very good performance compared to mySql. But RediSearch has almost 5 to 10 times better performance and also its way easier to create index, sync your data and send query requests.
 
 == Changelog ==
+
+= 0.3.3 =
+* Added: Ability to connect via UNIX sockets
 
 = 0.3.2 =
 * FIXED: Fix issue while creating/updating/deleting posts

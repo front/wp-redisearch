@@ -53,6 +53,10 @@ Yes, ElasticSearch is a great search engine and it has very good performance com
 
 ### Changelog
 
+##### 0.3.3
+* **Added**: Ability to connect via UNIX sockets
+
+
 ##### 0.3.2
 * **FIXED**: Fix issue while creating/updating/deleting posts
 
