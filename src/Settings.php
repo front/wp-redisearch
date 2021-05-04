@@ -57,9 +57,9 @@ class Settings {
      * First we try to get the WP_REDIS_SCHEME option from wp-config.php
      * @since 0.3.3
      */
-    $redis_server = ( defined( 'WP_REDIS_SCHEME' ) ) ? WP_REDIS_SCHEME : get_option( 'wp_redisearch_connection_scheme' );
+    $redis_server = ( defined( 'WP_REDIS_SCHEME' ) ) ? WP_REDIS_SCHEME : get_option( 'wp_redisearch_connection_scheme', 'tcp' );
 
-    return get_option( 'wp_redisearch_connection_scheme' );
+    return $redis_server;
   }
 
   /**
