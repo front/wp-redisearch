@@ -38,6 +38,7 @@ define('WP_REDIS_HOST', '127.0.0.1');
 define('WP_REDIS_PORT', '6379');
 define('WP_REDIS_PASSWORD', 'your-password');
 define('WP_REDIS_INDEX_NAME', 'indexName');
+define('WP_REDIS_SCHEME', 'connectionScheme');
 ```
 
 
