@@ -4,12 +4,12 @@ namespace WpRediSearch;
 
 use FKRediSearch\Query\Query;
 use WpRediSearch\RediSearch\Client;
-use WpRediSearch\Admin;
+use WpRediSearch\Admin\Admin;
 use WpRediSearch\RediSearch\Index;
 use WpRediSearch\RediSearch\Search;
 use WpRediSearch\Features;
 use WpRediSearch\Features\Synonym;
-use WpRediSearch\Features\LiveSearch;
+use WpRediSearch\Features\LiveSearch\LiveSearch;
 use WpRediSearch\Features\WooCommerce;
 use WpRediSearch\Features\Document;
 use WpRediSearch\RedisRaw\PredisAdapter;
@@ -118,10 +118,11 @@ class WpRediSearch {
       // Check if RediSearch module is loaded.
       try {
         $loaded_modules = $this->client->rawCommand('MODULE', ['LIST']);
+        self::$moduleException = true;
         if ( isset( $loaded_modules ) && !empty( $loaded_modules ) ) {
           foreach ($loaded_modules as $module) {
-            if ( !in_array( 'search', $module ) ) {
-              self::$moduleException = true;
+            if ( in_array( 'search', $module ) ) {
+              self::$moduleException = false;
             }
           }
         } else {
