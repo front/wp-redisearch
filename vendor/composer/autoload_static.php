@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
+class ComposerStaticInitd0d9ec57d4a198e8c0a84af8a5284dcb
 {
     public static $prefixLengthsPsr4 = array (
         'W' => 
@@ -62,6 +62,7 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
 
     public static $classMap = array (
         'Asika\\Pdf2text' => __DIR__ . '/..' . '/asika/pdf2text/src/Pdf2text.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'FKRediSearch\\Document' => __DIR__ . '/..' . '/front/redisearch/src/Document.php',
         'FKRediSearch\\Fields\\AbstractField' => __DIR__ . '/..' . '/front/redisearch/src/Fields/AbstractField.php',
         'FKRediSearch\\Fields\\FieldInterface' => __DIR__ . '/..' . '/front/redisearch/src/Fields/FieldInterface.php',
@@ -369,16 +370,16 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
         'Vaites\\ApacheTika\\Metadata\\ImageMetadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/ImageMetadata.php',
         'Vaites\\ApacheTika\\Metadata\\Metadata' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/Metadata.php',
         'Vaites\\ApacheTika\\Metadata\\MetadataInterface' => __DIR__ . '/..' . '/vaites/php-apache-tika/src/Metadata/MetadataInterface.php',
-        'WpRediSearch\\Admin' => __DIR__ . '/../..' . '/src/Admin/Admin.php',
+        'WpRediSearch\\Admin\\Admin' => __DIR__ . '/../..' . '/src/Admin/Admin.php',
         'WpRediSearch\\Feature' => __DIR__ . '/../..' . '/src/Feature.php',
         'WpRediSearch\\Features' => __DIR__ . '/../..' . '/src/Features.php',
         'WpRediSearch\\Features\\Document' => __DIR__ . '/../..' . '/src/Features/Document.php',
-        'WpRediSearch\\Features\\LiveSearch' => __DIR__ . '/../..' . '/src/Features/LiveSearch/LiveSearch.php',
+        'WpRediSearch\\Features\\LiveSearch\\LiveSearch' => __DIR__ . '/../..' . '/src/Features/LiveSearch/LiveSearch.php',
         'WpRediSearch\\Features\\Synonym' => __DIR__ . '/../..' . '/src/Features/Synonym.php',
-        'WpRediSearch\\Features\\WooCommerce' => __DIR__ . '/../..' . '/src/Features/Woocommerce.php',
+        'WpRediSearch\\Features\\WooCommerce' => __DIR__ . '/../..' . '/src/Features/WooCommerce.php',
+        'WpRediSearch\\RediSearch\\Client' => __DIR__ . '/../..' . '/src/RediSearch/Client.php',
         'WpRediSearch\\RediSearch\\Index' => __DIR__ . '/../..' . '/src/RediSearch/Index.php',
         'WpRediSearch\\RediSearch\\Search' => __DIR__ . '/../..' . '/src/RediSearch/Search.php',
-        'WpRediSearch\\RediSearch\\Setup' => __DIR__ . '/../..' . '/src/RediSearch/Setup.php',
         'WpRediSearch\\RedisRaw\\AbstractRedisRawClient' => __DIR__ . '/../..' . '/src/RedisRaw/AbstractRedisRawClient.php',
         'WpRediSearch\\RedisRaw\\PredisAdapter' => __DIR__ . '/../..' . '/src/RedisRaw/PredisAdapter.php',
         'WpRediSearch\\RedisRaw\\RedisRawClientInterface' => __DIR__ . '/../..' . '/src/RedisRaw/RedisRawClientInterface.php',
@@ -390,9 +391,9 @@ class ComposerStaticInitc54fefdfecefa7a76a4efbc673072543
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc54fefdfecefa7a76a4efbc673072543::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc54fefdfecefa7a76a4efbc673072543::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitc54fefdfecefa7a76a4efbc673072543::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd0d9ec57d4a198e8c0a84af8a5284dcb::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd0d9ec57d4a198e8c0a84af8a5284dcb::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd0d9ec57d4a198e8c0a84af8a5284dcb::$classMap;
 
         }, null, ClassLoader::class);
     }
