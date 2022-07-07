@@ -1,6 +1,6 @@
 <?php
 
-namespace WpRediSearch\Features;
+namespace WpRediSearch\Features\LiveSearch;
 
 use FKRediSearch\Query\Query;
 use WpRediSearch\RediSearch\Client;

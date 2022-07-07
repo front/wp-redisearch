@@ -1,5 +1,5 @@
 <?php
-namespace WpRediSearch;
+namespace WpRediSearch\Admin;
 
 use SevenFields\Fields\Fields;
 use SevenFields\Container\Container;
